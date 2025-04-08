@@ -1,0 +1,28 @@
+.carousel {
+  width: 100vw;
+  height: 361px;
+  position: relative;
+  &__image {
+    position: absolute;
+    transition: all ease-in-out 1.5s;
+    opacity: 0;
+    &--active {
+      opacity: 1;
+    }
+  }
+  &__text {
+    position: absolute;
+    top: 50%;
+    left: 28%;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .carousel {
+    height: 100vh;
+    &__text {
+      top: 35%;
+      left: 30%;
+    }
+  }
+}

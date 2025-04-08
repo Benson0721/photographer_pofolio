@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  body {
+    @apply flex items-center justify-center bg-[#FBFDF9];
+  }
+  form{
+    @apply w-full md:w-1/2;
+
+  }
+  input,
+  textarea {
+    @apply outline-none;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  a:hover {
+    color: white;
+  }
+}
