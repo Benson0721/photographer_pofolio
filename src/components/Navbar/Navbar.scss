@@ -1,7 +1,7 @@
 $--menu-bg: #6e7887bd;
 .navbar {
   width: 100%;
-  padding: 2rem;
+  padding: 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -41,6 +41,7 @@ $--menu-bg: #6e7887bd;
 
     &__list {
       visibility: visible;
+      padding: 1.5rem;
       opacity: 1;
       position: static;
       width: auto;

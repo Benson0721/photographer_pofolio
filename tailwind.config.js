@@ -13,6 +13,7 @@ export default {
         noto: ["Noto Sans TC"],
         bellefair: ["Bellefair"],
         playfair: ["Playfair Display"],
+        montserrat: ["Montserrat"],
       },
       colors: {},
       screens: {

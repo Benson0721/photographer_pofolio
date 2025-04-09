@@ -2,10 +2,10 @@
 import "./Navbar.scss";
 import { ref, computed, defineProps } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import logo_B from "../../assets/icons/logo__small__black.png";
-import logo_W from "../../assets/icons/logo__small__white.png";
-import menu from "../../assets/icons/menu.png";
-import cancel from "../../assets/icons/cancel.png";
+import logo_B from "../../assets/images/icons/logo__small__black.png";
+import logo_W from "../../assets/images/icons/logo__small__white.png";
+import menu from "../../assets/images/icons/menu.png";
+import cancel from "../../assets/images/icons/cancel.png";
 import { faInstagram, faGithub } from "@fortawesome/free-brands-svg-icons";
 const isMenuOpen = ref(false);
 
@@ -72,18 +72,21 @@ const linkClass = computed(() => {
       <button @click="toggleMenu" class="md:hidden cancel">
         <img :src="cancel" alt="cancel_button" />
       </button>
-      <router-link to="/" class="font-bold cursor-pointer" :class="linkClass"
+      <router-link
+        to="/"
+        class="font-bellefair cursor-pointer lg:text-xl textShadow"
+        :class="linkClass"
         >Home</router-link
       >
       <router-link
         to="/portfolio"
-        class="font-bold cursor-pointer"
+        class="font-bellefair cursor-pointer lg:text-xl textShadow"
         :class="linkClass"
         >Portfolio</router-link
       >
       <router-link
         to="/about"
-        class="font-bold cursor-pointer"
+        class="font-bellefair cursor-pointer lg:text-xl textShadow"
         :class="linkClass"
         >About</router-link
       >
@@ -123,5 +126,8 @@ const linkClass = computed(() => {
 }
 .icon {
   font-size: 1.5rem;
+}
+.textShadow {
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 </style>

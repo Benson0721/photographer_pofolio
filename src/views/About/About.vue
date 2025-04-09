@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import "./About.scss";
 import { defineProps, ref, onMounted, onBeforeUnmount } from "vue";
-import bioImage from "../../assets/images/pai.jpg";
-import bioImage_mobile from "../../assets/images/pai_mobile.jpg";
+import bioImage from "../../assets/images/about/pai.jpg";
+import bioImage_mobile from "../../assets/images/about/pai_mobile.jpg";
 import Navbar from "../../components/Navbar/Navbar.vue";
 import Footer from "../../components/Footer.vue";
 import { FormKit } from "@formkit/vue";
 import { reactive } from "vue";
 import emailjs from "@emailjs/browser";
-import about from "../../assets/images/about.png";
+import about from "../../assets/images/about/about.png";
 import Handing from "../../components/Handing.vue";
-
+import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
+import moto from "../../assets/images/about/moto.jpg";
+import moto_mobile from "../../assets/images/about/moto-mobile.png";
 const formData = reactive({
   name: "",
   email: "",
@@ -25,10 +27,13 @@ const props = defineProps<{
 const title = ref("About");
 
 const HeadingStyle = ref(
-  "mt-4 text-[56px] md:text-[72px] lg:text-[96px] font-playfair text-white text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+  "mt-4 text-[48px] md:text-[72px] lg:text-[96px] font-playfair text-white text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
 );
 
 const isScrolledPast = ref(false);
+const isSocialScrolledPast = ref(false);
+const isAboutPastScroll = ref(false);
+const isContactPastScroll = ref(false);
 
 const handleSubmit = async (data: any) => {
   const response = await emailjs.send(
@@ -46,8 +51,60 @@ const handleSubmit = async (data: any) => {
 };
 
 onMounted(() => {
+  const aboutSection = document.querySelector("#about");
+
+  if (!aboutSection) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      isAboutPastScroll.value = entry.isIntersecting;
+    },
+    {
+      threshold: 0.05,
+    }
+  );
+
+  observer.observe(aboutSection);
+
+  onBeforeUnmount(() => {
+    observer.disconnect();
+  });
+});
+
+onMounted(() => {
+  const contactSection = document.querySelector("#contact");
+
+  if (!contactSection) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      isContactPastScroll.value = entry.isIntersecting;
+    },
+    {
+      threshold: 0.05,
+    }
+  );
+
+  observer.observe(contactSection);
+
+  onBeforeUnmount(() => {
+    observer.disconnect();
+  });
+});
+
+onMounted(() => {
   const navbar = document.querySelector(".navbar");
   const aboutSection = document.querySelector("#about");
+  const socialMediaButtons = document.querySelector(".social-media-buttons");
+
+  const handleSocialMediaScroll = () => {
+    if (!socialMediaButtons || !aboutSection) return;
+
+    const socialRect = socialMediaButtons.getBoundingClientRect();
+    const aboutRect = aboutSection.getBoundingClientRect();
+
+    isSocialScrolledPast.value = socialRect.bottom >= aboutRect.top;
+  };
 
   const handleScroll = () => {
     if (!navbar || !aboutSection) return;
@@ -57,19 +114,23 @@ onMounted(() => {
 
     isScrolledPast.value = navbarRect.bottom >= aboutRect.top;
   };
-
-  window.addEventListener("scroll", handleScroll);
+  const combinedHandler = () => {
+    handleScroll();
+    handleSocialMediaScroll();
+  };
+  window.addEventListener("scroll", combinedHandler);
   handleScroll(); // 初始化時檢查
 
   onBeforeUnmount(() => {
-    window.removeEventListener("scroll", handleScroll);
+    window.removeEventListener("scroll", combinedHandler);
   });
 });
-
-console.log(isScrolledPast.value);
 </script>
-<template>
-  <main class="about__bg" :class="{ 'about__bg--mobile': props.isDesktop }">
+<template #default="{ state: { valid } }">
+  <main
+    class="about__bg transition"
+    :class="{ 'about__bg--mobile': props.isDesktop }"
+  >
     <Navbar :isScrolledPast="isScrolledPast" />
     <div class="relative h-auto md:h-screen">
       <img
@@ -80,100 +141,181 @@ console.log(isScrolledPast.value);
       />
       <Handing v-model:title="title" :HeadingStyle="HeadingStyle" />
     </div>
-    <div class="about" id="about">
-      <div class="about__pai">
-        <img
-          :src="bioImage"
-          alt="bio_image"
-          class="w-full h-full object-cover hidden md:block"
-        />
-        <img
-          :src="bioImage_mobile"
-          alt="bio_image_mobile"
-          class="w-full h-full object-cover md:hidden"
-        />
-      </div>
-      <div class="about__content">
-        <h2 class="text-center text-[28px] md:text-[56px] font-playfair my-12">
-          關於我
-        </h2>
+    <div class="bg-amber-50">
+      <div class="about" id="about">
         <div
-          class="px-4 h-full text-[16px] md:text-[28px] text-black font-noto"
+          class="about__pai"
+          :class="{ 'fade-controller': isAboutPastScroll }"
         >
-          <div class="my-8">
-            我是白承智，一位專注於人像、街頭、風景與建築攝影的創作者。
+          <img
+            :src="bioImage"
+            alt="bio_image"
+            class="w-full h-full object-cover hidden md:block"
+          />
+          <img
+            :src="bioImage_mobile"
+            alt="bio_image_mobile"
+            class="w-full h-full object-cover md:hidden"
+          />
+        </div>
+        <div
+          class="about__content"
+          :class="{ 'fade-controller': isAboutPastScroll }"
+        >
+          <div
+            class="px-4 h-full text-[1rem] md:text-[1.03rem] lg:text-[1.5rem] text-black font-noto"
+          >
+            <div class="my-4 lg:my-16">
+              我是白承智，一位專注於人像、街拍、風景與建築攝影的創作者。
+            </div>
+            <div>喜歡以機車旅行的方式探索城市與自然，</div>
+            <div>將每段路途中的片刻，以影像記錄下來。</div>
+            <div class="my-4 lg:my-16">
+              我的攝影風格注重光影與情緒，致力於捕捉被攝者最自然的狀態，同時也關注城市脈動與空間構造所呈現的美學。
+            </div>
+            <div class="my-4 lg:my-16">
+              若你對我的影像有共鳴，或希望合作拍攝，歡迎與我聯繫。
+            </div>
           </div>
-          <div>喜歡以機車旅行的方式探索城市與自然，</div>
-          <div>將每段路途中的片刻，以影像記錄下來。</div>
-          <div class="my-8">
-            我的攝影風格注重光影與情緒，致力於捕捉被攝者最自然的狀態，同時也關注城市脈動與空間構造所呈現的美學。
-          </div>
-          <div class="my-12">
-            若你對我的影像有共鳴，或希望合作拍攝，歡迎與我聯繫。
-          </div>
+        </div>
+        <div class="about__whitespace"></div>
+      </div>
+      <div class="flex flex-col md:flex-row mt-4" id="contact">
+        <div
+          class="flex-1/3 md:order-2"
+          :class="{ 'fade-controller': isContactPastScroll }"
+        >
+          <img
+            :src="moto"
+            alt="moto"
+            class="w-full h-full object-cover hidden md:block"
+          />
+          <img
+            :src="moto_mobile"
+            alt="moto_mobile"
+            class="w-full h-full object-cover md:hidden"
+          />
+        </div>
+        <div
+          class="flex flex-col items-center mt-4 p-4 md:p-8 lg:p-12 relative flex-2/3 md:order-1"
+          id="gmail"
+          :class="{ 'fade-controller': isContactPastScroll }"
+        >
+          <h2
+            class="mt-4 mb-16 text-[48px] md:text-[72px] font-playfair text-black text-center"
+          >
+            Contact
+          </h2>
+          <FormKit
+            type="form"
+            :actions="false"
+            @submit="handleSubmit"
+            outerClass="w-full"
+            validation="required"
+            :validation-visibility="'submit'"
+            incomplete-message="請填寫完必要資訊以送出信件"
+            messages-class="text-red-500 text-lg absolute sm:top-1/5 md:top-1/4"
+          >
+            <div class="flex flex-col md:flex-row">
+              <FormKit
+                v-model="formData.name"
+                type="text"
+                name="name"
+                label="姓名"
+                outerClass="mb-4 md:mr-8 w-full md:w-1/2"
+                innerClass="mt-4 border-b-2 border-black"
+                labelClass=" font-noto "
+                validation="required"
+                messages-class="text-red-500 text-sm"
+                :validation-messages="{
+                  required: '請輸入姓名',
+                }"
+                :classes="{
+                  outer: '',
+                  inner: 'mt-4 border-b-2',
+                  input: 'w-full border-none bg-transparent focus:outline-none',
+                  inputInvalid: 'border-red-500', // 加紅線
+                }"
+              />
+              <FormKit
+                v-model="formData.email"
+                type="email"
+                name="email"
+                label="Email"
+                outerClass="mb-4 w-full md:w-1/2"
+                innerClass="mt-4 border-b-2 border-black"
+                labelClass="text-black font-noto "
+                validation="required"
+                messages-class="text-red-500 text-sm"
+                :validation-messages="{
+                  required: '請輸入正確的 Email 格式',
+                }"
+                :classes="{
+                  outer: '',
+                  inner: 'mt-4 border-b-2',
+                  input: 'w-full border-none bg-transparent focus:outline-none',
+                  inputInvalid: 'border-red-500', // 加紅線
+                }"
+              />
+            </div>
+            <div class="flex flex-col md:flex-col">
+              <FormKit
+                v-model="formData.subject"
+                type="text"
+                name="subject"
+                label="標題"
+                outerClass="mb-4 w-full md:w-full"
+                innerClass="mt-4 border-b-2 border-black"
+                labelClass="text-black font-noto "
+                validation="required"
+                messages-class="text-red-500 text-sm"
+                :validation-messages="{
+                  required: '請輸入標題',
+                }"
+                :classes="{
+                  outer: '',
+                  inner: 'mt-4 border-b-2',
+                  input: 'w-full border-none bg-transparent focus:outline-none',
+                  inputInvalid: 'border-red-500', // 加紅線
+                }"
+              />
+              <FormKit
+                v-model="formData.message"
+                type="textarea"
+                name="message"
+                label="訊息"
+                outerClass="mb-4"
+                innerClass="mt-4 border-b-2 border-black"
+                labelClass="text-black font-noto"
+                validation="required"
+                rows="5"
+                cols="30"
+                messages-class="text-red-500 text-sm"
+                :validation-messages="{
+                  required: '請輸入訊息',
+                }"
+                :classes="{
+                  outer: '',
+                  inner: 'mt-4 border-b-2',
+                  input: 'w-full border-none bg-transparent focus:outline-none',
+                  inputInvalid: 'border-red-500', // 加紅線
+                }"
+              />
+            </div>
+            <FormKit
+              type="submit"
+              label="送出"
+              :classes="{
+                outer: 'my-8 text-center',
+                input:
+                  'bg-gray-300 text-black font-semibold py-2 px-16 rounded hover:bg-gray-400 transition duration-300',
+              }"
+            />
+          </FormKit>
         </div>
       </div>
     </div>
-    <div class="flex flex-col items-center mt-8">
-      <h2
-        class="mt-4 mb-16 text-[48px] md:text-[72px] font-playfair text-black text-center"
-      >
-        Contact Me
-      </h2>
-      <FormKit type="form" :actions="false" @submit="handleSubmit">
-        <div class="flex flex-col md:flex-row">
-          <FormKit
-            v-model="formData.name"
-            type="text"
-            name="name"
-            label="姓名"
-            outerClass="mb-4 md:mr-8 w-full md:w-1/2"
-            innerClass="mt-4 border-b-2 border-black"
-            labelClass=" font-noto "
-          />
-          <FormKit
-            v-model="formData.email"
-            type="email"
-            name="email"
-            label="Email"
-            outerClass="mb-4 w-full md:w-1/2"
-            innerClass="mt-4 border-b-2 border-black"
-            labelClass="text-black font-noto "
-          />
-        </div>
-        <div class="flex flex-col md:flex-col">
-          <FormKit
-            v-model="formData.subject"
-            type="text"
-            name="subject"
-            label="標題"
-            outerClass="mb-4 w-full md:w-full"
-            innerClass="mt-4 border-b-2 border-black"
-            labelClass="text-black font-noto "
-          />
-          <FormKit
-            v-model="formData.message"
-            type="textarea"
-            name="message"
-            label="訊息"
-            outerClass="mb-4"
-            innerClass="mt-4 border-b-2 border-black"
-            labelClass="text-black font-noto"
-            rows="5"
-            cols="30"
-          />
-        </div>
-        <FormKit
-          type="submit"
-          label="送出"
-          :classes="{
-            outer: 'my-8 text-center',
-            input:
-              'bg-gray-300 text-black font-semibold py-2 px-16 rounded hover:bg-gray-400 transition duration-300',
-          }"
-        />
-      </FormKit>
-    </div>
+    <SocialMediaButtons :isSocialScrolledPast="isSocialScrolledPast" />
     <Footer />
   </main>
 </template>

@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import Navbar from "../../components/Navbar/Navbar.vue";
 import Carousel from "../../components/Carousel/Carousel.vue";
-import CategorySection from "../../components/CategorySection.vue";
+import CategorySection from "../../components/CategorySection/CategorySection.vue";
 import Footer from "../../components/Footer.vue";
 import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
-import { ref, onMounted, onUnmounted, computed, defineProps } from "vue";
-import carouselImage1 from "../../assets/images/carousel1.jpg";
-import carouselImage2 from "../../assets/images/carousel2.jpg";
-import carouselImage3 from "../../assets/images/carousel3.jpg";
+import {
+  ref,
+  onMounted,
+  onUnmounted,
+  computed,
+  defineProps,
+  onBeforeUnmount,
+} from "vue";
+import carouselImage1 from "../../assets/images/carousel/carousel1.jpg";
+import carouselImage2 from "../../assets/images/carousel/carousel2.jpg";
+import carouselImage3 from "../../assets/images/carousel/carousel3.jpg";
 import "./Home.scss";
 
 const images = ref([
@@ -27,6 +34,7 @@ const props = defineProps<{
 }>();
 
 const currentImage = ref(0);
+const isSectionPastScroll = ref(false);
 
 const backgroundStyle = computed(() => {
   if (props.isDesktop) {
@@ -44,6 +52,27 @@ const changeImage = () => {
 };
 
 onMounted(() => {
+  const categorySection = document.querySelector(".category-section");
+
+  if (!categorySection) return;
+
+  const observer = new IntersectionObserver(
+    ([entry]) => {
+      isSectionPastScroll.value = entry.isIntersecting;
+    },
+    {
+      threshold: 0.05,
+    }
+  );
+
+  observer.observe(categorySection);
+
+  onBeforeUnmount(() => {
+    observer.disconnect();
+  });
+});
+
+onMounted(() => {
   changeImage();
 });
 
@@ -55,14 +84,14 @@ onUnmounted(() => {
 });
 </script>
 <template>
-  <main :class="`home`" :style="backgroundStyle">
+  <main :class="`home transition`" :style="backgroundStyle">
     <Navbar />
     <Carousel
       :images="images"
       :currentImage="currentImage"
       :isDesktop="isDesktop"
     />
-    <CategorySection />
+    <CategorySection :isSectionPastScroll="isSectionPastScroll" />
     <Footer />
     <SocialMediaButtons />
   </main>

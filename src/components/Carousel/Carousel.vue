@@ -12,9 +12,12 @@ defineProps({
 const title = ref("PaiCheng");
 const content = ref("Photographer");
 
-const HeadingStyle = ref("text-[36px] md:text-[72px] lg:text-[96px] text-white font-bold font-playfair")
-const ContentStyle = ref("text-[18px] md:text-[24px] lg:text-[36px] font-playfair text-white")
-
+const HeadingStyle = ref(
+  "text-[36px] md:text-[72px] lg:text-[96px] text-white font-bold font-playfair"
+);
+const ContentStyle = ref(
+  "text-[18px] md:text-[24px] lg:text-[36px] font-playfair text-white"
+);
 </script>
 
 <template>
@@ -33,7 +36,12 @@ const ContentStyle = ref("text-[18px] md:text-[24px] lg:text-[36px] font-playfai
       />
     </div>
     <div class="carousel__text">
-      <Handing v-model:title="title" v-model:content="content" :HeadingStyle="HeadingStyle" :ContentStyle="ContentStyle"/>
+      <Handing
+        v-model:title="title"
+        v-model:content="content"
+        :HeadingStyle="HeadingStyle"
+        :ContentStyle="ContentStyle"
+      />
     </div>
   </div>
 </template>

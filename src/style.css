@@ -5,13 +5,55 @@
   body {
     @apply flex items-center justify-center bg-[#FBFDF9];
   }
-  form{
-    @apply w-full md:w-1/2;
-
+  form {
+    @apply w-full md:w-4/5 lg:w-3/4;
   }
   input,
   textarea {
     @apply outline-none;
+  }
+}
+
+.transition {
+  animation: identifier 1.5s;
+}
+
+.fade-controller {
+  opacity: 0;
+  animation: fade-in 1s forwards;
+  &:nth-child(1) {
+    animation-delay: 0.3s;
+  }
+  &:nth-child(2) {
+    animation-delay: 0.5s;
+  }
+  &:nth-child(3) {
+    animation-delay: 0.7s;
+  }
+  &:nth-child(4) {
+    animation-delay: 0.9s;
+  }
+}
+
+@keyframes identifier {
+  0% {
+    opacity: 0;
+    transform: translateY(80px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
