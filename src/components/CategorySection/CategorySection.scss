@@ -8,7 +8,7 @@
   &__images {
     height: 100%;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(6, 1fr);
     justify-content: center;
     align-items: center;
   }
@@ -16,14 +16,14 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    width: 100%;
+    width: 100vw;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    filter: grayscale(100%) blur(5px);
-    transition: filter 0.5s ease-in-out;
+    filter: grayscale(100%) blur(3px);
+    transition: filter 0.5s ease-in;
     &:hover {
       filter: none;
     }
@@ -42,9 +42,12 @@
     &__images {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: repeat(2, 1fr);
+      grid-template-rows: repeat(3, 1fr);
       justify-content: center;
       align-items: center;
+    }
+    &__image {
+      width: 100%;
     }
   }
 }

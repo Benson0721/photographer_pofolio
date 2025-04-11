@@ -12,9 +12,9 @@ import {
   defineProps,
   onBeforeUnmount,
 } from "vue";
-import carouselImage1 from "../../assets/images/carousel/carousel1.jpg";
-import carouselImage2 from "../../assets/images/carousel/carousel2.jpg";
-import carouselImage3 from "../../assets/images/carousel/carousel3.jpg";
+import carouselImage1 from "@/assets/images/carousel/carousel1.jpg";
+import carouselImage2 from "@/assets/images/carousel/carousel2.jpg";
+import carouselImage3 from "@/assets/images/carousel/carousel3.jpg";
 import "./Home.scss";
 
 const images = ref([

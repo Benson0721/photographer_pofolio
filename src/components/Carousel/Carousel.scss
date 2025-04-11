@@ -1,7 +1,8 @@
 .carousel {
   width: 100vw;
-  height: 361px;
+  height: 250px;
   position: relative;
+
   &__image {
     position: absolute;
     transition: all ease-in-out 1.5s;
@@ -12,7 +13,7 @@
   }
   &__text {
     position: absolute;
-    top: 50%;
+    top: 36%;
     left: 28%;
   }
 }
@@ -20,6 +21,7 @@
 @media only screen and (min-width: 768px) {
   .carousel {
     height: 100vh;
+    margin-bottom: 0;
     &__text {
       top: 35%;
       left: 35%;

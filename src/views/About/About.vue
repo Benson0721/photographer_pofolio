@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import "./About.scss";
 import { defineProps, ref, onMounted, onBeforeUnmount } from "vue";
-import bioImage from "../../assets/images/about/pai.jpg";
-import bioImage_mobile from "../../assets/images/about/pai_mobile.jpg";
+import bioImage from "@/assets/images/about/pai.jpg";
+import bioImage_mobile from "@/assets/images/about/pai_mobile.jpg";
 import Navbar from "../../components/Navbar/Navbar.vue";
 import Footer from "../../components/Footer.vue";
 import { FormKit } from "@formkit/vue";
 import { reactive } from "vue";
 import emailjs from "@emailjs/browser";
-import about from "../../assets/images/about/about.png";
+import about from "@/assets/images/about/about.png";
 import Handing from "../../components/Handing.vue";
 import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
-import moto from "../../assets/images/about/moto.jpg";
-import moto_mobile from "../../assets/images/about/moto-mobile.png";
+import moto from "@/assets/images/about/moto.jpg";
+import moto_mobile from "@/assets/images/about/moto-mobile.png";
 const formData = reactive({
   name: "",
   email: "",

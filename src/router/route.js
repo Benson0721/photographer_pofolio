@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home/Home.vue";
-import Portfolio from "../views/Portfolio.vue";
+import Portfolio from "../views/Portfolio/Portfolio.vue";
 import About from "../views/About/About.vue";
-
+import Login from "../views/Login/Login.vue";
+import register from "../views/Register/Register.vue";
 const routes = [
   {
     path: "/",
@@ -11,7 +12,7 @@ const routes = [
     props: true,
   },
   {
-    path: "/portfolio/:category?",
+    path: "/portfolio/:category",
     name: "Portfolio",
     component: Portfolio,
     props: true,
@@ -20,6 +21,18 @@ const routes = [
     path: "/about",
     name: "About",
     component: About,
+    props: true,
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
+    props: true,
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: register,
     props: true,
   },
 ];

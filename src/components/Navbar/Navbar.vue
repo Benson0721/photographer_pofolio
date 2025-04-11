@@ -2,10 +2,10 @@
 import "./Navbar.scss";
 import { ref, computed, defineProps } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import logo_B from "../../assets/images/icons/logo__small__black.png";
-import logo_W from "../../assets/images/icons/logo__small__white.png";
-import menu from "../../assets/images/icons/menu.png";
-import cancel from "../../assets/images/icons/cancel.png";
+import logo_B from "@/assets/images/icons/logo__small__black.png";
+import logo_W from "@/assets/images/icons/logo__small__white.png";
+import menu from "@/assets/images/icons/menu.png";
+import cancel from "@/assets/images/icons/cancel.png";
 import { faInstagram, faGithub } from "@fortawesome/free-brands-svg-icons";
 const isMenuOpen = ref(false);
 

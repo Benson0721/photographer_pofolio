@@ -1,9 +1,11 @@
 <script setup>
 import "./CategorySection.scss";
-import architecture from "../../assets/images/category/architecture.jpg";
-import landscape from "../../assets/images/category/landscape.jpg";
-import portrait from "../../assets/images/category/portrait.jpg";
-import street from "../../assets/images/category/street.jpg";
+import architecture from "@/assets/images/category/architecture.jpg";
+import landscape from "@/assets/images/category/landscape.jpg";
+import portrait from "@/assets/images/category/portrait.jpg";
+import street from "@/assets/images/category/street.jpg";
+import motorcycle from "@/assets/images/category/motorcycle.jpg";
+import others from "@/assets/images/category/others.jpg";
 import { ref, defineProps } from "vue";
 
 const props = defineProps({
@@ -30,6 +32,14 @@ const images = ref([
     title: "Street",
     src: street,
   },
+  {
+    title: "Motorcycle",
+    src: motorcycle,
+  },
+  {
+    title: "Others",
+    src: others,
+  },
 ]);
 </script>
 <template>
@@ -45,7 +55,7 @@ const images = ref([
         >
           <div class="category-section__content">
             <h2
-              class="category-section__title text-white font-playfair text-[18px] md:text-[40px] lg:text-[72px]"
+              class="category-section__title text-white font-playfair text-[28px] md:text-[40px] lg:text-[72px]"
             >
               {{ image.title }}
             </h2>
