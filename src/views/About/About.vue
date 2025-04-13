@@ -1,18 +1,23 @@
 <script setup lang="ts">
 import "./About.scss";
-import { defineProps, ref, onMounted, onBeforeUnmount } from "vue";
-import bioImage from "@/assets/images/about/pai.jpg";
-import bioImage_mobile from "@/assets/images/about/pai_mobile.jpg";
+import {
+  defineProps,
+  ref,
+  onMounted,
+  onBeforeUnmount,
+  reactive,
+  nextTick,
+} from "vue";
 import Navbar from "../../components/Navbar/Navbar.vue";
 import Footer from "../../components/Footer.vue";
 import { FormKit } from "@formkit/vue";
-import { reactive } from "vue";
 import emailjs from "@emailjs/browser";
-import about from "@/assets/images/about/about.png";
 import Handing from "../../components/Handing.vue";
 import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
-import moto from "@/assets/images/about/moto.jpg";
-import moto_mobile from "@/assets/images/about/moto-mobile.png";
+
+import { getImages } from "../../apis/image-api.js";
+import { Image } from "../../types/api";
+
 const formData = reactive({
   name: "",
   email: "",
@@ -25,6 +30,8 @@ const props = defineProps<{
 }>();
 
 const title = ref("About");
+const isLoading = ref(true);
+const aboutImages = ref<Image[]>([]);
 
 const HeadingStyle = ref(
   "mt-4 text-[48px] md:text-[72px] lg:text-[96px] font-playfair text-white text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -49,14 +56,14 @@ const handleSubmit = async (data: any) => {
   );
   console.log(response);
 };
-
-onMounted(() => {
+const observerFunc = () => {
+  const contactSection = document.querySelector("#contact");
   const aboutSection = document.querySelector("#about");
-
-  if (!aboutSection) return;
+  if (!contactSection || !aboutSection) return;
 
   const observer = new IntersectionObserver(
     ([entry]) => {
+      isContactPastScroll.value = entry.isIntersecting;
       isAboutPastScroll.value = entry.isIntersecting;
     },
     {
@@ -64,31 +71,20 @@ onMounted(() => {
     }
   );
 
+  observer.observe(contactSection);
   observer.observe(aboutSection);
 
   onBeforeUnmount(() => {
     observer.disconnect();
   });
-});
+};
 
-onMounted(() => {
-  const contactSection = document.querySelector("#contact");
-
-  if (!contactSection) return;
-
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      isContactPastScroll.value = entry.isIntersecting;
-    },
-    {
-      threshold: 0.05,
-    }
-  );
-
-  observer.observe(contactSection);
-
-  onBeforeUnmount(() => {
-    observer.disconnect();
+onMounted(async () => {
+  const aboutPath = "about";
+  aboutImages.value = await getImages(aboutPath);
+  isLoading.value = false;
+  await nextTick(() => {
+    observerFunc();
   });
 });
 
@@ -125,8 +121,19 @@ onMounted(() => {
     window.removeEventListener("scroll", combinedHandler);
   });
 });
+console.log(isLoading.value);
+console.log(isAboutPastScroll.value);
 </script>
 <template #default="{ state: { valid } }">
+  <div
+    v-if="isLoading"
+    class="absolute inset-0 flex flex-col justify-center items-center bg-white z-10"
+  >
+    <div
+      class="spinner border-4 border-gray-200 border-t-blue-500 rounded-full w-12 h-12 animate-spin"
+    ></div>
+    <p class="mt-2 text-gray-500 text-sm">Loading...</p>
+  </div>
   <main
     class="about__bg transition"
     :class="{ 'about__bg--mobile': props.isDesktop }"
@@ -135,7 +142,7 @@ onMounted(() => {
     <div class="relative h-auto md:h-screen">
       <img
         v-if="!props.isDesktop"
-        :src="about"
+        :src="aboutImages.find((img) => img.title === 'about')?.url"
         alt="about"
         class="w-full h-auto object-cover about__image"
       />
@@ -148,13 +155,13 @@ onMounted(() => {
           :class="{ 'fade-controller': isAboutPastScroll }"
         >
           <img
-            :src="bioImage"
-            alt="bio_image"
+            :src="aboutImages.find((img) => img.title === 'pai')?.url"
+            alt="攝影師帥哥本人"
             class="w-full h-full object-cover hidden md:block"
           />
           <img
-            :src="bioImage_mobile"
-            alt="bio_image_mobile"
+            :src="aboutImages.find((img) => img.title === 'pai_mobile')?.url"
+            alt="攝影師帥哥本人"
             class="w-full h-full object-cover md:hidden"
           />
         </div>
@@ -186,12 +193,12 @@ onMounted(() => {
           :class="{ 'fade-controller': isContactPastScroll }"
         >
           <img
-            :src="moto"
+            :src="aboutImages.find((img) => img.title === 'moto')?.url"
             alt="moto"
             class="w-full h-full object-cover hidden md:block"
           />
           <img
-            :src="moto_mobile"
+            :src="aboutImages.find((img) => img.title === 'moto_mobile')?.url"
             alt="moto_mobile"
             class="w-full h-full object-cover md:hidden"
           />

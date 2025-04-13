@@ -1,5 +1,10 @@
 <script setup>
 import { reactive } from "vue";
+import { useUserStore } from "../../stores/userPinia";
+import { useRouter } from "vue-router";
+
+const userStore = useUserStore();
+const router = useRouter();
 
 const formData = reactive({
   username: "",
@@ -8,6 +13,8 @@ const formData = reactive({
 
 const handleSubmit = async (data) => {
   console.log(data);
+  userStore.login(data);
+  router.push("/");
 };
 </script>
 <template>
@@ -51,11 +58,10 @@ const handleSubmit = async (data) => {
           outerClass="mb-4 w-full md:w-1/2"
           innerClass="mt-4 border-b-2 border-black"
           labelClass="text-black font-noto "
-          validation="required|min:6"
+          validation="required"
           messages-class="text-red-500 text-sm"
           :validation-messages="{
             required: 'please input password',
-            min: 'password must be at least 6 characters',
           }"
           :classes="{
             outer: '',

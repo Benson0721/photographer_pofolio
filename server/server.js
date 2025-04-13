@@ -5,6 +5,7 @@ import fs from "fs";
 import mongoose from "mongoose";
 import { User } from "./models/UserSchema.js";
 import { router as UserRoutes } from "./routes/UserRoutes.js";
+import { router as OtherPageRoutes } from "./routes/OtherPageRoutes.js";
 import passport from "passport";
 import express from "express";
 import LocalStrategy from "passport-local";
@@ -97,7 +98,13 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-
+if (process.env.NODE_ENV !== "production") {
+  app.use("/", UserRoutes);
+  app.use("/", OtherPageRoutes);
+} else {
+  app.use("/api", UserRoutes);
+  app.use("/api", OtherPageRoutes);
+}
 
 /*app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../dist", "index.html"));

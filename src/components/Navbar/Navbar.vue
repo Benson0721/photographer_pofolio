@@ -1,12 +1,17 @@
-<script setup lang="ts">
+<script setup>
 import "./Navbar.scss";
 import { ref, computed, defineProps } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import logo_B from "@/assets/images/icons/logo__small__black.png";
-import logo_W from "@/assets/images/icons/logo__small__white.png";
-import menu from "@/assets/images/icons/menu.png";
-import cancel from "@/assets/images/icons/cancel.png";
+import logo_B from "../../assets/images/icons/logo__small__black.png";
+import logo_W from "../../assets/images/icons/logo__small__white.png";
+import menu from "../../assets/images/icons/menu.png";
+import cancel from "../../assets/images/icons/cancel.png";
 import { faInstagram, faGithub } from "@fortawesome/free-brands-svg-icons";
+import { faArrowRightToBracket } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { useUserStore } from "../../stores/userPinia";
+
+const userStore = useUserStore();
 const isMenuOpen = ref(false);
 
 const socialMedias = ref([
@@ -29,9 +34,13 @@ const goToHome = () => {
   router.push("/");
 };
 
-const { isScrolledPast } = defineProps<{
-  isScrolledPast: boolean;
-}>();
+const goToLogin = () => {
+  router.push("/login");
+};
+
+const { isScrolledPast } = defineProps({
+  isScrolledPast: Boolean,
+});
 
 const router = useRouter();
 const route = useRoute();
@@ -90,6 +99,21 @@ const linkClass = computed(() => {
         :class="linkClass"
         >About</router-link
       >
+      <router-link
+        v-if="!userStore.user"
+        to="/login"
+        class="hidden md:block font-bellefair cursor-pointer lg:text-xl textShadow"
+        :class="linkClass"
+        >Login</router-link
+      >
+      <button
+        v-else
+        class="hidden md:block font-bellefair cursor-pointer lg:text-xl textShadow"
+        :class="linkClass"
+        @click="userStore.logout()"
+      >
+        Logout
+      </button>
       <div class="mt-4 md:hidden">
         <div class="flex">
           <div
@@ -101,6 +125,12 @@ const linkClass = computed(() => {
               <FontAwesomeIcon :icon="socialMedia.icon" class="icon" />
             </a>
           </div>
+          <button class="ml-2" v-if="!userStore.user" @click="goToLogin">
+            <FontAwesomeIcon :icon="faArrowRightToBracket" class="icon" />
+          </button>
+          <button class="ml-2" v-else @click="userStore.logout()">
+            <FontAwesomeIcon :icon="faArrowRightFromBracket" class="icon" />
+          </button>
         </div>
       </div>
     </div>

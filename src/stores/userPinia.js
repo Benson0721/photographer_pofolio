@@ -1,19 +1,15 @@
-import { defineStore, createPinia } from "pinia";
-import { login, register, logout } from "../apis/userAPI.js";
-import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
-
-const pinia = createPinia();
-pinia.use(piniaPluginPersistedstate);
+import { defineStore } from "pinia";
+import { login, register, logout } from "../apis/user-api.js";
 
 export const useUserStore = defineStore("userStore", {
   state: () => ({
     user: null,
-    isLoggedIn: false,
+    error: null,
   }),
   actions: {
-    async login(credentials) {
-      const data = await login(credentials);
-      this.user = data.user;
+    async login(userData) {
+      const data = await login(userData);
+      this.user = data._id;
       this.error = data?.error;
     },
     async register(userData) {
@@ -22,19 +18,18 @@ export const useUserStore = defineStore("userStore", {
       this.error = data?.error;
     },
     async logout() {
-      const response = await logout();
+      await logout();
       this.user = null;
-      this.token = null;
     },
-    persist: {
-      enabled: true,
-      strategies: [
-        {
-          key: "userStore",
-          storage: localStorage,
-          paths: ["user"],
-        },
-      ],
-    },
+  },
+  persist: {
+    enabled: true,
+    strategies: [
+      {
+        key: "userStore",
+        storage: localStorage,
+        paths: ["user"],
+      },
+    ],
   },
 });

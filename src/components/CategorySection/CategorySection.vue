@@ -1,57 +1,23 @@
-<script setup>
+<script setup lang="ts">
 import "./CategorySection.scss";
-import architecture from "@/assets/images/category/architecture.jpg";
-import landscape from "@/assets/images/category/landscape.jpg";
-import portrait from "@/assets/images/category/portrait.jpg";
-import street from "@/assets/images/category/street.jpg";
-import motorcycle from "@/assets/images/category/motorcycle.jpg";
-import others from "@/assets/images/category/others.jpg";
-import { ref, defineProps } from "vue";
+import { defineProps } from "vue";
+import { Image } from "../../types/api";
 
-const props = defineProps({
-  isSectionPastScroll: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const images = ref([
-  {
-    title: "Architecture",
-    src: architecture,
-  },
-  {
-    title: "Landscape",
-    src: landscape,
-  },
-  {
-    title: "Portrait",
-    src: portrait,
-  },
-  {
-    title: "Street",
-    src: street,
-  },
-  {
-    title: "Motorcycle",
-    src: motorcycle,
-  },
-  {
-    title: "Others",
-    src: others,
-  },
-]);
+defineProps<{
+  sectionsImages: Array<Image>;
+  isSectionPastScroll: boolean;
+}>();
 </script>
 <template>
   <div class="category-section__wrapper">
     <section class="category-section">
       <div class="category-section__images">
         <div
-          v-for="(image, index) in images"
+          v-for="(image, index) in sectionsImages"
           :key="index"
           class="category-section__image"
           :class="{ 'fade-controller': isSectionPastScroll }"
-          :style="`background-image: url(${image.src})`"
+          :style="`background-image: url(${image?.url})`"
         >
           <div class="category-section__content">
             <h2

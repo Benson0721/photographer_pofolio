@@ -4,6 +4,7 @@ import Carousel from "../../components/Carousel/Carousel.vue";
 import CategorySection from "../../components/CategorySection/CategorySection.vue";
 import Footer from "../../components/Footer.vue";
 import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
+import { getImages } from "../../apis/image-api.js";
 import {
   ref,
   onMounted,
@@ -11,23 +12,15 @@ import {
   computed,
   defineProps,
   onBeforeUnmount,
+  nextTick,
 } from "vue";
-import carouselImage1 from "@/assets/images/carousel/carousel1.jpg";
-import carouselImage2 from "@/assets/images/carousel/carousel2.jpg";
-import carouselImage3 from "@/assets/images/carousel/carousel3.jpg";
-import "./Home.scss";
 
-const images = ref([
-  {
-    src: carouselImage1,
-  },
-  {
-    src: carouselImage2,
-  },
-  {
-    src: carouselImage3,
-  },
-]);
+import "./Home.scss";
+import { Image } from "../../types/api";
+
+const carouselImages = ref<Image[]>([]);
+const sectionsImages = ref<Image[]>([]);
+const isLoading = ref(true);
 
 const props = defineProps<{
   isDesktop: boolean;
@@ -38,7 +31,9 @@ const isSectionPastScroll = ref(false);
 
 const backgroundStyle = computed(() => {
   if (props.isDesktop) {
-    return { backgroundImage: `url(${images.value[currentImage.value].src})` };
+    return {
+      backgroundImage: `url(${carouselImages.value[currentImage.value]?.url})`,
+    };
   }
   return {};
 });
@@ -47,13 +42,12 @@ let intervalId: ReturnType<typeof setInterval> | null = null;
 
 const changeImage = () => {
   intervalId = setInterval(() => {
-    currentImage.value = (currentImage.value + 1) % images.value.length;
+    currentImage.value = (currentImage.value + 1) % carouselImages.value.length;
   }, 10000);
 };
-
-onMounted(() => {
+const observerFunc = () => {
   const categorySection = document.querySelector(".category-section");
-
+  console.log(categorySection);
   if (!categorySection) return;
 
   const observer = new IntersectionObserver(
@@ -70,6 +64,17 @@ onMounted(() => {
   onBeforeUnmount(() => {
     observer.disconnect();
   });
+};
+
+onMounted(async () => {
+  const carouselPath = "home/carousel";
+  const sectionPath = "home/sections";
+  carouselImages.value = await getImages(carouselPath);
+  sectionsImages.value = await getImages(sectionPath);
+  isLoading.value = false;
+  await nextTick(() => {
+    observerFunc();
+  });
 });
 
 onMounted(() => {
@@ -84,14 +89,26 @@ onUnmounted(() => {
 });
 </script>
 <template>
-  <main :class="`home transition`" :style="backgroundStyle">
+  <div
+    v-if="isLoading"
+    class="absolute inset-0 flex flex-col justify-center items-center bg-white z-10"
+  >
+    <div
+      class="spinner border-4 border-gray-200 border-t-blue-500 rounded-full w-12 h-12 animate-spin"
+    ></div>
+    <p class="mt-2 text-gray-500 text-sm">Loading...</p>
+  </div>
+  <main v-else :class="`home transition`" :style="backgroundStyle">
     <Navbar />
     <Carousel
-      :images="images"
+      :carouselImages="carouselImages"
       :currentImage="currentImage"
       :isDesktop="isDesktop"
     />
-    <CategorySection :isSectionPastScroll="isSectionPastScroll" />
+    <CategorySection
+      :isSectionPastScroll="isSectionPastScroll"
+      :sectionsImages="sectionsImages"
+    />
     <Footer />
     <SocialMediaButtons />
   </main>

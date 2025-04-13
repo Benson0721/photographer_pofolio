@@ -1,13 +1,15 @@
-<script setup>
+<script setup lang="ts">
 import Handing from "../Handing.vue";
 import { defineProps, ref } from "vue";
 import "./Carousel.scss";
 
-defineProps({
-  images: Array,
-  currentImage: Number,
-  isDesktop: Boolean,
-});
+import { Image } from "../../types/api";
+
+defineProps<{
+  carouselImages: Array<Image>;
+  currentImage: number;
+  isDesktop: boolean;
+}>();
 
 const title = ref("PaiCheng");
 const content = ref("Photographer");
@@ -25,14 +27,15 @@ const ContentStyle = ref(
     <div
       v-if="!isDesktop"
       class="carousel__image"
-      v-for="(image, index) in images"
+      v-for="(image, index) in carouselImages"
       :key="index"
       :class="currentImage === index ? 'carousel__image--active' : ''"
     >
       <img
-        :src="image.src"
+        :src="image.url"
         alt="carousel_image"
         class="w-full h-full object-cover"
+        loading="lazy"
       />
     </div>
     <div class="carousel__text">
