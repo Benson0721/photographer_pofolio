@@ -4,7 +4,7 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { ref, defineProps } from "vue";
 
 const { isSocialScrolledPast } = defineProps<{
-  isSocialScrolledPast: { type: boolean; default: false };
+  isSocialScrolledPast?: boolean;
 }>();
 
 const socialMedias = ref([
@@ -21,7 +21,7 @@ const socialMedias = ref([
   {
     name: "gmail",
     to: "/about",
-    hash: "#gmail",
+    hash: "#contact",
     icon: faEnvelope,
   },
 ]);

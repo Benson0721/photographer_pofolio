@@ -13,7 +13,6 @@ import { useUserStore } from "../../stores/userPinia";
 
 const userStore = useUserStore();
 const isMenuOpen = ref(false);
-
 const socialMedias = ref([
   {
     name: "instagram",
@@ -55,13 +54,19 @@ const linkClass = computed(() => {
 </script>
 <template>
   <nav
-    class="navbar bg-white"
+    class="navbar bg-white relative"
     :class="{
       'navbar--fixed': route.path === '/' || route.path === '/about',
       'md:bg-white': isScrolledPast,
       'md:bg-transparent': !isScrolledPast,
     }"
   >
+    <button
+      class="absolute top-1/2 -translate-y-1/2 right-1/3 md:hidden font-bellefair cursor-pointer lg:text-xl text-black textShadow"
+      @click="userStore.isEditing = !userStore.isEditing"
+    >
+      Edit Mode : {{ userStore.isEditing ? "ON" : "OFF" }}
+    </button>
     <img
       :src="logo_B"
       alt="logo"
@@ -106,14 +111,22 @@ const linkClass = computed(() => {
         :class="linkClass"
         >Login</router-link
       >
-      <button
-        v-else
-        class="hidden md:block font-bellefair cursor-pointer lg:text-xl textShadow"
-        :class="linkClass"
-        @click="userStore.logout()"
-      >
-        Logout
-      </button>
+      <template v-else>
+        <button
+          class="hidden md:block font-bellefair cursor-pointer lg:text-xl textShadow"
+          :class="linkClass"
+          @click="userStore.logout()"
+        >
+          Logout
+        </button>
+        <button
+          class="hidden md:block font-bellefair cursor-pointer lg:text-xl textShadow"
+          :class="linkClass"
+          @click="userStore.isEditing = !userStore.isEditing"
+        >
+          Edit Mode : {{ userStore.isEditing ? "ON" : "OFF" }}
+        </button>
+      </template>
       <div class="mt-4 md:hidden">
         <div class="flex">
           <div

@@ -19,12 +19,21 @@ import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 library.add(faUserSecret);
 
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import { createVuetify } from "vuetify";
+import * as components from "vuetify/components";
+import * as directives from "vuetify/directives";
 
+const vuetify = createVuetify({
+  components,
+  directives,
+});
+import "vuetify/styles";
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 
 createApp(App)
   .use(router)
+  .use(vuetify)
   .use(pinia)
   .use(plugin, defaultConfig(config))
   .component("FontAwesomeIcon", FontAwesomeIcon)

@@ -7,7 +7,9 @@ import {
   onBeforeUnmount,
   reactive,
   nextTick,
+  computed,
 } from "vue";
+import { useRoute } from "vue-router";
 import Navbar from "../../components/Navbar/Navbar.vue";
 import Footer from "../../components/Footer.vue";
 import { FormKit } from "@formkit/vue";
@@ -37,10 +39,22 @@ const HeadingStyle = ref(
   "mt-4 text-[48px] md:text-[72px] lg:text-[96px] font-playfair text-white text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
 );
 
+const route = useRoute();
 const isScrolledPast = ref(false);
 const isSocialScrolledPast = ref(false);
 const isAboutPastScroll = ref(false);
 const isContactPastScroll = ref(false);
+
+const backgroundStyle = computed(() => {
+  if (props.isDesktop) {
+    return {
+      backgroundImage: `url(${
+        aboutImages.value.find((img) => img.title === "about")?.url
+      })`,
+    };
+  }
+  return {};
+});
 
 const handleSubmit = async (data: any) => {
   const response = await emailjs.send(
@@ -61,34 +75,32 @@ const observerFunc = () => {
   const aboutSection = document.querySelector("#about");
   if (!contactSection || !aboutSection) return;
 
-  const observer = new IntersectionObserver(
+  const AboutObserver = new IntersectionObserver(
     ([entry]) => {
-      isContactPastScroll.value = entry.isIntersecting;
       isAboutPastScroll.value = entry.isIntersecting;
     },
     {
       threshold: 0.05,
     }
   );
+  const ContactObserver = new IntersectionObserver(
+    ([entry]) => {
+      isContactPastScroll.value = entry.isIntersecting;
+    },
+    {
+      threshold: 0.1,
+    }
+  );
 
-  observer.observe(contactSection);
-  observer.observe(aboutSection);
+  AboutObserver.observe(aboutSection);
+  ContactObserver.observe(contactSection);
 
   onBeforeUnmount(() => {
-    observer.disconnect();
+    AboutObserver.disconnect();
+    ContactObserver.disconnect();
   });
 };
-
-onMounted(async () => {
-  const aboutPath = "about";
-  aboutImages.value = await getImages(aboutPath);
-  isLoading.value = false;
-  await nextTick(() => {
-    observerFunc();
-  });
-});
-
-onMounted(() => {
+const socialFunc = () => {
   const navbar = document.querySelector(".navbar");
   const aboutSection = document.querySelector("#about");
   const socialMediaButtons = document.querySelector(".social-media-buttons");
@@ -120,7 +132,32 @@ onMounted(() => {
   onBeforeUnmount(() => {
     window.removeEventListener("scroll", combinedHandler);
   });
+};
+const scrollFunc = (hash: string) => {
+  setTimeout(() => {
+    const el = document.querySelector(hash);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  }, 1000);
+};
+onMounted(async () => {
+  const aboutPath = "about";
+  aboutImages.value = await getImages(aboutPath);
+  isLoading.value = false;
+  await nextTick(() => {
+    observerFunc();
+    socialFunc();
+  });
 });
+
+onMounted(() => {
+  if (route.hash) {
+    console.log("coming from hash");
+    scrollFunc(route.hash);
+  }
+});
+
 console.log(isLoading.value);
 console.log(isAboutPastScroll.value);
 </script>
@@ -134,15 +171,12 @@ console.log(isAboutPastScroll.value);
     ></div>
     <p class="mt-2 text-gray-500 text-sm">Loading...</p>
   </div>
-  <main
-    class="about__bg transition"
-    :class="{ 'about__bg--mobile': props.isDesktop }"
-  >
+  <main v-else class="about__bg transition" :style="backgroundStyle">
     <Navbar :isScrolledPast="isScrolledPast" />
     <div class="relative h-auto md:h-screen">
       <img
         v-if="!props.isDesktop"
-        :src="aboutImages.find((img) => img.title === 'about')?.url"
+        :src="aboutImages.find((img) => img.title === 'about--mobile')?.url"
         alt="about"
         class="w-full h-auto object-cover about__image"
       />
@@ -160,7 +194,7 @@ console.log(isAboutPastScroll.value);
             class="w-full h-full object-cover hidden md:block"
           />
           <img
-            :src="aboutImages.find((img) => img.title === 'pai_mobile')?.url"
+            :src="aboutImages.find((img) => img.title === 'pai--mobile')?.url"
             alt="攝影師帥哥本人"
             class="w-full h-full object-cover md:hidden"
           />
@@ -198,14 +232,13 @@ console.log(isAboutPastScroll.value);
             class="w-full h-full object-cover hidden md:block"
           />
           <img
-            :src="aboutImages.find((img) => img.title === 'moto_mobile')?.url"
-            alt="moto_mobile"
+            :src="aboutImages.find((img) => img.title === 'moto--mobile')?.url"
+            alt="moto--mobile"
             class="w-full h-full object-cover md:hidden"
           />
         </div>
         <div
           class="flex flex-col items-center mt-4 p-4 md:p-8 lg:p-12 relative flex-2/3 md:order-1"
-          id="gmail"
           :class="{ 'fade-controller': isContactPastScroll }"
         >
           <h2
@@ -322,7 +355,10 @@ console.log(isAboutPastScroll.value);
         </div>
       </div>
     </div>
-    <SocialMediaButtons :isSocialScrolledPast="isSocialScrolledPast" />
+    <SocialMediaButtons
+      :isSocialScrolledPast="isSocialScrolledPast"
+      :isLoading="isLoading"
+    />
     <Footer />
   </main>
 </template>

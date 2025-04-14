@@ -2,8 +2,8 @@
 import Handing from "../Handing.vue";
 import { defineProps, ref } from "vue";
 import "./Carousel.scss";
-
 import { Image } from "../../types/api";
+import EditDialog from "./EditDialog.vue";
 
 defineProps<{
   carouselImages: Array<Image>;
@@ -24,6 +24,7 @@ const ContentStyle = ref(
 
 <template>
   <div class="carousel">
+    <EditDialog />
     <div
       v-if="!isDesktop"
       class="carousel__image"

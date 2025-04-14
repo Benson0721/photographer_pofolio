@@ -13,6 +13,7 @@ import {
   defineProps,
   onBeforeUnmount,
   nextTick,
+  watch,
 } from "vue";
 
 import "./Home.scss";
@@ -21,7 +22,7 @@ import { Image } from "../../types/api";
 const carouselImages = ref<Image[]>([]);
 const sectionsImages = ref<Image[]>([]);
 const isLoading = ref(true);
-
+const isEditing = ref(false);
 const props = defineProps<{
   isDesktop: boolean;
 }>();
@@ -86,6 +87,10 @@ onUnmounted(() => {
     clearInterval(intervalId);
     intervalId = null;
   }
+});
+
+watch(isEditing, (newVal, oldVal) => {
+  console.log(`isEditing changed from ${oldVal} to ${newVal}`);
 });
 </script>
 <template>

@@ -5,6 +5,7 @@ export const useUserStore = defineStore("userStore", {
   state: () => ({
     user: null,
     error: null,
+    isEditing: false,
   }),
   actions: {
     async login(userData) {

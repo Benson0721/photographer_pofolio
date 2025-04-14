@@ -18,18 +18,26 @@ export const getImages = async (folder1, folder2 = "") => {
   }
 };
 
-export const updateImage = async (req, res) => {
+export const updateImage = async (folder1, folder2 = "") => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: "Unauthorized" });
   }
   try {
-    const { displayID } = req.params;
-    const deletedDisplayImage = await DisplayImage.findOneAndDelete({
-      _id: displayID,
-    });
-    res.json({ deletedDisplayImage });
+    const filePath = `Pai/views/${folder1}/${folder2}`;
+    const options = {
+      folder: "",
+      resource_type: "image",
+      overwrite: true,
+    };
+    if (folder2 === "") {
+      options.folder = `${folder1}`;
+    } else {
+      options.folder = `${folder1}/${folder2}`;
+    }
+    const result = await cloudinary.v2.uploader.upload_image(filePath, options);
+    return result;
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return { error: error.message };
   }
 };
 
