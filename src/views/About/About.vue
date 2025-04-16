@@ -17,8 +17,8 @@ import emailjs from "@emailjs/browser";
 import Handing from "../../components/Handing.vue";
 import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
 
-import { getImages } from "../../apis/image-api.js";
-import { Image } from "../../types/api";
+import { getImages } from "../../apis/OtherImage_Api.js";
+import { Image } from "../../types/apiType";
 
 const formData = reactive({
   name: "",

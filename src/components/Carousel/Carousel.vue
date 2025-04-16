@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import Handing from "../Handing.vue";
-import { defineProps, ref } from "vue";
+import { defineProps, ref, computed } from "vue";
 import "./Carousel.scss";
-import { Image } from "../../types/api";
-import EditDialog from "./EditDialog.vue";
+import CarouselDialog from "../ImageSystem/CarouselDialog/CarouselDialog.vue";
+import { useCarouselStore } from "../../stores/carouselPinia.ts";
 
 defineProps<{
-  carouselImages: Array<Image>;
   currentImage: number;
   isDesktop: boolean;
 }>();
 
+const carouselStore = useCarouselStore();
 const title = ref("PaiCheng");
 const content = ref("Photographer");
+const orderMode = ref(true);
+const uploadMode = ref(true);
+const deleteMode = ref(true);
 
 const HeadingStyle = ref(
   "text-[36px] md:text-[72px] lg:text-[96px] text-white font-bold font-playfair"
@@ -24,16 +27,20 @@ const ContentStyle = ref(
 
 <template>
   <div class="carousel">
-    <EditDialog />
+    <CarouselDialog
+      :orderMode="orderMode"
+      :uploadMode="uploadMode"
+      :deleteMode="deleteMode"
+    />
     <div
       v-if="!isDesktop"
       class="carousel__image"
-      v-for="(image, index) in carouselImages"
-      :key="index"
+      v-for="(image, index) in carouselStore.sortedImages"
+      :key="image._id"
       :class="currentImage === index ? 'carousel__image--active' : ''"
     >
       <img
-        :src="image.url"
+        :src="image.imageURL"
         alt="carousel_image"
         class="w-full h-full object-cover"
         loading="lazy"

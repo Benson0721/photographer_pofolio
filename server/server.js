@@ -6,12 +6,15 @@ import mongoose from "mongoose";
 import { User } from "./models/UserSchema.js";
 import { router as UserRoutes } from "./routes/UserRoutes.js";
 import { router as OtherPageRoutes } from "./routes/OtherPageRoutes.js";
+import { router as CarouselRoutes } from "./routes/CarouselRoutes.js";
+import { router as SectionRoutes } from "./routes/SectionRoutes.js";
 import passport from "passport";
 import express from "express";
 import LocalStrategy from "passport-local";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import cloudinary from "cloudinary";
+
 // 獲取當前檔案的路徑
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -101,9 +104,13 @@ passport.deserializeUser(User.deserializeUser());
 if (process.env.NODE_ENV !== "production") {
   app.use("/", UserRoutes);
   app.use("/", OtherPageRoutes);
+  app.use("/", CarouselRoutes);
+  app.use("/", SectionRoutes);
 } else {
   app.use("/api", UserRoutes);
   app.use("/api", OtherPageRoutes);
+  app.use("/api", CarouselRoutes);
+  app.use("/api", SectionRoutes);
 }
 
 /*app.get("*", (req, res) => {

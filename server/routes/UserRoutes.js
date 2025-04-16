@@ -1,5 +1,5 @@
 import express from "express";
-import { logout, register } from "../controllers/UserAPI.js";
+import { logout, register } from "../controllers/UserApi.js";
 import passport from "passport";
 
 const router = express.Router();

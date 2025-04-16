@@ -1,10 +1,12 @@
 import express from "express";
 import {
   getImages,
-  addImage,
+  addImages,
   updateImage,
-  deleteImage,
-} from "../controllers/cloudinaryAPI/ImgAPI.js";
+  deleteImages,
+} from "../controllers/cloudinaryApi/ImgApi.js";
+import multer from "multer";
+const upload = multer({ dest: "uploads/" });
 const router = express.Router();
 
 const handleGetImages = async (req, res) => {
@@ -19,21 +21,32 @@ const handleGetImages = async (req, res) => {
 
 const handleUpdateImage = async (req, res) => {
   try {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    console.log("後端");
+    console.log(req);
+    console.log(req.body);
     const { folder1, folder2 = "" } = req.params;
-    const result = await updateImage(folder1, folder2);
+    const filepath = req.file.path;
+    const result = await updateImage(folder1, folder2, filepath);
+    console.log(result);
     res.json({ result });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-router.route("/images/:folder1").get(handleGetImages).put(handleUpdateImage);
+router
+  .route("/images/:folder1")
+  .get(handleGetImages)
+  .put(upload.single("image"), handleUpdateImage);
 
 router
   .route("/images/:folder1/:folder2")
   .get(handleGetImages)
-  .put(handleUpdateImage)
-  .post(addImage)
-  .delete(deleteImage);
+  .put(upload.single("image"), handleUpdateImage)
+  .post(upload.array("images"), addImages)
+  .delete(deleteImages);
 
 export { router };

@@ -29,6 +29,7 @@
     "fs": "^0.0.1-security",
     "joi": "^17.13.3",
     "mongoose": "^8.13.2",
+    "multer": "^1.4.5-lts.2",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^8.0.0",
@@ -38,6 +39,7 @@
     "sass-embedded": "^1.86.1",
     "tailwindcss": "^4.0.17",
     "vue": "^3.5.13",
+    "vue-draggable-plus": "^0.6.0",
     "vue-router": "^4.5.0",
     "vuetify": "^3.8.1"
   },

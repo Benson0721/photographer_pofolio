@@ -1,4 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
+import fs from "fs/promises";
+
+// 假設上傳到 Cloudinary 成功後：
 
 export const getImages = async (folder1, folder2 = "") => {
   try {
@@ -7,7 +10,6 @@ export const getImages = async (folder1, folder2 = "") => {
       .sort_by("public_id", "asc")
       .max_results(30)
       .execute();
-    console.log(res);
     return res.resources.map((img) => ({
       public_id: img.public_id,
       url: `https://res.cloudinary.com/dk1yh5mdu/image/upload/f_auto,q_auto,w_1440/${img.public_id}`,
@@ -18,60 +20,59 @@ export const getImages = async (folder1, folder2 = "") => {
   }
 };
 
-export const updateImage = async (folder1, folder2 = "") => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+export const updateImage = async (
+  folder1,
+  folder2 = "",
+  filePath,
+  publicId
+) => {
   try {
-    const filePath = `Pai/views/${folder1}/${folder2}`;
     const options = {
-      folder: "",
+      folder: `Pai/views/${folder1}/${folder2}`,
       resource_type: "image",
       overwrite: true,
+      public_id: publicId,
     };
-    if (folder2 === "") {
-      options.folder = `${folder1}`;
-    } else {
-      options.folder = `${folder1}/${folder2}`;
-    }
-    const result = await cloudinary.v2.uploader.upload_image(filePath, options);
+    const result = await cloudinary.uploader.upload(filePath, options);
     return result;
   } catch (error) {
     return { error: error.message };
   }
 };
 
-export const addImage = async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+export const addImages = async (folder1, folder2 = "", filePath) => {
   try {
-    const { category, topic, notes, thumbnail } = req.body;
-    const newTopicImage = new TopicImage({
-      category,
-      topic,
-      notes,
-      thumbnail,
+    const uploadPromises = filePath.map(async (path) => {
+      //儲存批量更新，再透過promise.all同時跑多個任務
+
+      const options = {
+        folder: `Pai/views/${folder1}/${folder2}`,
+        resource_type: "image",
+      };
+      const result = await cloudinary.uploader.upload(path, options);
+      return result;
     });
-    await newTopicImage.save();
-    res.json({ newTopicImage });
+    const results = await Promise.all(uploadPromises);
+    console.log(
+      "批量圖片上傳成功：",
+      results.map((r) => r.secure_url)
+    );
+    await fs.unlink(file.path); // file.path 是 multer 存的本地路徑
+    return results;
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return { error: error.message };
   }
 };
 
-export const deleteImage = async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+export const deleteImages = async (publicId) => {
+  console.log("刪除圖片", publicId);
   try {
-    const { category, topic } = req.params;
-    const deletedTopicImage = await TopicImage.findOneAndDelete({
-      category,
-      topic,
+    const result = await cloudinary.uploader.destroy(publicId, {
+      resource_type: "image",
     });
-    res.json({ deletedTopicImage });
+    console.log(result);
+    return result;
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return { error: error.message };
   }
 };

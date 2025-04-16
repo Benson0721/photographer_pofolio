@@ -4,7 +4,7 @@ import Carousel from "../../components/Carousel/Carousel.vue";
 import CategorySection from "../../components/CategorySection/CategorySection.vue";
 import Footer from "../../components/Footer.vue";
 import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
-import { getImages } from "../../apis/image-api.js";
+import { getImages } from "../../apis/OtherImage_Api.js";
 import {
   ref,
   onMounted,
@@ -17,10 +17,13 @@ import {
 } from "vue";
 
 import "./Home.scss";
-import { Image } from "../../types/api";
+import { Image } from "../../types/apiType.js";
+import { useCarouselStore } from "../../stores/carouselPinia.ts";
+import { useSectionStore } from "../../stores/sectionPinia.ts";
 
-const carouselImages = ref<Image[]>([]);
-const sectionsImages = ref<Image[]>([]);
+const carouselStore = useCarouselStore();
+const sectionStore = useSectionStore();
+
 const isLoading = ref(true);
 const isEditing = ref(false);
 const props = defineProps<{
@@ -29,21 +32,59 @@ const props = defineProps<{
 
 const currentImage = ref(0);
 const isSectionPastScroll = ref(false);
+const previousImage = ref(-1); // 用於儲存前一張圖片索引
+
+const currentBackgroundStyle = computed(() => {
+  if (props.isDesktop && carouselStore.sortedImages[currentImage.value]) {
+    return {
+      backgroundImage: `url("${
+        carouselStore.sortedImages[currentImage.value].imageURL
+      }")`,
+      opacity: 1,
+      transition: "opacity 1s ease-in-out",
+    };
+  }
+  return { opacity: 0 };
+});
+
+// 前一張圖片的背景樣式
+const previousBackgroundStyle = computed(() => {
+  if (
+    props.isDesktop &&
+    previousImage.value >= 0 &&
+    carouselStore.sortedImages[previousImage.value]
+  ) {
+    return {
+      backgroundImage: `url("${
+        carouselStore.sortedImages[previousImage.value].imageURL
+      }")`,
+      opacity: 0,
+      transition: "opacity 1s ease-in-out",
+    };
+  }
+  return { opacity: 0 };
+});
 
 const backgroundStyle = computed(() => {
   if (props.isDesktop) {
     return {
-      backgroundImage: `url(${carouselImages.value[currentImage.value]?.url})`,
+      backgroundImage: `url(${
+        carouselStore.sortedImages[currentImage.value]?.imageURL || ""
+      })`,
+      opacity: bgOpacity.value,
+      transition: "opacity 1s ease-in-out",
     };
   }
   return {};
 });
 
 let intervalId: ReturnType<typeof setInterval> | null = null;
-
+const bgOpacity = ref(0);
 const changeImage = () => {
   intervalId = setInterval(() => {
-    currentImage.value = (currentImage.value + 1) % carouselImages.value.length;
+    previousImage.value = currentImage.value; // 儲存當前圖片作為前一張
+    currentImage.value =
+      (currentImage.value + 1) % carouselStore.sortedImages.length;
   }, 10000);
 };
 const observerFunc = () => {
@@ -68,10 +109,8 @@ const observerFunc = () => {
 };
 
 onMounted(async () => {
-  const carouselPath = "home/carousel";
-  const sectionPath = "home/sections";
-  carouselImages.value = await getImages(carouselPath);
-  sectionsImages.value = await getImages(sectionPath);
+  carouselStore.fetchImages();
+  sectionStore.fetchImages();
   isLoading.value = false;
   await nextTick(() => {
     observerFunc();
@@ -94,26 +133,14 @@ watch(isEditing, (newVal, oldVal) => {
 });
 </script>
 <template>
-  <div
-    v-if="isLoading"
-    class="absolute inset-0 flex flex-col justify-center items-center bg-white z-10"
-  >
-    <div
-      class="spinner border-4 border-gray-200 border-t-blue-500 rounded-full w-12 h-12 animate-spin"
-    ></div>
-    <p class="mt-2 text-gray-500 text-sm">Loading...</p>
-  </div>
-  <main v-else :class="`home transition`" :style="backgroundStyle">
+  <main :class="`home transition`">
+    <!-- 前一張圖片的背景層 -->
+    <div class="background-layer" :style="previousBackgroundStyle"></div>
+    <!-- 當前圖片的背景層 -->
+    <div class="background-layer" :style="currentBackgroundStyle"></div>
     <Navbar />
-    <Carousel
-      :carouselImages="carouselImages"
-      :currentImage="currentImage"
-      :isDesktop="isDesktop"
-    />
-    <CategorySection
-      :isSectionPastScroll="isSectionPastScroll"
-      :sectionsImages="sectionsImages"
-    />
+    <Carousel :currentImage="currentImage" :isDesktop="isDesktop" />
+    <CategorySection :isSectionPastScroll="isSectionPastScroll" />
     <Footer />
     <SocialMediaButtons />
   </main>
@@ -122,6 +149,20 @@ watch(isEditing, (newVal, oldVal) => {
 .home {
   width: 100vw;
   min-height: calc(var(--vh, 1vh) * 100);
-  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+.background-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 </style>
