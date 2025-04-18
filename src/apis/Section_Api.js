@@ -35,3 +35,16 @@ export const updateImage = async (
   }
   return { error: "Failed to fetch images" };
 };
+
+export const adjustOffsetY = async (folderPath, id, offsetY) => {
+  console.log(folderPath, id, offsetY);
+  const response = await axios.patch(`${baseURL}/api/section/${folderPath}`, {
+    offsetY,
+    id,
+  });
+  console.log(response);
+  if (response.status === 200) {
+    return response;
+  }
+  return { error: "Failed to fetch images" };
+};

@@ -8,6 +8,7 @@ import { router as UserRoutes } from "./routes/UserRoutes.js";
 import { router as OtherPageRoutes } from "./routes/OtherPageRoutes.js";
 import { router as CarouselRoutes } from "./routes/CarouselRoutes.js";
 import { router as SectionRoutes } from "./routes/SectionRoutes.js";
+import { router as AboutRoutes } from "./routes/AboutRoutes.js";
 import passport from "passport";
 import express from "express";
 import LocalStrategy from "passport-local";
@@ -106,11 +107,13 @@ if (process.env.NODE_ENV !== "production") {
   app.use("/", OtherPageRoutes);
   app.use("/", CarouselRoutes);
   app.use("/", SectionRoutes);
+  app.use("/", AboutRoutes);
 } else {
   app.use("/api", UserRoutes);
   app.use("/api", OtherPageRoutes);
   app.use("/api", CarouselRoutes);
   app.use("/api", SectionRoutes);
+  app.use("/api", AboutRoutes);
 }
 
 /*app.get("*", (req, res) => {

@@ -1,4 +1,4 @@
-import { SectionImage } from "./models/SectionImageSchema.js";
+import { AboutImage } from "./models/AboutImageSchema.js";
 
 import dotenv from "dotenv";
 import path from "path";
@@ -48,51 +48,36 @@ db.once("open", () => {
   console.log("Database connected");
 });
 
-const addCarouselImage = async () => {
+const addAboutImage = async () => {
   try {
-    const imageData = [
+    const images = [
       {
-        public_id: "architecture_rlmvem",
+        public_id: "Pai/views/about/about_putqkq",
         imageURL:
-          "https://res.cloudinary.com/dk1yh5mdu/image/upload/f_auto,q_auto,w_1440/architecture_rlmvem",
-        title: "Architecture",
+          "https://res.cloudinary.com/dk1yh5mdu/image/upload/f_auto,q_auto,w_1440/v1744950175/Pai/views/about/about_putqkq",
+        displayName: "about",
+        offsetY: 0,
       },
       {
-        public_id: "landscape_req1tt",
+        public_id: "Pai/views/about/moto_berr54",
         imageURL:
-          "https://res.cloudinary.com/dk1yh5mdu/image/upload/f_auto,q_auto,w_1440/landscape_req1tt",
-        title: "Landscape",
+          "https://res.cloudinary.com/dk1yh5mdu/image/upload/f_auto,q_auto,w_1440/v1744526927/Pai/views/about/moto_berr54",
+        displayName: "moto",
+        offsetY: 0,
       },
       {
-        public_id: "motorcycle_idhmon",
+        public_id: "Pai/views/about/pai_ed2g0k",
         imageURL:
-          "https://res.cloudinary.com/dk1yh5mdu/image/upload/f_auto,q_auto,w_1440/motorcycle_idhmon",
-        title: "Motorcycle",
-      },
-      {
-        public_id: "others_iuqhet",
-        imageURL:
-          "https://res.cloudinary.com/dk1yh5mdu/image/upload/f_auto,q_auto,w_1440/others_iuqhet",
-        title: "Others",
-      },
-      {
-        public_id: "portrait_gujfpu",
-        imageURL:
-          "https://res.cloudinary.com/dk1yh5mdu/image/upload/f_auto,q_auto,w_1440/portrait_gujfpu",
-        title: "Portrait",
-      },
-      {
-        public_id: "street_pcbrcf",
-        imageURL:
-          "https://res.cloudinary.com/dk1yh5mdu/image/upload/f_auto,q_auto,w_1440/street_pcbrcf",
-        title: "Street",
+          "https://res.cloudinary.com/dk1yh5mdu/image/upload/f_auto,q_auto,w_1440/v1744526927/Pai/views/about/pai_ed2g0k",
+        displayName: "pai",
+        offsetY: 0,
       },
     ];
 
-    await SectionImage.insertMany(imageData);
+    await AboutImage.insertMany(images);
   } catch (error) {
     console.error(error);
   }
 };
 
-addCarouselImage();
+addAboutImage();

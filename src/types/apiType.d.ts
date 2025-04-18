@@ -9,6 +9,7 @@ export type SectionImage = {
   public_id: string;
   url: string;
   title: string | null;
+  offsetY: number;
 };
 
 export type CarouselImage = {
@@ -16,4 +17,12 @@ export type CarouselImage = {
   imageURL: string;
   order: number;
   createdAt: Date;
+};
+
+export type aboutImage = {
+  public_id: string;
+  imageURL: string;
+  displayName: string | null;
+  offsetY: number;
+  _id: string;
 };

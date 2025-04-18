@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import Handing from "../Handing.vue";
-import { defineProps, ref, computed } from "vue";
+import { defineProps, ref } from "vue";
 import "./Carousel.scss";
 import CarouselDialog from "../ImageSystem/CarouselDialog/CarouselDialog.vue";
 import { useCarouselStore } from "../../stores/carouselPinia.ts";
+import { useIsDesktop } from "../../utils/useIsDesktop";
+
+const isDesktop = useIsDesktop();
 
 defineProps<{
   currentImage: number;
-  isDesktop: boolean;
 }>();
 
 const carouselStore = useCarouselStore();

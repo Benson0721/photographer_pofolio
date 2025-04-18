@@ -1,10 +1,9 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs/promises";
 
-// 假設上傳到 Cloudinary 成功後：
-
 export const getImages = async (folder1, folder2 = "") => {
   try {
+    console.log("後端");
     const res = await cloudinary.search
       .expression(`folder:Pai/views/${folder1}/${folder2}`)
       .sort_by("public_id", "asc")
@@ -12,7 +11,7 @@ export const getImages = async (folder1, folder2 = "") => {
       .execute();
     return res.resources.map((img) => ({
       public_id: img.public_id,
-      url: `https://res.cloudinary.com/dk1yh5mdu/image/upload/f_auto,q_auto,w_1440/${img.public_id}`,
+      url: `https://res.cloudinary.com/dk1yh5mdu/image/upload/f_auto,q_auto,w_1440/v${img.version}/${img.public_id}`,
       title: img.display_name,
     }));
   } catch (error) {
@@ -27,11 +26,13 @@ export const updateImage = async (
   publicId
 ) => {
   try {
+    console.log(folder1, folder2, filePath, publicId);
     const options = {
       folder: `Pai/views/${folder1}/${folder2}`,
       resource_type: "image",
       overwrite: true,
       public_id: publicId,
+      invalidate: true, // 👈 告訴 Cloudinary 清掉舊圖快取
     };
     const result = await cloudinary.uploader.upload(filePath, options);
     return result;

@@ -25,13 +25,22 @@ const handleUpdateImage = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
     console.log("後端");
-    console.log(req);
-    console.log(req.body);
     const { folder1, folder2 = "" } = req.params;
+    const { publicID } = req.query;
     const filepath = req.file.path;
-    const result = await updateImage(folder1, folder2, filepath);
+    const filterPublicID = publicID.replace(
+      `Pai/views/${folder1}/${folder2}`,
+      ""
+    );
+    console.log(filterPublicID);
+    const result = await updateImage(
+      folder1,
+      folder2,
+      filepath,
+      filterPublicID
+    );
     console.log(result);
-    res.json({ result });
+    res.status(200).json({ message: "上傳圖片成功!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

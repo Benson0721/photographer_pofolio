@@ -19,6 +19,9 @@ const TopicImageSchema = new Schema({
     type: String,
     required: true,
   },
+  public_id: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

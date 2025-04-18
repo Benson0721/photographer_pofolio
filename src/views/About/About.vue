@@ -16,10 +16,15 @@ import { FormKit } from "@formkit/vue";
 import emailjs from "@emailjs/browser";
 import Handing from "../../components/Handing.vue";
 import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
+import AboutDialog from "../../components/ImageSystem/AboutDialog/AboutDialog.vue";
+import { aboutImage } from "../../types/apiType";
+import { useAboutStore } from "../../stores/aboutPinia";
+import { useIsDesktop } from "../../utils/useIsDesktop";
+import { useImageSizeList } from "../../utils/useImageSizeList";
 
-import { getImages } from "../../apis/OtherImage_Api.js";
-import { Image } from "../../types/apiType";
-
+const isDesktop = useIsDesktop();
+const route = useRoute();
+const aboutStore = useAboutStore();
 const formData = reactive({
   name: "",
   email: "",
@@ -27,30 +32,35 @@ const formData = reactive({
   message: "",
 });
 
-const props = defineProps<{
-  isDesktop: boolean;
-}>();
-
 const title = ref("About");
 const isLoading = ref(true);
-const aboutImages = ref<Image[]>([]);
 
 const HeadingStyle = ref(
   "mt-4 text-[48px] md:text-[72px] lg:text-[96px] font-playfair text-white text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
 );
 
-const route = useRoute();
 const isScrolledPast = ref(false);
 const isSocialScrolledPast = ref(false);
 const isAboutPastScroll = ref(false);
 const isContactPastScroll = ref(false);
+const imageMap = computed(() => {
+  const result: Record<string, aboutImage> = {};
+  const targets = ["about", "pai", "moto"];
+  targets.forEach((title) => {
+    const image = aboutStore.aboutImages.find(
+      (img) => img.displayName === title
+    );
+    if (image) {
+      result[title] = image;
+    }
+  });
+  return result;
+});
 
 const backgroundStyle = computed(() => {
-  if (props.isDesktop) {
+  if (isDesktop) {
     return {
-      backgroundImage: `url(${
-        aboutImages.value.find((img) => img.title === "about")?.url
-      })`,
+      backgroundImage: `url(${imageMap.value["about"]?.imageURL})`,
     };
   }
   return {};
@@ -142,16 +152,13 @@ const scrollFunc = (hash: string) => {
   }, 1000);
 };
 onMounted(async () => {
-  const aboutPath = "about";
-  aboutImages.value = await getImages(aboutPath);
+  aboutStore.fetchImages();
   isLoading.value = false;
   await nextTick(() => {
     observerFunc();
     socialFunc();
   });
-});
 
-onMounted(() => {
   if (route.hash) {
     console.log("coming from hash");
     scrollFunc(route.hash);
@@ -173,30 +180,38 @@ console.log(isAboutPastScroll.value);
   </div>
   <main v-else class="about__bg transition" :style="backgroundStyle">
     <Navbar :isScrolledPast="isScrolledPast" />
-    <div class="relative h-auto md:h-screen">
+    <div class="about__banner">
       <img
-        v-if="!props.isDesktop"
-        :src="aboutImages.find((img) => img.title === 'about--mobile')?.url"
+        v-if="!isDesktop"
+        :src="imageMap['about']?.imageURL"
         alt="about"
-        class="w-full h-auto object-cover about__image"
+        class="w-full h-auto object-cover md:hidden"
       />
       <Handing v-model:title="title" :HeadingStyle="HeadingStyle" />
+      <AboutDialog
+        :url="imageMap['about']?.imageURL"
+        :publicID="imageMap['about']?.public_id"
+      />
     </div>
     <div class="bg-amber-50">
       <div class="about" id="about">
         <div
-          class="about__pai"
+          class="about__pai relative"
           :class="{ 'fade-controller': isAboutPastScroll }"
         >
           <img
-            :src="aboutImages.find((img) => img.title === 'pai')?.url"
+            :src="imageMap['pai']?.imageURL"
             alt="攝影師帥哥本人"
             class="w-full h-full object-cover hidden md:block"
           />
           <img
-            :src="aboutImages.find((img) => img.title === 'pai--mobile')?.url"
+            :src="imageMap['pai']?.imageURL"
             alt="攝影師帥哥本人"
             class="w-full h-full object-cover md:hidden"
+          />
+          <AboutDialog
+            :url="imageMap['pai']?.imageURL"
+            :publicID="imageMap['pai']?.public_id"
           />
         </div>
         <div
@@ -223,18 +238,22 @@ console.log(isAboutPastScroll.value);
       </div>
       <div class="flex flex-col md:flex-row mt-4" id="contact">
         <div
-          class="flex-1/3 md:order-2"
+          class="relative flex-1/3 md:order-2"
           :class="{ 'fade-controller': isContactPastScroll }"
         >
           <img
-            :src="aboutImages.find((img) => img.title === 'moto')?.url"
+            :src="imageMap['moto']?.imageURL"
             alt="moto"
             class="w-full h-full object-cover hidden md:block"
           />
           <img
-            :src="aboutImages.find((img) => img.title === 'moto--mobile')?.url"
+            :src="imageMap['moto']?.imageURL"
             alt="moto--mobile"
             class="w-full h-full object-cover md:hidden"
+          />
+          <AboutDialog
+            :url="imageMap['moto']?.imageURL"
+            :publicID="imageMap['moto']?.public_id"
           />
         </div>
         <div

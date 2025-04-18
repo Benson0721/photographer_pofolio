@@ -47,8 +47,12 @@ export const addCarouselImage = async (req, res) => {
       return res.status(500).json({ message: imageDatas.error });
     }
     imageDatas.map(async (data) => {
+      const newUrl = data.secure_url.replace(
+        "/upload/",
+        "/upload/f_auto,q_auto,w_1440/"
+      );
       const image = new CarouselImage({
-        imageURL: data.secure_url,
+        imageURL: newUrl,
         public_id: data.public_id,
       });
       await image.save();

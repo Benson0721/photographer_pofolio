@@ -13,6 +13,10 @@ const SectionImageSchema = new Schema({
   public_id: {
     type: String,
   },
+  offsetY: {
+    type: Number,
+    default: 0,
+  },
 });
 
 export const SectionImage = mongoose.model("SectionImage", SectionImageSchema);

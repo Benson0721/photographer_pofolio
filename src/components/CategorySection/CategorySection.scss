@@ -6,33 +6,34 @@
     height: 100vh;
   }
   &__images {
+    width: 100%;
     height: 100%;
     display: grid;
+    grid-template-columns: repeat(1, 1fr);
     grid-template-rows: repeat(6, 1fr);
     justify-content: center;
     align-items: center;
   }
   &__image {
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 100vw;
-    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
     filter: grayscale(100%) blur(3px);
     transition: filter 0.5s ease-in;
     &:hover {
       filter: none;
     }
-    &--dialog {
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+    &-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
       width: 100%;
       height: 100%;
+      overflow: hidden;
     }
   }
   &__content {

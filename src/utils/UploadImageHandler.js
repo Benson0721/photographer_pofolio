@@ -7,6 +7,17 @@ export function useUploadHandler(single = false) {
   const handleFileChange = (e) => {
     const files = e.target.files;
     selectedFiles.value.push(...files); // 儲存原始檔案
+    console.log(selectedFiles.value);
+    previewUrls.value = selectedFiles.value.map((file) => ({
+      file,
+      src: URL.createObjectURL(file),
+    }));
+  };
+
+  const handleSingleFileChange = (e) => {
+    const files = e.target.files;
+    selectedFiles.value = Array.from(files); // 儲存原始檔案
+    console.log(selectedFiles.value);
     previewUrls.value = selectedFiles.value.map((file) => ({
       file,
       src: URL.createObjectURL(file),
@@ -38,6 +49,7 @@ export function useUploadHandler(single = false) {
     selectedFiles,
     previewUrls,
     handleFileChange,
+    handleSingleFileChange,
     resetUpload,
     handleDragOver,
     handleDrop,

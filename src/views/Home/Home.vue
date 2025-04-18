@@ -4,38 +4,35 @@ import Carousel from "../../components/Carousel/Carousel.vue";
 import CategorySection from "../../components/CategorySection/CategorySection.vue";
 import Footer from "../../components/Footer.vue";
 import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
-import { getImages } from "../../apis/OtherImage_Api.js";
+import { useIsDesktop } from "../../utils/useIsDesktop";
 import {
   ref,
   onMounted,
   onUnmounted,
   computed,
-  defineProps,
   onBeforeUnmount,
   nextTick,
   watch,
 } from "vue";
 
 import "./Home.scss";
-import { Image } from "../../types/apiType.js";
+
 import { useCarouselStore } from "../../stores/carouselPinia.ts";
 import { useSectionStore } from "../../stores/sectionPinia.ts";
 
 const carouselStore = useCarouselStore();
 const sectionStore = useSectionStore();
 
+const isDesktop = useIsDesktop();
 const isLoading = ref(true);
 const isEditing = ref(false);
-const props = defineProps<{
-  isDesktop: boolean;
-}>();
 
 const currentImage = ref(0);
 const isSectionPastScroll = ref(false);
 const previousImage = ref(-1); // 用於儲存前一張圖片索引
 
 const currentBackgroundStyle = computed(() => {
-  if (props.isDesktop && carouselStore.sortedImages[currentImage.value]) {
+  if (isDesktop.value && carouselStore.sortedImages[currentImage.value]) {
     return {
       backgroundImage: `url("${
         carouselStore.sortedImages[currentImage.value].imageURL
@@ -50,7 +47,7 @@ const currentBackgroundStyle = computed(() => {
 // 前一張圖片的背景樣式
 const previousBackgroundStyle = computed(() => {
   if (
-    props.isDesktop &&
+    isDesktop.value &&
     previousImage.value >= 0 &&
     carouselStore.sortedImages[previousImage.value]
   ) {
@@ -66,7 +63,7 @@ const previousBackgroundStyle = computed(() => {
 });
 
 const backgroundStyle = computed(() => {
-  if (props.isDesktop) {
+  if (isDesktop.value) {
     return {
       backgroundImage: `url(${
         carouselStore.sortedImages[currentImage.value]?.imageURL || ""
@@ -139,7 +136,7 @@ watch(isEditing, (newVal, oldVal) => {
     <!-- 當前圖片的背景層 -->
     <div class="background-layer" :style="currentBackgroundStyle"></div>
     <Navbar />
-    <Carousel :currentImage="currentImage" :isDesktop="isDesktop" />
+    <Carousel :currentImage="currentImage" />
     <CategorySection :isSectionPastScroll="isSectionPastScroll" />
     <Footer />
     <SocialMediaButtons />
