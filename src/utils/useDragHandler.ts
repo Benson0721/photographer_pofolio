@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useOffsetYHandler } from "./useOffsetYHandler";
 export function useDragHandler(
   maxScrollY: number,
@@ -9,13 +9,18 @@ export function useDragHandler(
   const offsetY = ref(initialOffsetY);
   let startY = 0;
   let dragging = false;
+  let updateTimer;
 
   function startDrag(event) {
+    event.preventDefault();
+    event.stopPropagation();
     dragging = true;
     startY = event.touches ? event.touches[0].clientY : event.clientY;
   }
 
   function onDrag(event) {
+    event.preventDefault();
+    event.stopPropagation();
     if (!dragging) return;
     const y = event.touches ? event.touches[0].clientY : event.clientY;
     const deltaY = y - startY;
@@ -25,14 +30,22 @@ export function useDragHandler(
     offsetY.value = Math.max(Math.min(offsetY.value + deltaY, 0), -maxScrollY);
   }
 
-  function endDrag() {
+  async function endDrag() {
     dragging = false;
-    useOffsetYHandler(path, id, offsetY.value);
   }
+
+  watch(offsetY, (newVal) => {
+    clearTimeout(updateTimer);
+    updateTimer = setTimeout(() => {
+      useOffsetYHandler(path, id, newVal);
+    }, 3000); // <-- 自由調整等待時間
+  });
+
   return {
     offsetY,
     startDrag,
     onDrag,
     endDrag,
+    isDragging: dragging,
   };
 }

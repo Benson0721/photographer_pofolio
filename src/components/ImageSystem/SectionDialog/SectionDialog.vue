@@ -34,7 +34,7 @@ const { url, title, id, publicID, width, height, updateSizes, curOffsetY } =
     curOffsetY: Number,
   });
 
-const { offsetY, startDrag, onDrag, endDrag } = useDragHandler(
+const { offsetY, startDrag, onDrag, endDrag, isDragging } = useDragHandler(
   400,
   "section",
   id,
@@ -86,7 +86,8 @@ watch(handleOpen, () => {
   successmessage.value = "";
 });
 
-watch(endDrag, async () => {
+watch(isDragging, async () => {
+  console.log("更新");
   await sectionStore.fetchImages();
 });
 </script>
@@ -121,9 +122,7 @@ watch(endDrag, async () => {
         <v-card-text> 以下是現有的分區圖片... </v-card-text>
         <div class="flex justify-center gap-2 flex-wrap">
           <div
-            @mousedown="startDrag"
             @touchstart="startDrag"
-            @mousemove="onDrag"
             @touchmove="onDrag"
             @mouseup="endDrag"
             @mouseleave="endDrag"
@@ -136,7 +135,7 @@ watch(endDrag, async () => {
               alt="previewImage"
               class="draggable-image"
               :style="{ top: `${offsetY}px` }"
-              draggable="false"
+              draggable="true"
               pre
             />
             <h2

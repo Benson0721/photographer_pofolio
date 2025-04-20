@@ -15,6 +15,8 @@ import LocalStrategy from "passport-local";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import cloudinary from "cloudinary";
+import cron from "node-cron";
+import { clearUploadsFolder } from "./utils/clearUploads.js";
 
 // 獲取當前檔案的路徑
 const __filename = fileURLToPath(import.meta.url);
@@ -115,6 +117,11 @@ if (process.env.NODE_ENV !== "production") {
   app.use("/api", SectionRoutes);
   app.use("/api", AboutRoutes);
 }
+
+cron.schedule("0 * * * *", async () => {
+  console.log("每日清空 uploads 資料夾...");
+  await clearUploadsFolder();
+});
 
 /*app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../dist", "index.html"));

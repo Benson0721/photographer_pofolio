@@ -20,7 +20,8 @@ const carouselStore = useCarouselStore();
 const editMode = ref("");
 const errormessage = ref("");
 const successmessage = ref("");
-
+const loadingmessage = ref("");
+const isLoading = ref(false);
 const props = defineProps({
   currentImage: Number,
   isDesktop: Boolean,
@@ -41,11 +42,14 @@ const handleUpload = async () => {
   if (selectedFiles.value.length === 0) return;
   try {
     console.log("upload image");
+    loadingmessage.value = "上傳圖片中...";
+    isLoading.value = true;
     const res = await carouselStore.addImages(selectedFiles.value);
     console.log(res);
     resetUpload();
     successmessage.value = res.data.message;
     carouselStore.fetchImages();
+    isLoading.value = false;
   } catch (error) {
     errormessage.value = error.response.data.message;
     resetUpload();
@@ -61,9 +65,12 @@ const handleOrder = async () => {
   }));
   console.log(newOrderArray);
   try {
+    loadingmessage.value = "調整順序中...";
+    isLoading.value = true;
     const res = await carouselStore.adjustOrder(newOrderArray);
     successmessage.value = res.data.message;
     carouselStore.fetchImages();
+    isLoading.value = false;
   } catch (error) {
     errormessage.value = error.response.data.message;
     carouselStore.fetchImages();
@@ -72,9 +79,12 @@ const handleOrder = async () => {
 };
 const handleDelete = async (public_Id, id) => {
   try {
+    loadingmessage.value = "刪除圖片中...";
+    isLoading.value = true;
     const res = await carouselStore.deleteImage(public_Id, id);
     successmessage.value = res?.data?.message;
     carouselStore.fetchImages();
+    isLoading.value = false;
   } catch (error) {
     errormessage.value = error.response.data.message;
     carouselStore.fetchImages();
@@ -89,6 +99,8 @@ watch(previewUrls, () => {
 watch(editMode, () => {
   errormessage.value = ""; // 切換模式時清空錯誤訊息
   successmessage.value = "";
+  loadingmessage.value = "";
+  isLoading.value = false;
 });
 </script>
 
@@ -108,13 +120,26 @@ watch(editMode, () => {
     </template>
 
     <template #default="{ isActive }">
-      <v-card title="編輯輪播圖片" class="p-4">
-        <v-card-text class="text-red-500" v-if="errormessage">{{
-          errormessage
-        }}</v-card-text>
-        <v-card-text class="text-green-500" v-if="successmessage">{{
-          successmessage
-        }}</v-card-text>
+      <v-card title="編輯輪播圖片" class="p-4 relative">
+        <div
+          v-if="isLoading"
+          class="flex items-center absolute top-1/10 right-1/8"
+        >
+          <div
+            class="spinner border-4 border-gray-200 border-t-blue-500 rounded-full w-5 h-5 animate-spin"
+          ></div>
+          <span class="ml-2 text-gray-500 text-sm">載入中...</span>
+        </div>
+        <v-card-text
+          class="text-red-500 absolute top-1/10 right-1/8"
+          v-if="errormessage"
+          >{{ errormessage }}</v-card-text
+        >
+        <v-card-text
+          class="text-green-500 absolute top-1/10 right-1/8"
+          v-if="successmessage"
+          >{{ successmessage }}</v-card-text
+        >
         <v-card-text> 以下是現有的輪播圖片... </v-card-text>
         <div v-if="editMode !== 'order'" class="flex gap-2 flex-wrap">
           <div

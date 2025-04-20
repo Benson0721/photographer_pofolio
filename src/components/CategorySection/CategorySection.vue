@@ -12,7 +12,6 @@ defineProps<{
   isSectionPastScroll: boolean;
 }>();
 
-
 </script>
 <template>
   <div class="category-section__wrapper">
@@ -24,6 +23,7 @@ defineProps<{
           :class="{ 'fade-controller': isSectionPastScroll }"
           class="category-section__image-wrapper"
           :ref="(el) => (imageRefs[index] = el)"
+          draggable="false"
         >
           <SectionDialog
             :updateSizes="updateSizes"

@@ -106,14 +106,17 @@ const observerFunc = () => {
 };
 
 onMounted(async () => {
-  carouselStore.fetchImages();
-  sectionStore.fetchImages();
+  await carouselStore.fetchImages();
+  await sectionStore.fetchImages();
   isLoading.value = false;
   await nextTick(() => {
     observerFunc();
   });
 });
 
+const handleDrag = (event) => {
+  event.preventDefault();
+};
 onMounted(() => {
   changeImage();
 });
@@ -130,7 +133,16 @@ watch(isEditing, (newVal, oldVal) => {
 });
 </script>
 <template>
-  <main :class="`home transition`">
+  <div
+    v-if="isLoading"
+    class="absolute inset-0 flex flex-col justify-center items-center bg-white z-10"
+  >
+    <div
+      class="spinner border-4 border-gray-200 border-t-blue-500 rounded-full w-12 h-12 animate-spin"
+    ></div>
+    <p class="mt-2 text-gray-500 text-sm">Loading...</p>
+  </div>
+  <main v-else :class="`home transition`">
     <!-- 前一張圖片的背景層 -->
     <div class="background-layer" :style="previousBackgroundStyle"></div>
     <!-- 當前圖片的背景層 -->

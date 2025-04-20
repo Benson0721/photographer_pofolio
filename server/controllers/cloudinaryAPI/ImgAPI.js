@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs/promises";
 
 export const getImages = async (folder1, folder2 = "") => {
   try {
@@ -44,8 +43,6 @@ export const updateImage = async (
 export const addImages = async (folder1, folder2 = "", filePath) => {
   try {
     const uploadPromises = filePath.map(async (path) => {
-      //儲存批量更新，再透過promise.all同時跑多個任務
-
       const options = {
         folder: `Pai/views/${folder1}/${folder2}`,
         resource_type: "image",
@@ -58,7 +55,6 @@ export const addImages = async (folder1, folder2 = "", filePath) => {
       "批量圖片上傳成功：",
       results.map((r) => r.secure_url)
     );
-    await fs.unlink(file.path); // file.path 是 multer 存的本地路徑
     return results;
   } catch (error) {
     return { error: error.message };

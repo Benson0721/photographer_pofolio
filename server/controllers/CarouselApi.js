@@ -1,5 +1,6 @@
 import { CarouselImage } from "../models/CarouselImageSchema.js";
 import { addImages, deleteImages } from "./cloudinaryApi/ImgApi.js";
+import fs from "fs/promises";
 
 export const getCarouselImages = async (req, res) => {
   try {
@@ -40,6 +41,7 @@ export const addCarouselImage = async (req, res) => {
     const { folder1, folder2 = "" } = req.params;
     const files = req.files;
     const paths = files.map((file) => file.path);
+
     console.log(paths);
     const imageDatas = await addImages(folder1, folder2, paths);
     console.log(imageDatas);
@@ -57,6 +59,7 @@ export const addCarouselImage = async (req, res) => {
       });
       await image.save();
     });
+
     res.status(200).json({ message: "新增圖片成功!" });
   } catch (error) {
     console.log(error);
