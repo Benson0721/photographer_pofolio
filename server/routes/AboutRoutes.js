@@ -3,7 +3,7 @@ import {
   getAboutImages,
   updateAboutImage,
   adjustOffsetY,
-} from "../controllers/AboutApi.js";
+} from "../controllers/aboutApi/AboutApi.js";
 import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();

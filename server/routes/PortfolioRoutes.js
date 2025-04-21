@@ -5,11 +5,11 @@ import {
   addTopicImage,
   updateTopicImage,
   deleteTopicImage,
-} from "../controllers/TopicApi.js";
+} from "../controllers/portfolioApi/TopicApi.js";
 import {
   getDisplayImages,
   deleteDisplayImage,
-} from "../controllers/DisplayApi.js";
+} from "../controllers/portfolioApi/DisplayApi.js";
 
 const router = express.Router();
 

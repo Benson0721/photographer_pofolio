@@ -16,6 +16,7 @@ const useOffsetYHandler = async (
   } else {
     console.warn(`Unknown path: ${path}`);
   }
+  await sectionStore.fetchImages();
 };
 
 export { useOffsetYHandler };

@@ -4,8 +4,8 @@ import { useSectionStore } from "../../../stores/sectionPinia.ts";
 import { ref, watch, defineProps, computed } from "vue";
 import { useIsDesktop } from "../../../utils/useIsDesktop";
 import { useDragHandler } from "../../../utils/useDragHandler.ts";
-import { useUploadHandler } from "@/utils/UploadImageHandler";
-import { useOffsetYHandler } from "@/utils/useOffsetYHandler";
+import { useUploadHandler } from "../../../utils/useUploadHandler.js";
+import ButtonArea from "../ButtonArea.vue";
 const {
   selectedFiles,
   previewUrls,
@@ -18,9 +18,11 @@ const userStore = useUserStore();
 const sectionStore = useSectionStore();
 const errormessage = ref("");
 const successmessage = ref("");
+const editMode = ref("");
 const isDesktop = useIsDesktop();
-
 const newTitle = ref("");
+const uploadMode = ref(true);
+const changeTitleMode = ref(true);
 
 const { url, title, id, publicID, width, height, updateSizes, curOffsetY } =
   defineProps({
@@ -45,6 +47,7 @@ const handleOpen = async () => {
   await sectionStore.fetchImages();
   updateSizes();
   newTitle.value = title;
+  editMode.value = "";
 };
 
 const handleUpload = async () => {
@@ -60,14 +63,36 @@ const handleUpload = async () => {
     );
     resetUpload();
     successmessage.value = res.data.message;
-    sectionStore.fetchImages();
+    await sectionStore.fetchImages();
   } catch (error) {
     errormessage.value = error?.response?.data?.message;
     resetUpload();
-    sectionStore.fetchImages();
+    await sectionStore.fetchImages();
     console.error(error);
     console.error("上傳失敗：", error?.response?.data?.message);
   }
+};
+const handleTitleUpload = async () => {
+  if (newTitle.value === title) return;
+  try {
+    const res = await sectionStore.updateSectionName(id, newTitle.value);
+    successmessage.value = res.data.message;
+    await sectionStore.fetchImages();
+  } catch (error) {
+    errormessage.value = error?.response?.data?.message;
+    await sectionStore.fetchImages();
+    console.error(error);
+    console.error("上傳失敗：", error?.response?.data?.message);
+  }
+};
+
+const resetMode = async () => {
+  console.log("reset mode");
+  editMode.value = "";
+  errormessage.value = ""; // 切換模式時清空錯誤訊息
+  successmessage.value = "";
+  resetUpload();
+  await sectionStore.fetchImages();
 };
 
 const previewImage = computed(() => {
@@ -146,14 +171,15 @@ watch(isDragging, async () => {
           </div>
         </div>
         <v-card-actions>
-          <div class="flex w-full h-[75px] items-center relative">
+          <div class="flex w-3/4 h-[75px] items-center justify-end relative">
             <FormKit
+              v-if="editMode === 'changeTitle'"
               v-model="newTitle"
               type="text"
               name="title"
               label="標題"
               placeholder="請輸入標題"
-              outerClass="mb-4 w-full md:w-full"
+              outerClass="mb-4 mr-16 w-full md:w-full"
               innerClass="mt-4 border-b-2 border-black"
               labelClass="text-black font-noto "
               validation="required"
@@ -168,17 +194,16 @@ watch(isDragging, async () => {
                 inputInvalid: 'border-red-500', // 加紅線
               }"
             />
-            <v-file-input
-              class="w-full h-full mt-4 mr-6"
-              name="images"
-              @change="handleSingleFileChange"
-              variant="outlined"
-              label="圖片上傳"
-              show-size
-              clip
-            >
-            </v-file-input>
-            <v-btn text="送出" @click="handleUpload"></v-btn>
+            <ButtonArea
+              v-model:editMode="editMode"
+              :changeTitleMode="changeTitleMode"
+              :uploadMode="uploadMode"
+              :handleFileChange="handleSingleFileChange"
+              :handleUpload="handleUpload"
+              :handleTitleUpload="handleTitleUpload"
+              :selectedFiles="selectedFiles"
+              :resetMode="resetMode"
+            />
             <v-btn text="關閉" @click="isActive.value = false"></v-btn>
           </div>
         </v-card-actions>

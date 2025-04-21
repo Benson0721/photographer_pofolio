@@ -1,8 +1,10 @@
 <script setup>
 import { useUserStore } from "../../../stores/userPinia.js";
 import { ref, watch, defineProps, computed } from "vue";
-import { useUploadHandler } from "@/utils/UploadImageHandler";
+import { useUploadHandler } from "../../../utils/useUploadHandler";
 import { useAboutStore } from "../../../stores/aboutPinia";
+import { useIsDesktop } from "../../../utils/useIsDesktop.js";
+const { isDesktop } = useIsDesktop();
 const aboutStore = useAboutStore();
 const {
   selectedFiles,
@@ -64,7 +66,11 @@ watch(handleOpen, () => {
 </script>
 
 <template>
-  <v-dialog max-width="50vw" @dragover="handleDragOver" @drop="handleDrop">
+  <v-dialog
+    :max-width="isDesktop ? '60vw' : '100vw'"
+    @dragover="handleDragOver"
+    @drop="handleDrop"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         v-bind="activatorProps"

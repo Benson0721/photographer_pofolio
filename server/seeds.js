@@ -1,5 +1,4 @@
-import { AboutImage } from "./models/AboutImageSchema.js";
-
+import { SectionImage } from "./models/SectionImageSchema.js";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -74,7 +73,7 @@ const addAboutImage = async () => {
       },
     ];
 
-    await AboutImage.insertMany(images);
+    await SectionImage.insertMany(images);
   } catch (error) {
     console.error(error);
   }

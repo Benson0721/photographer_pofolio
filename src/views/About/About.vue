@@ -17,10 +17,9 @@ import emailjs from "@emailjs/browser";
 import Handing from "../../components/Handing.vue";
 import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
 import AboutDialog from "../../components/ImageSystem/AboutDialog/AboutDialog.vue";
-import { aboutImage } from "../../types/apiType";
+import { AboutImage } from "../../types/apiType";
 import { useAboutStore } from "../../stores/aboutPinia";
 import { useIsDesktop } from "../../utils/useIsDesktop";
-import { useImageSizeList } from "../../utils/useImageSizeList";
 
 const isDesktop = useIsDesktop();
 const route = useRoute();
@@ -44,7 +43,7 @@ const isSocialScrolledPast = ref(false);
 const isAboutPastScroll = ref(false);
 const isContactPastScroll = ref(false);
 const imageMap = computed(() => {
-  const result: Record<string, aboutImage> = {};
+  const result: Record<string, AboutImage> = {};
   const targets = ["about", "pai", "moto"];
   targets.forEach((title) => {
     const image = aboutStore.aboutImages.find(

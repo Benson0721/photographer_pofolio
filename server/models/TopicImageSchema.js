@@ -15,7 +15,7 @@ const TopicImageSchema = new Schema({
     type: String,
     required: true,
   },
-  thumbnail: {
+  imageURL: {
     type: String,
     required: true,
   },

@@ -2,11 +2,12 @@
 import { useUserStore } from "../../../stores/userPinia.js";
 import { useCarouselStore } from "../../../stores/carouselPinia.ts";
 import { ref, watch, defineProps } from "vue";
-import ButtonArea from "./ButtonArea.vue";
+import ButtonArea from "../ButtonArea.vue";
 import OrderMode from "./OrderMode.vue";
 import UploadMode from "./UploadMode.vue";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { useUploadHandler } from "@/utils/UploadImageHandler";
+import { useUploadHandler } from "../../../utils/useUploadHandler.js";
+import { useIsDesktop } from "../../../utils/useIsDesktop.js";
 const {
   selectedFiles,
   previewUrls,
@@ -17,11 +18,13 @@ const {
 } = useUploadHandler();
 const userStore = useUserStore();
 const carouselStore = useCarouselStore();
+const { isDesktop } = useIsDesktop();
 const editMode = ref("");
 const errormessage = ref("");
 const successmessage = ref("");
 const loadingmessage = ref("");
 const isLoading = ref(false);
+
 const props = defineProps({
   currentImage: Number,
   isDesktop: Boolean,
@@ -105,7 +108,11 @@ watch(editMode, () => {
 </script>
 
 <template>
-  <v-dialog max-width="50vw" @dragover="handleDragOver" @drop="handleDrop">
+  <v-dialog
+    :max-width="isDesktop ? '60vw' : '100vw'"
+    @dragover="handleDragOver"
+    @drop="handleDrop"
+  >
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         v-bind="activatorProps"
@@ -113,7 +120,7 @@ watch(editMode, () => {
         text="編輯"
         variant="flat"
         :disabled="!userStore.isEditing"
-        class="absolute z-10 top-0 left-11/12"
+        class="absolute z-10 top-0 left-5/6 md:left-11/12"
         @click="carouselStore.fetchImages"
         :class="!userStore.isEditing ? 'hidden' : 'block'"
       ></v-btn>

@@ -4,10 +4,10 @@ import {
   updateAboutImage,
   adjustOffsetY,
 } from "../apis/About_api";
-import { aboutImage } from "../types/apiType";
+import { AboutImage } from "../types/apiType";
 export const useAboutStore = defineStore("aboutStore", {
   state: () => ({
-    aboutImages: [] as aboutImage[],
+    aboutImages: [] as AboutImage[],
   }),
 
   actions: {

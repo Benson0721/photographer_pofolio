@@ -7,8 +7,8 @@ export type Image = {
 export type SectionImage = {
   _id: string;
   public_id: string;
-  url: string;
-  title: string | null;
+  imageURL: string;
+  title: string;
   offsetY: number;
 };
 
@@ -17,9 +17,27 @@ export type CarouselImage = {
   imageURL: string;
   order: number;
   createdAt: Date;
+  public_id: string;
 };
 
-export type aboutImage = {
+export type TopicImage = {
+  _id: string;
+  category: string;
+  topic: string;
+  notes: string;
+  imageURL: string;
+  public_id: string;
+  createdAt: Date;
+};
+export type DisplayImage = {
+  _id: string;
+  topicID: string;
+  imageURL: string;
+  public_id: string;
+  createdAt: Date;
+};
+
+export type AboutImage = {
   public_id: string;
   imageURL: string;
   displayName: string | null;

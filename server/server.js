@@ -9,6 +9,8 @@ import { router as OtherPageRoutes } from "./routes/OtherPageRoutes.js";
 import { router as CarouselRoutes } from "./routes/CarouselRoutes.js";
 import { router as SectionRoutes } from "./routes/SectionRoutes.js";
 import { router as AboutRoutes } from "./routes/AboutRoutes.js";
+import { router as DisplayRoutes } from "./routes/DisplayRoutes.js";
+import { router as TopicRoutes } from "./routes/TopicRoutes.js";
 import passport from "passport";
 import express from "express";
 import LocalStrategy from "passport-local";
@@ -110,12 +112,16 @@ if (process.env.NODE_ENV !== "production") {
   app.use("/", CarouselRoutes);
   app.use("/", SectionRoutes);
   app.use("/", AboutRoutes);
+  app.use("/", DisplayRoutes);
+  app.use("/", TopicRoutes);
 } else {
   app.use("/api", UserRoutes);
   app.use("/api", OtherPageRoutes);
   app.use("/api", CarouselRoutes);
   app.use("/api", SectionRoutes);
   app.use("/api", AboutRoutes);
+  app.use("/api", DisplayRoutes);
+  app.use("/api", TopicRoutes);
 }
 
 cron.schedule("0 * * * *", async () => {

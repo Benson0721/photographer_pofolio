@@ -6,12 +6,10 @@ import SectionDialog from "../ImageSystem/SectionDialog/SectionDialog.vue";
 import { useImageSizeList } from "../../utils/useImageSizeList";
 
 const { imageRefs, imageSizes, updateSizes } = useImageSizeList();
-
 const sectionStore = useSectionStore();
 defineProps<{
   isSectionPastScroll: boolean;
 }>();
-
 </script>
 <template>
   <div class="category-section__wrapper">
@@ -19,7 +17,7 @@ defineProps<{
       <div class="category-section__images">
         <div
           v-for="(image, index) in sectionStore.sectionImages"
-          :key="index"
+          :key="image._id"
           :class="{ 'fade-controller': isSectionPastScroll }"
           class="category-section__image-wrapper"
           :ref="(el) => (imageRefs[index] = el)"
@@ -28,7 +26,7 @@ defineProps<{
           <SectionDialog
             :updateSizes="updateSizes"
             :url="image.imageURL"
-            :title="image.displayName"
+            :title="image.title"
             :id="image._id"
             :publicID="image.public_id"
             :width="imageSizes[index]?.width"
@@ -45,7 +43,7 @@ defineProps<{
           />
           <div class="category-section__content">
             <h2
-              class="category-section__title text-white font-playfair text-[28px] md:text-[40px] lg:text-[72px]"
+              class="category-section__title text-white font-playfair text-[28px] md:text-[40px] lg:text-[56px]"
             >
               {{ image.title }}
             </h2>

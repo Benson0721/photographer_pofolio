@@ -2,7 +2,7 @@
   width: 100vw;
   height: 66vw;
   position: relative;
-
+  overflow: hidden;
   &__image {
     position: absolute;
     transition: all ease-in-out 1.5s;

@@ -13,7 +13,7 @@ const routes = [
     props: true,
   },
   {
-    path: "/portfolio/:category",
+    path: "/portfolio/",
     name: "Portfolio",
     component: Portfolio,
     props: true,

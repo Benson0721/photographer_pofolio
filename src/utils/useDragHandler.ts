@@ -38,6 +38,7 @@ export function useDragHandler(
     clearTimeout(updateTimer);
     updateTimer = setTimeout(() => {
       useOffsetYHandler(path, id, newVal);
+      
     }, 3000); // <-- 自由調整等待時間
   });
 
