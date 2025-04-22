@@ -2,7 +2,7 @@
 import { useUserStore } from "../../../stores/userPinia.js";
 import { useCarouselStore } from "../../../stores/carouselPinia.ts";
 import { ref, watch, defineProps } from "vue";
-import ButtonArea from "../ButtonArea.vue";
+import ButtonArea from "./ButtonArea.vue";
 import OrderMode from "./OrderMode.vue";
 import UploadMode from "./UploadMode.vue";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";

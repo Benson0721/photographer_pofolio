@@ -10,6 +10,7 @@ export type SectionImage = {
   imageURL: string;
   title: string;
   offsetY: number;
+  type: string;
 };
 
 export type CarouselImage = {

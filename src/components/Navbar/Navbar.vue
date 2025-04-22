@@ -48,9 +48,9 @@ const currentLogo = computed(() => {
   return isScrolledPast ? logo_B : logo_W;
 });
 
-const linkClass = computed(() => {
+/*const linkClass = computed(() => {
   return isScrolledPast ? "text-black" : "text-black md:text-white";
-});
+});*/
 </script>
 <template>
   <nav
@@ -89,19 +89,19 @@ const linkClass = computed(() => {
       <router-link
         to="/"
         class="font-bellefair cursor-pointer lg:text-xl textShadow"
-        :class="linkClass"
+        :class="route.path === '/' ? 'text-black' : 'text-white'"
         >Home</router-link
       >
       <router-link
         to="/portfolio"
         class="font-bellefair cursor-pointer lg:text-xl textShadow"
-        :class="linkClass"
+        :class="route.path === '/portfolio' ? 'text-black' : 'text-white'"
         >Portfolio</router-link
       >
       <router-link
         to="/about"
         class="font-bellefair cursor-pointer lg:text-xl textShadow"
-        :class="linkClass"
+        :class="route.path === '/about' ? 'text-black' : 'text-white'"
         >About</router-link
       >
       <router-link
@@ -113,15 +113,14 @@ const linkClass = computed(() => {
       >
       <template v-else>
         <button
-          class="hidden md:block font-bellefair cursor-pointer lg:text-xl textShadow"
+          class="hidden md:block font-bellefair text-white cursor-pointer lg:text-xl textShadow"
           :class="linkClass"
           @click="userStore.logout()"
         >
           Logout
         </button>
         <button
-          class="hidden md:block font-bellefair cursor-pointer lg:text-xl textShadow"
-          :class="linkClass"
+          class="hidden md:block font-bellefair text-white cursor-pointer lg:text-xl textShadow"
           @click="userStore.isEditing = !userStore.isEditing"
         >
           Edit Mode : {{ userStore.isEditing ? "ON" : "OFF" }}

@@ -11,9 +11,16 @@ export const getAllTopicImages = async (req, res) => {
 };
 export const getTopicImages = async (req, res) => {
   try {
-    const { folder2 } = req.params;
-    const topicImages = await TopicImage.find({ category: folder2 });
-
+    const { category } = req.query;
+    if (category) {
+      const topicImages = await TopicImage.find({ category: category });
+      if (!topicImages) {
+        return res.status(404).json({ message: "No images found" });
+      }
+      res.json({ topicImages });
+      return;
+    }
+    const topicImages = await TopicImage.find({});
     if (!topicImages) {
       return res.status(404).json({ message: "No images found" });
     }
@@ -22,41 +29,30 @@ export const getTopicImages = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 export const addTopicImage = async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
   try {
     const { category, topic, notes } = req.query;
-    console.log(req.query);
     console.log("後端");
-
+    console.log(req.body);
+    console.log(category, topic, notes);
     const { folder1 } = req.params;
-    const files = req.files;
-    const paths = files.map((file) => file.path);
+    const filepath = req.file.path;
 
-    console.log(paths);
-    const imageDatas = await addImages(folder1, category, paths);
-    console.log(imageDatas);
-    if (imageDatas.error) {
-      return res.status(500).json({ message: imageDatas.error });
+    const imageData = await addImages(folder1, category, filepath);
+    console.log(imageData);
+    if (imageData.error) {
+      return res.status(500).json({ message: imageData.error });
     }
-    imageDatas.map(async (data) => {
-      const newUrl = data.secure_url.replace(
-        "/upload/",
-        "/upload/f_auto,q_auto,w_1440/"
-      );
-      const image = new CarouselImage({
-        imageURL: newUrl,
-        public_id: data.public_id,
-      });
-      await image.save();
-    });
+    const newUrl = imageData.secure_url.replace(
+      "/upload/",
+      "/upload/f_auto,q_auto,w_1440/"
+    );
     const newTopicImage = new TopicImage({
       category,
       topic,
       notes,
-      thumbnail,
+      imageURL: newUrl,
     });
     await newTopicImage.save();
     res.json({ newTopicImage });
@@ -65,9 +61,6 @@ export const addTopicImage = async (req, res) => {
   }
 };
 export const updateTopicImage = async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
   try {
     const { category, topic, notes, thumbnail, publicID, id } = req.body;
     const { folder1, folder2 = "" } = req.params;
@@ -92,7 +85,7 @@ export const updateTopicImage = async (req, res) => {
     if (imageData.error) {
       return res.status(500).json({ message: imageData.error });
     }
-    const updatedTopicImage = await TopicImage.findByIdAndUpdate(
+    const newImage = await TopicImage.findByIdAndUpdate(
       id,
       {
         category,
@@ -103,15 +96,12 @@ export const updateTopicImage = async (req, res) => {
       },
       { new: true }
     );
-    res.json({ updatedTopicImage });
+    res.status(200).json({ message: "上傳圖片成功!", newImage });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 export const updateTopicInfo = async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
   try {
     const { category, topic, notes, thumbnail, id } = req.body;
     const updatedTopicImage = await TopicImage.findByIdAndUpdate(
@@ -131,9 +121,6 @@ export const updateTopicInfo = async (req, res) => {
 };
 
 export const deleteTopicImage = async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
   try {
     const { category, topic } = req.params;
     const deletedTopicImage = await TopicImage.findOneAndDelete({

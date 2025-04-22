@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home/Home.vue";
 import Draggable from "../components/Carousel/draggable.vue";
+import MasonryDemo from "../views/Portfolio/MasonryDemo.vue";
 import Portfolio from "../views/Portfolio/Portfolio.vue";
 import About from "../views/About/About.vue";
 import Login from "../views/Login/Login.vue";
@@ -13,10 +14,14 @@ const routes = [
     props: true,
   },
   {
-    path: "/portfolio/",
+    path: "/portfolio",
     name: "Portfolio",
     component: Portfolio,
-    props: true,
+  },
+  {
+    path: "/portfolio/:category",
+    name: "PortfolioCategory",
+    component: Portfolio,
   },
   {
     path: "/about",
@@ -39,7 +44,7 @@ const routes = [
   {
     path: "/draggable",
     name: "Draggable",
-    component: Draggable,
+    component: MasonryDemo,
     props: true,
   },
 ];

@@ -3,41 +3,41 @@ import { updateImage } from "../cloudinaryApi/ImgApi.js";
 
 export const getSectionImages = async (req, res) => {
   try {
-    const SectionImages = await SectionImage.find({});
-    res.json({ SectionImages });
+    const sectionImages = await SectionImage.find({});
+    res.status(200).json({ sectionImages });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message || "取得圖片失敗" });
   }
 };
 
 export const updateSectionImage = async (req, res) => {
   try {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    console.log("後端");
-
     const { folder1, folder2 = "" } = req.params;
     const { title, id, publicID = "" } = req.query;
 
-    const filepath = req.file.path;
-    console.log(filepath);
-    const filterPublicID = publicID.replace("Pai/views/home/sections/", "");
-    console.log(filterPublicID);
+    const filepath = req.file?.path;
+    if (!filepath) {
+      return res.status(400).json({ message: "缺少圖片檔案" });
+    }
+
+    const trimmedPublicID = publicID.replace("Pai/views/home/sections/", "");
     const imageData = await updateImage(
       folder1,
       folder2,
       filepath,
-      filterPublicID
+      trimmedPublicID
     );
+
+    if (imageData.error) {
+      return res.status(500).json({ message: imageData.error });
+    }
+
     const newUrl = imageData.secure_url.replace(
       "/upload/",
       "/upload/f_auto,q_auto,w_1440/"
     );
-    if (imageData.error) {
-      return res.status(500).json({ message: imageData.error });
-    }
-    const response = await SectionImage.findByIdAndUpdate(
+
+    const updatedImage = await SectionImage.findByIdAndUpdate(
       id,
       {
         imageURL: newUrl,
@@ -46,58 +46,43 @@ export const updateSectionImage = async (req, res) => {
       },
       { new: true }
     );
-    console.log(response);
-    res.status(200).json({ message: "上傳圖片成功!" });
+
+    res.status(200).json({ message: "上傳圖片成功!", updatedImage });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message || "圖片更新失敗" });
   }
 };
 
 export const updateSectionName = async (req, res) => {
   try {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    console.log("後端");
     const { title, id } = req.body;
-    console.log(title, id);
-    const response = await SectionImage.findByIdAndUpdate(
+    const updatedSection = await SectionImage.findByIdAndUpdate(
       id,
-      {
-        title: title,
-      },
+      { title },
       { new: true }
     );
-    console.log(response);
-    res.status(200).json({ message: "更改Seciton名稱成功!" });
+    res.status(200).json({ message: "更改 Section 名稱成功!", updatedSection });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message || "名稱更新失敗" });
   }
 };
 
 export const adjustOffsetY = async (req, res) => {
   try {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
     console.log("後端");
-    console.log(req);
+
     const { id, offsetY } = req.body;
     console.log(id, offsetY);
 
-    const response = await SectionImage.findByIdAndUpdate(
+    const updatedSection = await SectionImage.findByIdAndUpdate(
       id,
-      {
-        offsetY: offsetY,
-      },
+      { offsetY },
       { new: true }
     );
-    console.log(response);
-    res.status(200).json({ message: "調整成功!" });
+    console.log(updatedSection);
+
+    res.status(200).json({ message: "調整成功!", updatedSection });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message || "調整 Offset 失敗" });
   }
 };

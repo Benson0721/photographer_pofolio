@@ -13,13 +13,9 @@ export const useTopicStore = defineStore("topicStore", {
   }),
 
   actions: {
-    async fetchAllImages() {
-      this.topicImages = await getTopicImages();
-    },
-    async fetchImages(category: string) {
-      const Path = `portfolio/${category}`;
-
-      this.topicImages = await getTopicImages(Path);
+    async fetchImages(category: string | undefined) {
+      const folderPath = `portfolio`;
+      this.topicImages = await getTopicImages(folderPath, category);
     },
     async addImage(
       files: File[],

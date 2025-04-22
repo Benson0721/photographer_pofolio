@@ -62,14 +62,8 @@
       height: 100vh;
     }
     &__image {
-      width: 100%;
-      filter: grayscale(100%) blur(3px);
-      transition: filter 0.5s ease-in;
-      &:hover {
-        filter: none;
-      }
       &-wrapper {
-        filter: none;
+        padding: 0;
         &:hover {
           padding: 0;
         }

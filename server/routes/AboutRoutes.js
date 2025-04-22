@@ -8,9 +8,16 @@ import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();
 
+const checkAuth = (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  next();
+};
+
 router
   .route("/about/:folder1")
   .get(getAboutImages)
-  .put(upload.single("image"), updateAboutImage)
-  .patch(adjustOffsetY);
+  .put(checkAuth, upload.single("image"), updateAboutImage)
+  .patch(checkAuth, adjustOffsetY);
 export { router };

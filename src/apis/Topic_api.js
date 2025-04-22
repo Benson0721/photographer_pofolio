@@ -2,9 +2,12 @@ import axios from "axios";
 
 const baseURL = window.location.origin;
 
-export const getTopicImages = async (folderPath = "") => {
-  const response = await axios.get(`${baseURL}/api/topic/${folderPath}`);
-  console.log(response);
+export const getTopicImages = async (folderPath = "", category = "") => {
+  const response = await axios.get(`${baseURL}/api/topic/${folderPath}`, {
+    params: {
+      category,
+    },
+  });
   if (response.status === 200) {
     return response.data.topicImages;
   }

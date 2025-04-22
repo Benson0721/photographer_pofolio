@@ -33,14 +33,17 @@ defineProps<{
             :height="imageSizes[index]?.height"
             :curOffsetY="image.offsetY"
           />
-          <img
-            :src="image?.imageURL"
-            alt=""
-            class="category-section__image"
-            :style="{
-              top: `${image.offsetY}px`,
-            }"
-          />
+          <router-link :to="`/portfolio/${image.type}`">
+            <img
+              :src="image?.imageURL"
+              alt=""
+              class="category-section__image"
+              :style="{
+                top: `${image.offsetY}px`,
+              }"
+              draggable="false"
+            />
+          </router-link>
           <div class="category-section__content">
             <h2
               class="category-section__title text-white font-playfair text-[28px] md:text-[40px] lg:text-[56px]"

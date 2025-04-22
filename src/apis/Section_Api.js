@@ -6,7 +6,7 @@ export const getSectionImages = async (folderPath) => {
   const response = await axios.get(`${baseURL}/api/section/${folderPath}`);
   console.log(response);
   if (response.status === 200) {
-    return response.data.SectionImages;
+    return response.data.sectionImages;
   }
   return { error: "Failed to fetch images" };
 };

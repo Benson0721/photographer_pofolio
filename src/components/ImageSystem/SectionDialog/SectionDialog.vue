@@ -5,7 +5,7 @@ import { ref, watch, defineProps, computed } from "vue";
 import { useIsDesktop } from "../../../utils/useIsDesktop";
 import { useDragHandler } from "../../../utils/useDragHandler.ts";
 import { useUploadHandler } from "../../../utils/useUploadHandler.js";
-import ButtonArea from "../ButtonArea.vue";
+import ButtonArea from "./ButtonArea.vue";
 const {
   selectedFiles,
   previewUrls,
@@ -37,7 +37,7 @@ const { url, title, id, publicID, width, height, updateSizes, curOffsetY } =
   });
 
 const { offsetY, startDrag, onDrag, endDrag, isDragging } = useDragHandler(
-  400,
+  720,
   "section",
   id,
   curOffsetY
@@ -119,7 +119,7 @@ watch(isDragging, async () => {
 
 <template>
   <v-dialog
-    :max-width="isDesktop ? '60vw' : '100vw'"
+    :width="isDesktop ? '60vw' : '100vw'"
     @dragover="handleDragOver"
     @drop="handleDrop"
   >
@@ -147,10 +147,12 @@ watch(isDragging, async () => {
         <v-card-text> 以下是現有的分區圖片... </v-card-text>
         <div class="flex justify-center gap-2 flex-wrap">
           <div
-            @touchstart="startDrag"
-            @touchmove="onDrag"
+            @mousedown="startDrag"
+            @mousemove="onDrag"
             @mouseup="endDrag"
             @mouseleave="endDrag"
+            @touchstart="startDrag"
+            @touchmove="onDrag"
             @touchend="endDrag"
             class="relative overflow-hidden"
             :style="{ width: `${width}px`, height: `${height}px` }"
@@ -160,7 +162,8 @@ watch(isDragging, async () => {
               alt="previewImage"
               class="draggable-image"
               :style="{ top: `${offsetY}px` }"
-              draggable="true"
+              @dragstart.prevent
+              draggable="false"
               pre
             />
             <h2
@@ -220,5 +223,9 @@ watch(isDragging, async () => {
   width: 100%;
   user-select: none;
   transition: top 0.1s ease-out;
+  cursor: grab;
+}
+.draggable-image:active {
+  cursor: grabbing;
 }
 </style>

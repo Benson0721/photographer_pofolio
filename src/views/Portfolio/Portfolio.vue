@@ -1,55 +1,123 @@
 <script setup>
-import { useUserStore } from "@/stores/userPinia";
-import axios from "axios";
-import { onMounted } from "vue";
+import { onMounted, computed, ref } from "vue";
 import Navbar from "../../components/Navbar/Navbar.vue";
 import Footer from "../../components/Footer.vue";
 import NewTopic from "../../components/ImageSystem/PortfolioDialog/NewTopic.vue";
+import { useRoute } from "vue-router";
 import { useTopicStore } from "../../stores/topicPinia";
+import { useIsDesktop } from "../../utils/useIsDesktop";
+import { useSectionStore } from "../../stores/sectionPinia";
+import Handing from "../../components/Handing.vue";
+import "./Portfolio.scss";
+const isDesktop = useIsDesktop();
 const topicStore = useTopicStore();
-/*onMounted(async () => {
-  const userStore = useUserStore();
+const sectionStore = useSectionStore();
+const route = useRoute();
+const title = ref("Portfolio");
+const HeadingStyle = ref(
+  "mt-4 text-[48px] md:text-[72px] lg:text-[96px] font-playfair text-white text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+);
 
-  try {
-    const res = await axios.get("/api/checkAuth");
+const categorys = ref([
+  "All",
+  "Architecture",
+  "Landscape",
+  "Portrait",
+  "Street",
+  "Motocycle",
+  "Others",
+]);
+const loadImage = async () => {
+  const category = route.params.category;
+  title.value = category || "Portfolio";
 
-    if (res.data.isValid) {
-      userStore.setLogin(res.data.userInfo); // ✅ 更新登入狀態
-    } else {
-      userStore.logout();
-    }
-  } catch (error) {
-    console.error("Session check failed:", error);
-    userStore.logout();
+  if (category && category !== "All") {
+    await topicStore.fetchImages(category);
+  } else {
+    await topicStore.fetchImages();
   }
-});*/
+};
+
+const backgroundStyle = computed(() => {
+  if (isDesktop) {
+    return {
+      backgroundImage: `url(${topicStore.topicImages[0]?.imageURL})`,
+    };
+  }
+  return {};
+});
+
+onMounted(() => {
+  loadImage();
+});
 </script>
 <template>
-  <main>
+  <main class="portfolio__bg transition" :style="backgroundStyle">
     <Navbar />
-    <div class="portfolio">
-      <h1>Portfolio</h1>
-      <div
-        class=""
-        v-for="topicImage in topicStore.topicImages"
-        :key="topicImage._id"
-      >
-        <div class="flex">
-          <div class="">
-            <img
-              :src="topicImage.imageURL"
-              alt="topic"
-              class="w-full h-auto object-cover"
-            />
-          </div>
-          <div class="">
-            <p>{{ topicImage.topic }}</p>
-            <p>{{ topicImage.notes }}</p>
-          </div>
-        </div>
-      </div>
+    <div class="portfolio__banner relative md:static">
+      <img
+        v-if="!isDesktop"
+        :src="topicStore.topicImages[0]?.imageURL"
+        alt="portfolio"
+        class="w-full h-auto object-cover md:hidden"
+      />
+      <Handing v-model:title="title" :HeadingStyle="HeadingStyle" />
       <NewTopic />
     </div>
+    <div class="portfolio__category">
+      <div class="portfolio__category__list">
+        <button
+          v-for="(category, index) in categorys"
+          :key="index"
+          class="portfolio__category__list__item font-noto textShadow"
+          :class="{
+            'portfolio__category__list__item--active':
+              route.params.category === category,
+          }"
+          @click="
+            () => {
+              route.params.category = category;
+              title = category;
+              loadImage();
+            }
+          "
+        >
+          {{ category }}
+        </button>
+      </div>
+    </div>
+    <div class="portfolio__gallery">
+      <masonry-wall
+        :items="topicStore.topicImages"
+        :ssr-columns="1"
+        :column-width="600"
+        :gap="16"
+      >
+        <template #default="{ item, index }">
+          <div class="portfolio__gallery__image" :key="index">
+            <img
+              :src="item.imageURL"
+              alt="portfolio"
+              class="w-full h-auto object-cover"
+              loading="lazy"
+            />
+            <div class="portfolio__gallery__image__info">
+              <p
+                class="text-[24px] md:text-[36px] lg:text-[48px] font-playfair text-white text-center"
+              >
+                {{ item.topic }}
+              </p>
+              <p
+                class="text-[14px] md:text-[18px] lg:text-[20px] font-playfair text-white text-center"
+              >
+                {{ item.notes }}
+              </p>
+            </div>
+          </div>
+        </template>
+      </masonry-wall>
+    </div>
+
     <Footer />
   </main>
 </template>

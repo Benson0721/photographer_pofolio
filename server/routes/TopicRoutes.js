@@ -11,13 +11,20 @@ import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();
 
-router.route("/topic").get(getAllTopicImages).patch(updateTopicInfo);
+const checkAuth = (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  next();
+};
+
+router.route("/topic").patch(checkAuth, updateTopicInfo);
 
 router
   .route("/topic/:folder1")
   .get(getTopicImages)
-  .post(upload.single("image"), addTopicImage)
-  .put(upload.single("image"), updateTopicImage)
-  .delete(deleteTopicImage);
+  .post(checkAuth, upload.single("image"), addTopicImage)
+  .put(checkAuth, upload.single("image"), updateTopicImage)
+  .delete(checkAuth, deleteTopicImage);
 
 export { router };

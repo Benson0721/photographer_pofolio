@@ -42,17 +42,22 @@ export const updateImage = async (
 
 export const addImages = async (folder1, folder2 = "", filePath) => {
   try {
+    console.log(folder1, folder2, filePath);
+    const options = {
+      folder: `Pai/views/${folder1}/${folder2}`,
+      resource_type: "image",
+    };
+    if (filePath != Array) {
+      const result = await cloudinary.uploader.upload(filePath, options);
+      return result;
+    }
     const uploadPromises = filePath.map(async (path) => {
-      const options = {
-        folder: `Pai/views/${folder1}/${folder2}`,
-        resource_type: "image",
-      };
       const result = await cloudinary.uploader.upload(path, options);
       return result;
     });
     const results = await Promise.all(uploadPromises);
     console.log(
-      "批量圖片上傳成功：",
+      "圖片上傳成功：",
       results.map((r) => r.secure_url)
     );
     return results;
@@ -67,7 +72,6 @@ export const deleteImages = async (publicId) => {
     const result = await cloudinary.uploader.destroy(publicId, {
       resource_type: "image",
     });
-    console.log(result);
     return result;
   } catch (error) {
     return { error: error.message };

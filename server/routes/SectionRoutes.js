@@ -9,12 +9,19 @@ import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();
 
-router.route("/section").patch(updateSectionName);
+const checkAuth = (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  next();
+};
+
+router.route("/section").patch(checkAuth, updateSectionName);
 
 router
   .route("/section/:folder1/:folder2")
   .get(getSectionImages)
-  .put(upload.single("image"), updateSectionImage)
-  .patch(adjustOffsetY);
+  .put(checkAuth, upload.single("image"), updateSectionImage)
+  .patch(checkAuth, adjustOffsetY);
 
 export { router };

@@ -24,7 +24,7 @@ import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { VueDraggable } from "vue-draggable-plus";
 import { VFileUpload } from "vuetify/labs/VFileUpload";
-
+import MasonryWall from "@yeger/vue-masonry-wall";
 const vuetify = createVuetify({
   components: {
     ...components,
@@ -42,6 +42,7 @@ createApp(App)
   .use(vuetify)
   .use(VueDraggable)
   .use(pinia)
+  .use(MasonryWall)
   .use(plugin, defaultConfig(config))
   .component("FontAwesomeIcon", FontAwesomeIcon)
   .mount("#app");
