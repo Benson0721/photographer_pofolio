@@ -1,11 +1,9 @@
 import express from "express";
 import {
   getTopicImages,
-  getAllTopicImages,
   addTopicImage,
   updateTopicImage,
   deleteTopicImage,
-  updateTopicInfo,
 } from "../controllers/portfolioApi/TopicApi.js";
 import multer from "multer";
 const upload = multer({ dest: "uploads/" });
@@ -17,8 +15,6 @@ const checkAuth = (req, res, next) => {
   }
   next();
 };
-
-router.route("/topic").patch(checkAuth, updateTopicInfo);
 
 router
   .route("/topic/:folder1")

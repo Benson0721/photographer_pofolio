@@ -34,43 +34,32 @@ export const useTopicStore = defineStore("topicStore", {
       console.log(res);
       return res;
     },
-    async updateImage(
-      files: File[],
-      topic: string,
-      notes: string,
-      id: string,
-      publicID: string
-    ) {
-      const sectionPath = `portfolio/${r}`;
+    async updateImage(newData: {
+      image: File[];
+      category: string;
+      topic: string;
+      notes: string;
+      publicID: string;
+      id: string;
+    }) {
+      const path = "portfolio";
 
+      const { image } = newData;
       const formData = new FormData();
-      files.forEach((file) => {
+      image.forEach((file) => {
         formData.append(`image`, file);
       });
-      console.log(formData);
-      console.log("前端");
-      const res = await updateTopicImage(
-        sectionPath,
-        formData,
-        topic,
-        notes,
-        id,
-        publicID
-      );
+
+      formData.append("newData", JSON.stringify(newData));
+      const res = await updateTopicImage(path, formData);
       console.log(res);
       return res;
-    },
-
-    async updateTopicInfo(id: string, title: string) {
-      const response = await updateTopicInfo(id, title);
-      console.log(response);
-      return response;
     },
     async deleteImage(public_Id: string, id: string) {
       this.topicImages = this.topicImages.filter(
         (image) => image.public_id !== public_Id
       );
-      const sectionPath = "home/sections";
+      const sectionPath = "portfolio";
       const res = await deleteTopicImage(sectionPath, public_Id, id);
       return res;
     },

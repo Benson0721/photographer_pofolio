@@ -34,25 +34,10 @@ export const addTopicImage = async (folderPath, formData, info) => {
   return { error: "Failed to fetch images" };
 };
 
-export const updateTopicImage = async (
-  folderPath,
-  formData,
-  topic,
-  notes,
-  id,
-  publicID
-) => {
+export const updateTopicImage = async (folderPath, formData) => {
   const response = await axios.put(
     `${baseURL}/api/topic/${folderPath}`,
-    formData,
-    {
-      params: {
-        topic,
-        notes,
-        id,
-        publicID,
-      },
-    }
+    formData
   );
   console.log(response);
   if (response.status === 200) {
@@ -77,8 +62,10 @@ export const updateTopicInfo = async (id, topic, notes) => {
 export const deleteTopicImage = async (folderPath, publicId, id) => {
   console.log("前端");
   const response = await axios.delete(`${baseURL}/api/topic/${folderPath}`, {
-    publicId,
-    id,
+    params: {
+      publicId,
+      id,
+    },
   });
   console.log(response);
   if (response.status === 200) {

@@ -14,13 +14,8 @@ const routes = [
     props: true,
   },
   {
-    path: "/portfolio",
-    name: "Portfolio",
-    component: Portfolio,
-  },
-  {
     path: "/portfolio/:category",
-    name: "PortfolioCategory",
+    name: "Portfolio",
     component: Portfolio,
   },
   {

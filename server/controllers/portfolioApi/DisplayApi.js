@@ -26,6 +26,7 @@ export const deleteDisplayImage = async (req, res) => {
   }
   try {
     const { displayID } = req.params;
+    
     const deletedDisplayImage = await DisplayImage.findOneAndDelete({
       _id: displayID,
     });

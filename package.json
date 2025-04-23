@@ -12,6 +12,7 @@
   "dependencies": {
     "@duskmoon/vue3-typed-js": "^0.0.4",
     "@emailjs/browser": "^4.4.1",
+    "@formkit/addons": "^1.6.9",
     "@formkit/vue": "^1.6.9",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",

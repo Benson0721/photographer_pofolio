@@ -1,5 +1,9 @@
 import { TopicImage } from "../../models/TopicImageSchema.js";
-import { addImages } from "../cloudinaryApi/ImgApi.js";
+import {
+  addImages,
+  updateImage,
+  deleteImages,
+} from "../cloudinaryApi/ImgApi.js";
 
 export const getAllTopicImages = async (req, res) => {
   try {
@@ -53,6 +57,7 @@ export const addTopicImage = async (req, res) => {
       topic,
       notes,
       imageURL: newUrl,
+      public_id: imageData.public_id,
     });
     await newTopicImage.save();
     res.json({ newTopicImage });
@@ -62,59 +67,43 @@ export const addTopicImage = async (req, res) => {
 };
 export const updateTopicImage = async (req, res) => {
   try {
-    const { category, topic, notes, thumbnail, publicID, id } = req.body;
+    console.log(req.body);
+    const { newData } = req.body;
+    const parsedData = JSON.parse(newData);
+    const { category, topic, notes, id, publicID } = parsedData;
     const { folder1, folder2 = "" } = req.params;
+    const updateData = { category: category, topic: topic, notes: notes };
+    if (req.file?.path) {
+      const filepath = req.file.path;
+      const filterPublicID = publicID.replace(
+        `Pai/views/portfolio/${category}/`,
+        ""
+      );
+      console.log(filterPublicID);
 
-    const filepath = req.file.path;
-    console.log(filepath);
-    const filterPublicID = publicID.replace(
-      `Pai/views/portfolio/${category}/`,
-      ""
-    );
-    console.log(filterPublicID);
-    const imageData = await updateImage(
-      folder1,
-      folder2,
-      filepath,
-      filterPublicID
-    );
-    const newUrl = imageData.secure_url.replace(
-      "/upload/",
-      "/upload/f_auto,q_auto,w_1440/"
-    );
-    if (imageData.error) {
-      return res.status(500).json({ message: imageData.error });
+      const imageData = await updateImage(
+        folder1,
+        category,
+        filepath,
+        filterPublicID
+      );
+
+      if (imageData.error) {
+        return res.status(500).json({ message: imageData.error });
+      }
+
+      const newUrl = imageData.secure_url.replace(
+        "/upload/",
+        "/upload/f_auto,q_auto,w_1440/"
+      );
+      updateData.imageURL = newUrl;
     }
-    const newImage = await TopicImage.findByIdAndUpdate(
-      id,
-      {
-        category,
-        topic,
-        notes,
-        thumbnail,
-        imageURL: newUrl,
-      },
-      { new: true }
-    );
-    res.status(200).json({ message: "上傳圖片成功!", newImage });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-export const updateTopicInfo = async (req, res) => {
-  try {
-    const { category, topic, notes, thumbnail, id } = req.body;
-    const updatedTopicImage = await TopicImage.findByIdAndUpdate(
-      id,
-      {
-        category,
-        topic,
-        notes,
-        thumbnail,
-      },
-      { new: true }
-    );
-    res.json({ updatedTopicImage });
+
+    const updatedImage = await TopicImage.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
+
+    res.status(200).json({ message: "更新資料成功!", updatedImage });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -122,11 +111,9 @@ export const updateTopicInfo = async (req, res) => {
 
 export const deleteTopicImage = async (req, res) => {
   try {
-    const { category, topic } = req.params;
-    const deletedTopicImage = await TopicImage.findOneAndDelete({
-      category,
-      topic,
-    });
+    const { publicId, id } = req.query;
+    await deleteImages(publicId);
+    const deletedTopicImage = await TopicImage.findByIdAndDelete(id);
     res.json({ deletedTopicImage });
   } catch (error) {
     res.status(500).json({ message: error.message });

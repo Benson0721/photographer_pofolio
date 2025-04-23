@@ -93,7 +93,7 @@ const currentLogo = computed(() => {
         >Home</router-link
       >
       <router-link
-        to="/portfolio"
+        :to="{ name: 'Portfolio', params: { category: 'All' } }"
         class="font-bellefair cursor-pointer lg:text-xl textShadow"
         :class="route.path === '/portfolio' ? 'text-black' : 'text-white'"
         >Portfolio</router-link

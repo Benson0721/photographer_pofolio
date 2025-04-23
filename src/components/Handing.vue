@@ -2,7 +2,7 @@
 import { Typed } from "@duskmoon/vue3-typed-js";
 import type { TypedOptions } from "@duskmoon/vue3-typed-js";
 
-import { defineProps, ref } from "vue";
+import { defineProps, defineModel, ref, watch, computed } from "vue";
 
 const props = defineProps({
   title: String,
@@ -11,18 +11,27 @@ const props = defineProps({
   ContentStyle: String,
 });
 
+const category = defineModel<string>("category");
+
 const title = ref(props.title);
 const content = ref(props.content);
 
-const TitleOptions: TypedOptions = {
-  strings: [title.value || ""],
+watch(category, (newVal) => {
+  console.log(newVal);
+  if (newVal === "All") {
+    category.value = "Portfolio";
+  }
+});
+
+const TitleOptions = computed<TypedOptions>(() => ({
+  strings: [title.value || category.value || ""],
   loop: false,
   typeSpeed: 80,
   backSpeed: 25,
   backDelay: 1000,
   startDelay: 500,
   showCursor: false,
-};
+}));
 
 const ContentOptions: TypedOptions = {
   strings: [content.value || ""],
@@ -35,7 +44,7 @@ const ContentOptions: TypedOptions = {
 };
 </script>
 <template>
-  <Typed :options="TitleOptions">
+  <Typed :options="TitleOptions" :key="category">
     <h1 class="typing" :class="props.HeadingStyle || ''"></h1>
   </Typed>
   <Typed :options="ContentOptions">
