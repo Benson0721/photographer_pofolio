@@ -4,7 +4,7 @@ import {
   addCarouselImage,
   adjustCarouselOrder,
   deleteCarouselImage,
-} from "../controllers/homeApi/CarouselApi.js";
+} from "../controllers/homeApi/carousel-api.js";
 import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();

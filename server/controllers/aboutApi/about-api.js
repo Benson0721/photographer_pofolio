@@ -1,5 +1,5 @@
 import { AboutImage } from "../../models/AboutImageSchema.js";
-import { updateImage } from "../cloudinaryApi/ImgApi.js";
+import { updateImage } from "../cloudinaryApi/img-api.js";
 
 export const getAboutImages = async (req, res) => {
   try {

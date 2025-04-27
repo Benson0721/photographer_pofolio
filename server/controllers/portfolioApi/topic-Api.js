@@ -3,7 +3,7 @@ import {
   addImages,
   updateImage,
   deleteImages,
-} from "../cloudinaryApi/ImgApi.js";
+} from "../cloudinaryApi/img-api.js";
 
 export const getAllTopicImages = async (req, res) => {
   try {

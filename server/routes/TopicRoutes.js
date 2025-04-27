@@ -4,7 +4,7 @@ import {
   addTopicImage,
   updateTopicImage,
   deleteTopicImage,
-} from "../controllers/portfolioApi/TopicApi.js";
+} from "../controllers/portfolioApi/topic-Api.js";
 import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();

@@ -3,7 +3,7 @@ import {
   getDisplayImages,
   addDisplayImages,
   deleteDisplayImage,
-} from "../controllers/portfolioApi/DisplayApi.js";
+} from "../controllers/portfolioApi/display-api.js";
 import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();

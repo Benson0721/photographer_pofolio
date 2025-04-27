@@ -4,7 +4,7 @@ import {
   updateSectionImage,
   adjustOffsetY,
   updateSectionName,
-} from "../controllers/homeApi/SectionApi.js";
+} from "../controllers/homeApi/section-api.js";
 import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();

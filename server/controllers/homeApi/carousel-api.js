@@ -1,5 +1,5 @@
 import { CarouselImage } from "../../models/CarouselImageSchema.js";
-import { addImages, deleteImages } from "../cloudinaryApi/ImgApi.js";
+import { addImages, deleteImages } from "../cloudinaryApi/img-api.js";
 
 export const getCarouselImages = async (req, res) => {
   try {
@@ -12,9 +12,7 @@ export const getCarouselImages = async (req, res) => {
 
 export const adjustCarouselOrder = async (req, res) => {
   try {
-
     const newOrderArray = req.body;
-
 
     const bulkOps = newOrderArray.map((item) => ({
       updateOne: {

@@ -1,5 +1,5 @@
 import { SectionImage } from "../../models/SectionImageSchema.js";
-import { updateImage } from "../cloudinaryApi/ImgApi.js";
+import { updateImage } from "../cloudinaryApi/img-api.js";
 
 export const getSectionImages = async (req, res) => {
   try {

@@ -4,7 +4,7 @@ import {
   addImages,
   updateImage,
   deleteImages,
-} from "../controllers/cloudinaryApi/ImgApi.js";
+} from "../controllers/cloudinaryApi/img-api.js";
 import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 const router = express.Router();
