@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import "./About.scss";
 import {
-  defineProps,
   ref,
   onMounted,
   onBeforeUnmount,
@@ -20,6 +19,9 @@ import AboutDialog from "../../components/ImageSystem/AboutDialog/AboutDialog.vu
 import { AboutImage } from "../../types/apiType";
 import { useAboutStore } from "../../stores/aboutPinia";
 import { useIsDesktop } from "../../utils/useIsDesktop";
+import { useImageSizeList } from "../../utils/useImageSizeList";
+
+const { imageRefs, imageSizes, updateSizes } = useImageSizeList();
 
 const isDesktop = useIsDesktop();
 const route = useRoute();
@@ -156,6 +158,7 @@ onMounted(async () => {
   await nextTick(() => {
     observerFunc();
     socialFunc();
+    updateSizes();
   });
 
   if (route.hash) {
@@ -183,6 +186,7 @@ console.log(isAboutPastScroll.value);
       <img
         v-if="!isDesktop"
         :src="imageMap['about']?.imageURL"
+        :ref="(el) => (imageRefs['about'] = el)"
         alt="about"
         class="w-full h-auto object-cover md:hidden"
       />
@@ -190,27 +194,29 @@ console.log(isAboutPastScroll.value);
       <AboutDialog
         :url="imageMap['about']?.imageURL"
         :publicID="imageMap['about']?.public_id"
+        :id="imageMap['about']?._id"
+        :width="imageSizes['about']?.width"
+        :height="imageSizes['about']?.height"
       />
     </div>
     <div class="bg-amber-50">
       <div class="about" id="about">
         <div
-          class="about__pai relative"
+          class="about__pai h-[250px] md:h-full relative mt-5"
           :class="{ 'fade-controller': isAboutPastScroll }"
         >
           <img
             :src="imageMap['pai']?.imageURL"
             alt="攝影師帥哥本人"
-            class="w-full h-full object-cover hidden md:block"
-          />
-          <img
-            :src="imageMap['pai']?.imageURL"
-            alt="攝影師帥哥本人"
-            class="w-full h-full object-cover md:hidden"
+            class="w-full h-full object-cover"
+            :ref="(el) => (imageRefs['pai'] = el)"
           />
           <AboutDialog
             :url="imageMap['pai']?.imageURL"
             :publicID="imageMap['pai']?.public_id"
+            :id="imageMap['pai']?._id"
+            :width="imageSizes['pai']?.width"
+            :height="imageSizes['pai']?.height"
           />
         </div>
         <div
@@ -220,15 +226,15 @@ console.log(isAboutPastScroll.value);
           <div
             class="px-4 h-full text-[1rem] md:text-[1.03rem] lg:text-[1.5rem] text-black font-noto"
           >
-            <div class="my-4 lg:my-16">
+            <div class="my-4 md:my-8 lg:my-18">
               我是白承智，一位專注於人像、街拍、風景與建築攝影的創作者。
             </div>
             <div>喜歡以機車旅行的方式探索城市與自然，</div>
             <div>將每段路途中的片刻，以影像記錄下來。</div>
-            <div class="my-4 lg:my-16">
+            <div class="my-4 md:my-8 lg:my-18">
               我的攝影風格注重光影與情緒，致力於捕捉被攝者最自然的狀態，同時也關注城市脈動與空間構造所呈現的美學。
             </div>
-            <div class="my-4 lg:my-16">
+            <div class="my-4 md:my-8 lg:my-18">
               若你對我的影像有共鳴，或希望合作拍攝，歡迎與我聯繫。
             </div>
           </div>
@@ -237,30 +243,29 @@ console.log(isAboutPastScroll.value);
       </div>
       <div class="flex flex-col md:flex-row mt-4" id="contact">
         <div
-          class="relative flex-1/3 md:order-2"
+          class="relative h-[250px] md:h-full md:order-2 md:flex-2/5"
           :class="{ 'fade-controller': isContactPastScroll }"
         >
           <img
             :src="imageMap['moto']?.imageURL"
             alt="moto"
-            class="w-full h-full object-cover hidden md:block"
-          />
-          <img
-            :src="imageMap['moto']?.imageURL"
-            alt="moto--mobile"
-            class="w-full h-full object-cover md:hidden"
+            class="w-full h-full object-cover"
+            :ref="(el) => (imageRefs['moto'] = el)"
           />
           <AboutDialog
             :url="imageMap['moto']?.imageURL"
             :publicID="imageMap['moto']?.public_id"
+            :id="imageMap['moto']?._id"
+            :width="imageSizes['moto']?.width"
+            :height="imageSizes['moto']?.height"
           />
         </div>
         <div
-          class="flex flex-col items-center mt-4 p-4 md:p-8 lg:p-12 relative flex-2/3 md:order-1"
+          class="flex flex-col items-center p-4 md:p-8 lg:p-12 relative md:flex-3/5 md:order-1"
           :class="{ 'fade-controller': isContactPastScroll }"
         >
           <h2
-            class="mt-4 mb-16 text-[48px] md:text-[72px] font-playfair text-black text-center"
+            class="mb-16 text-[48px] md:text-[72px] font-playfair text-black text-center"
           >
             Contact
           </h2>

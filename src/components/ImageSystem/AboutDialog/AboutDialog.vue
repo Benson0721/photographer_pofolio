@@ -1,9 +1,11 @@
 <script setup>
 import { useUserStore } from "../../../stores/userPinia.js";
 import { ref, watch, defineProps, computed } from "vue";
-import { useUploadHandler } from "../../../utils/useUploadHandler";
+import { useUploadHandler } from "../../../utils/useUploadHandler.ts";
 import { useAboutStore } from "../../../stores/aboutPinia";
 import { useIsDesktop } from "../../../utils/useIsDesktop.js";
+import Loading from "../../Loading.vue";
+
 const { isDesktop } = useIsDesktop();
 const aboutStore = useAboutStore();
 const {
@@ -16,12 +18,15 @@ const {
 } = useUploadHandler();
 const userStore = useUserStore();
 
+const isLoading = ref(false);
+const loadingmessage = ref("");
 const errormessage = ref("");
 const successmessage = ref("");
 
-const { url, publicID, width, height } = defineProps({
+const props = defineProps({
   url: String,
   publicID: String,
+  id: String,
   width: Number,
   height: Number,
 });
@@ -34,14 +39,22 @@ const handleUpload = async () => {
   if (selectedFiles.value.length === 0) return;
   try {
     console.log("upload image");
-    console.log(selectedFiles.value, publicID);
-    const res = await aboutStore.updateImage(selectedFiles.value, publicID);
+    console.log(selectedFiles.value, props.publicID, props.id);
+    isLoading.value = true;
+    loadingmessage.value = "更新圖片中...";
+    const message = await aboutStore.updateImage(
+      selectedFiles.value,
+      props.publicID,
+      props.id
+    );
     resetUpload();
-    successmessage.value = res.data.message;
+    isLoading.value = false;
+    successmessage.value = message;
     await aboutStore.fetchImages();
   } catch (error) {
     errormessage.value = error?.response?.data?.message;
     resetUpload();
+    isLoading.value = false;
     await aboutStore.fetchImages();
     console.error(error);
     console.error("上傳失敗：", error?.response?.data?.message);
@@ -52,7 +65,7 @@ const previewImage = computed(() => {
   if (previewUrls?.value.length > 0) {
     return previewUrls.value[0].src;
   }
-  return url;
+  return props.url;
 });
 
 watch(previewUrls, () => {
@@ -62,6 +75,9 @@ watch(previewUrls, () => {
 watch(handleOpen, () => {
   errormessage.value = ""; // 切換模式時清空錯誤訊息
   successmessage.value = "";
+});
+watch(props, () => {
+  console.log(props);
 });
 </script>
 
@@ -85,7 +101,8 @@ watch(handleOpen, () => {
     </template>
 
     <template #default="{ isActive }">
-      <v-card title="編輯分區圖片" class="p-4">
+      <v-card title="編輯圖片" class="p-4">
+        <Loading :isLoading="isLoading" :loadingmessage="loadingmessage" />
         <v-card-text class="text-red-500" v-if="errormessage">{{
           errormessage
         }}</v-card-text>
@@ -93,17 +110,16 @@ watch(handleOpen, () => {
           successmessage
         }}</v-card-text>
         <v-card-text> 以下是現有的圖片... </v-card-text>
-        <div class="flex gap-2 flex-wrap">
-          <div
-            class="relative object-contain"
-            :style="{ width: `${width}px`, height: `${height}px` }"
-          >
-            <div
-              class="category-section__image--dialog"
-              :style="`background-image: url(${previewImage})`"
-            ></div>
-          </div>
+        <div
+          class="flex gap-2 flex-wrap my-2"
+          :style="{
+            width: `${props.width}px`,
+            height: `${props.height}px`,
+          }"
+        >
+          <img :src="previewImage" alt="previewImage" draggable="false" />
         </div>
+
         <v-card-actions>
           <div class="flex w-full h-[75px] items-center relative">
             <v-file-input

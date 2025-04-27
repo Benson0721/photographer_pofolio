@@ -16,10 +16,18 @@ export const updateAboutImage = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
     const { folder1 } = req.params;
-    const { publicID } = req.query;
+    const { publicID, id } = req.query;
+    console.log("id:", id);
+    console.log("publicID:", publicID);
     const filepath = req.file.path;
     const filterPublicID = publicID.replace("Pai/views/about/", "");
-    const imageData = await updateImage(folder1, filepath, filterPublicID);
+    const imageData = await updateImage(
+      folder1,
+      undefined,
+      filepath,
+      filterPublicID
+    );
+    console.log(imageData);
     const newUrl = imageData.secure_url.replace(
       "/upload/",
       "/upload/f_auto,q_auto,w_1440/"
@@ -35,7 +43,7 @@ export const updateAboutImage = async (req, res) => {
       },
       { new: true }
     );
-    res.status(200).json({ message: "上傳圖片成功!" });
+    res.status(200).json({ message: "更新圖片成功!" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });

@@ -38,13 +38,12 @@ export const addTopicImage = async (req, res) => {
   try {
     const { category, topic, notes } = req.query;
     console.log("後端");
-    console.log(req.body);
     console.log(category, topic, notes);
     const { folder1 } = req.params;
     const filepath = req.file.path;
 
     const imageData = await addImages(folder1, category, filepath);
-    console.log(imageData);
+    console.log("imageData:", imageData);
     if (imageData.error) {
       return res.status(500).json({ message: imageData.error });
     }
@@ -60,7 +59,7 @@ export const addTopicImage = async (req, res) => {
       public_id: imageData.public_id,
     });
     await newTopicImage.save();
-    res.json({ newTopicImage });
+    res.status(200).json({ message: "新增主題成功!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

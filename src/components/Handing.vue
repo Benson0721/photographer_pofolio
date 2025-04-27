@@ -12,6 +12,8 @@ const props = defineProps({
 });
 
 const category = defineModel<string>("category");
+const topic = defineModel<string>("topic");
+const notes = defineModel<string>("notes");
 
 const title = ref(props.title);
 const content = ref(props.content);
@@ -23,8 +25,16 @@ watch(category, (newVal) => {
   }
 });
 
+watch(topic, (newVal) => {
+  console.log(newVal);
+});
+
+watch(notes, (newVal) => {
+  console.log(newVal);
+});
+
 const TitleOptions = computed<TypedOptions>(() => ({
-  strings: [title.value || category.value || ""],
+  strings: [title.value || topic.value || category.value || ""],
   loop: false,
   typeSpeed: 80,
   backSpeed: 25,
@@ -33,21 +43,21 @@ const TitleOptions = computed<TypedOptions>(() => ({
   showCursor: false,
 }));
 
-const ContentOptions: TypedOptions = {
-  strings: [content.value || ""],
+const ContentOptions = computed<TypedOptions>(() => ({
+  strings: [content.value || notes.value || ""],
   loop: false,
   typeSpeed: 100,
   backSpeed: 25,
   backDelay: 1000,
   startDelay: 1500,
   showCursor: false,
-};
+}));
 </script>
 <template>
-  <Typed :options="TitleOptions" :key="category">
+  <Typed :options="TitleOptions" :key="category || topic">
     <h1 class="typing" :class="props.HeadingStyle || ''"></h1>
   </Typed>
-  <Typed :options="ContentOptions">
+  <Typed :options="ContentOptions" :key="notes || content">
     <p class="typing" :class="props.ContentStyle || ''"></p>
   </Typed>
 </template>

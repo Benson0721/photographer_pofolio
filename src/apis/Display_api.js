@@ -1,8 +1,10 @@
 import axios from "axios";
 const baseURL = window.location.origin;
 
-export const getDisplayImages = async (folderPath) => {
-  const response = await axios.get(`${baseURL}/api/display/${folderPath}`);
+export const getDisplayImages = async (folderPath, topicID) => {
+  const response = await axios.get(`${baseURL}/api/display/${folderPath}`, {
+    params: { topicID },
+  });
   if (response.status === 200) {
     return response.data.displayImages;
   }
@@ -20,9 +22,9 @@ export const addDisplayImage = async (folderPath, formData) => {
       },
     }
   );
-  console.log(response);
+  console.log(response.data.message);
   if (response.status === 200) {
-    return response;
+    return response.data.message;
   }
   return { error: response.data.error };
 };
@@ -34,7 +36,7 @@ export const deleteDisplayImage = async (folderPath, publicId, id) => {
   });
   console.log(response);
   if (response.status === 200) {
-    return response;
+    return response.data.message;
   }
-  return { error: "Failed to add images" };
+  return { error: response.data.error };
 };

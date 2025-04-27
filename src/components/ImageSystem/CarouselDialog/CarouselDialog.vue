@@ -6,7 +6,7 @@ import ButtonArea from "./ButtonArea.vue";
 import OrderMode from "./OrderMode.vue";
 import UploadMode from "./UploadMode.vue";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { useUploadHandler } from "../../../utils/useUploadHandler.js";
+import { useUploadHandler } from "../../../utils/useUploadHandler.ts";
 import { useIsDesktop } from "../../../utils/useIsDesktop.js";
 const {
   selectedFiles,
@@ -25,9 +25,7 @@ const successmessage = ref("");
 const loadingmessage = ref("");
 const isLoading = ref(false);
 
-const props = defineProps({
-  currentImage: Number,
-  isDesktop: Boolean,
+defineProps({
   orderMode: Boolean,
   uploadMode: Boolean,
   deleteMode: Boolean,
@@ -39,6 +37,10 @@ const resetMode = () => {
   previewUrls.value = [];
   selectedFiles.value = [];
   carouselStore.fetchImages();
+  errormessage.value = "";
+  successmessage.value = "";
+  loadingmessage.value = "";
+  isLoading.value = false;
 };
 
 const handleUpload = async () => {
@@ -128,15 +130,7 @@ watch(editMode, () => {
 
     <template #default="{ isActive }">
       <v-card title="編輯輪播圖片" class="p-4 relative">
-        <div
-          v-if="isLoading"
-          class="flex items-center absolute top-1/10 right-1/8"
-        >
-          <div
-            class="spinner border-4 border-gray-200 border-t-blue-500 rounded-full w-5 h-5 animate-spin"
-          ></div>
-          <span class="ml-2 text-gray-500 text-sm">載入中...</span>
-        </div>
+        <Loading :isLoading="isLoading" :loadingmessage="loadingmessage" />
         <v-card-text
           class="text-red-500 absolute top-1/10 right-1/8"
           v-if="errormessage"

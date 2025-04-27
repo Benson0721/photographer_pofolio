@@ -31,9 +31,9 @@ export const updateSectionImage = async (
   );
   console.log(response);
   if (response.status === 200) {
-    return response;
+    return response.data.message;
   }
-  return { error: "Failed to fetch images" };
+  return { error: response.data.error };
 };
 
 export const adjustOffsetY = async (folderPath, id, offsetY) => {
@@ -44,9 +44,9 @@ export const adjustOffsetY = async (folderPath, id, offsetY) => {
   });
   console.log(response);
   if (response.status === 200) {
-    return response;
+    return response.data.message;
   }
-  return { error: "Failed to fetch images" };
+  return { error: response.data.error };
 };
 
 export const updateSectionName = async (id, title) => {
@@ -56,7 +56,7 @@ export const updateSectionName = async (id, title) => {
   });
   console.log(response);
   if (response.status === 200) {
-    return response;
+    return response.data.message;
   }
-  return { error: "Failed to fetch images" };
+  return { error: response.data.error };
 };

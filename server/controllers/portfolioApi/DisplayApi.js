@@ -1,8 +1,10 @@
 import { DisplayImage } from "../../models/DisplayImageSchema.js";
+import { addImages, deleteImages } from "../cloudinaryApi/ImgApi.js";
 
 export const getDisplayImages = async (req, res) => {
   try {
-    const { topicID } = req.params;
+    const { topicID } = req.query;
+    console.log(topicID);
     const displayImages = await DisplayImage.find({ topicID });
     res.json({ displayImages });
   } catch (error) {
@@ -12,9 +14,46 @@ export const getDisplayImages = async (req, res) => {
 
 export const addDisplayImages = async (req, res) => {
   try {
-    const { topicID } = req.params;
-    const displayImages = await DisplayImage.find({ topicID });
-    res.json({ displayImages });
+    const { topicID } = req.body;
+    const parsedTopicID = JSON.parse(topicID);
+    console.log("後端");
+    const { folder1, folder2 = "" } = req.params;
+    const files = req.files;
+    console.log(files);
+    const paths = files.map((file) => file.path);
+    const imageDatas = await addImages(folder1, folder2, paths);
+    console.log("imageDatas:", imageDatas);
+    if (imageDatas.error) {
+      return res.status(500).json({ message: imageDatas.error });
+    }
+    if (!Array.isArray(imageDatas)) {
+      console.log("object!");
+      const newUrl = imageDatas.secure_url.replace(
+        "/upload/",
+        "/upload/f_auto,q_auto,w_1440/"
+      );
+      const image = new DisplayImage({
+        imageURL: newUrl,
+        public_id: imageDatas.public_id,
+        topicID: parsedTopicID,
+      });
+      await image.save();
+    } else {
+      console.log("array!");
+      imageDatas.map(async (data) => {
+        const newUrl = data.secure_url.replace(
+          "/upload/",
+          "/upload/f_auto,q_auto,w_1440/"
+        );
+        const image = new DisplayImage({
+          imageURL: newUrl,
+          public_id: data.public_id,
+          topicID: parsedTopicID,
+        });
+        await image.save();
+      });
+    }
+    res.status(200).json({ message: "新增圖片成功!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -25,12 +64,13 @@ export const deleteDisplayImage = async (req, res) => {
     return res.status(401).json({ message: "Unauthorized" });
   }
   try {
-    const { displayID } = req.params;
-    
-    const deletedDisplayImage = await DisplayImage.findOneAndDelete({
-      _id: displayID,
+    const { publicId, id } = req.query;
+    await deleteImages(publicId);
+
+    await DisplayImage.findOneAndDelete({
+      _id: id,
     });
-    res.json({ deletedDisplayImage });
+    res.status(200).json({ message: "刪除圖片成功!" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

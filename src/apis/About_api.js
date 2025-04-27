@@ -11,29 +11,22 @@ export const getAboutImages = async (folderPath) => {
   return { error: "Failed to fetch images" };
 };
 
-export const updateAboutImage = async (
-  folderPath,
-  formData,
-  title,
-  id,
-  publicID
-) => {
+export const updateAboutImage = async (folderPath, formData, publicID, id) => {
   const response = await axios.put(
     `${baseURL}/api/about/${folderPath}`,
     formData,
     {
       params: {
-        title,
-        id,
         publicID,
+        id,
       },
     }
   );
-  console.log(response);
+  console.log(response.data.message);
   if (response.status === 200) {
-    return response;
+    return response.data.message;
   }
-  return { error: "Failed to fetch images" };
+  return { error: response.data.error };
 };
 
 export const adjustOffsetY = async (folderPath, id, offsetY) => {
@@ -45,5 +38,5 @@ export const adjustOffsetY = async (folderPath, id, offsetY) => {
   if (response.status === 200) {
     return response;
   }
-  return { error: "Failed to fetch images" };
+  return { error: response.data.error };
 };

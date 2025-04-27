@@ -37,7 +37,7 @@ export const updateSectionImage = async (req, res) => {
       "/upload/f_auto,q_auto,w_1440/"
     );
 
-    const updatedImage = await SectionImage.findByIdAndUpdate(
+    await SectionImage.findByIdAndUpdate(
       id,
       {
         imageURL: newUrl,
@@ -47,7 +47,7 @@ export const updateSectionImage = async (req, res) => {
       { new: true }
     );
 
-    res.status(200).json({ message: "上傳圖片成功!", updatedImage });
+    res.status(200).json({ message: "上傳圖片成功!" });
   } catch (error) {
     res.status(500).json({ message: error.message || "圖片更新失敗" });
   }
@@ -56,12 +56,8 @@ export const updateSectionImage = async (req, res) => {
 export const updateSectionName = async (req, res) => {
   try {
     const { title, id } = req.body;
-    const updatedSection = await SectionImage.findByIdAndUpdate(
-      id,
-      { title },
-      { new: true }
-    );
-    res.status(200).json({ message: "更改 Section 名稱成功!", updatedSection });
+    await SectionImage.findByIdAndUpdate(id, { title }, { new: true });
+    res.status(200).json({ message: "更改 Section 名稱成功!" });
   } catch (error) {
     res.status(500).json({ message: error.message || "名稱更新失敗" });
   }
@@ -74,14 +70,10 @@ export const adjustOffsetY = async (req, res) => {
     const { id, offsetY } = req.body;
     console.log(id, offsetY);
 
-    const updatedSection = await SectionImage.findByIdAndUpdate(
-      id,
-      { offsetY },
-      { new: true }
-    );
+    await SectionImage.findByIdAndUpdate(id, { offsetY }, { new: true });
     console.log(updatedSection);
 
-    res.status(200).json({ message: "調整成功!", updatedSection });
+    res.status(200).json({ message: "調整成功!" });
   } catch (error) {
     res.status(500).json({ message: error.message || "調整 Offset 失敗" });
   }

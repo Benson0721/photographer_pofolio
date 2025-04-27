@@ -27,11 +27,11 @@ export const addTopicImage = async (folderPath, formData, info) => {
       },
     }
   );
-  console.log(response);
   if (response.status === 200) {
-    return response;
+    console.log(response.data.message);
+    return response.data.message;
   }
-  return { error: "Failed to fetch images" };
+  return { error: response.data.error };
 };
 
 export const updateTopicImage = async (folderPath, formData) => {
@@ -41,9 +41,9 @@ export const updateTopicImage = async (folderPath, formData) => {
   );
   console.log(response);
   if (response.status === 200) {
-    return response;
+    return response.data.message;
   }
-  return { error: "Failed to fetch images" };
+  return { error: response.data.error };
 };
 
 export const updateTopicInfo = async (id, topic, notes) => {
@@ -54,9 +54,9 @@ export const updateTopicInfo = async (id, topic, notes) => {
   });
   console.log(response);
   if (response.status === 200) {
-    return response;
+    return response.data.message;
   }
-  return { error: "Failed to fetch images" };
+  return { error: response.data.error };
 };
 
 export const deleteTopicImage = async (folderPath, publicId, id) => {
@@ -69,7 +69,7 @@ export const deleteTopicImage = async (folderPath, publicId, id) => {
   });
   console.log(response);
   if (response.status === 200) {
-    return response;
+    return response.data.message;
   }
-  return { error: "Failed to add images" };
+  return { error: response.data.error };
 };

@@ -17,7 +17,7 @@ export const useAboutStore = defineStore("aboutStore", {
       console.log(images);
       this.aboutImages = images;
     },
-    async updateImage(files: File[], publicID: string) {
+    async updateImage(files: File[], publicID: string, id: string) {
       const aboutPath = "about";
       console.log(files, publicID);
       const formData = new FormData();
@@ -26,9 +26,9 @@ export const useAboutStore = defineStore("aboutStore", {
       });
       console.log(formData);
       console.log("前端");
-      const res = await updateAboutImage(aboutPath, formData, publicID);
-      console.log(res);
-      return res;
+      const message = await updateAboutImage(aboutPath, formData, publicID, id);
+
+      return message;
     },
     async adjustOffsetY(id: string, offsetY: number) {
       const aboutPath = "about";

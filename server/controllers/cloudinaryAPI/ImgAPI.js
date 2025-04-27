@@ -26,8 +26,11 @@ export const updateImage = async (
 ) => {
   try {
     console.log(folder1, folder2, filePath, publicId);
+    const folderPath = folder2
+      ? `Pai/views/${folder1}/${folder2}`
+      : `Pai/views/${folder1}`;
     const options = {
-      folder: `Pai/views/${folder1}/${folder2}`,
+      folder: folderPath,
       resource_type: "image",
       overwrite: true,
       public_id: publicId,
@@ -47,25 +50,21 @@ export const addImages = async (folder1, folder2 = "", filePath) => {
       folder: `Pai/views/${folder1}/${folder2}`,
       resource_type: "image",
     };
-    if (filePath != Array) {
+    if (!Array.isArray(filePath)) {
       const result = await cloudinary.uploader.upload(filePath, options);
       return result;
+    } else {
+      const uploadPromises = filePath.map(async (path) => {
+        const result = await cloudinary.uploader.upload(path, options);
+        return result;
+      });
+      const results = await Promise.all(uploadPromises);
+      return results;
     }
-    const uploadPromises = filePath.map(async (path) => {
-      const result = await cloudinary.uploader.upload(path, options);
-      return result;
-    });
-    const results = await Promise.all(uploadPromises);
-    console.log(
-      "圖片上傳成功：",
-      results.map((r) => r.secure_url)
-    );
-    return results;
   } catch (error) {
     return { error: error.message };
   }
 };
-
 export const deleteImages = async (publicId) => {
   console.log("刪除圖片", publicId);
   try {

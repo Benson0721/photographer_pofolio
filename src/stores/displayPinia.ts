@@ -12,27 +12,28 @@ export const useDisplayStore = defineStore("displayStore", {
   }),
 
   actions: {
-    async fetchImages() {
-      const carouselPath = "home/carousel";
-      this.displayImages = await getDisplayImages(carouselPath);
+    async fetchImages(topicID: string) {
+      const path = "portfolio/display";
+      this.displayImages = await getDisplayImages(path, topicID);
     },
-    async addImages(files: File[]) {
-      const carouselPath = "home/carousel";
-
+    async addImages(files: File[], topicID: string) {
+      console.log("前端");
+      const path = "portfolio/display";
       const formData = new FormData();
       files.forEach((file) => {
         formData.append(`images`, file);
       });
-      const res = await addDisplayImage(carouselPath, formData);
-      return res;
+      formData.append(`topicID`, JSON.stringify(topicID));
+      const message = await addDisplayImage(path, formData);
+      return message;
     },
-  
     async deleteImage(public_Id: string, id: string) {
       this.displayImages = this.displayImages.filter(
         (image) => image.public_id !== public_Id
       );
-      const carouselPath = "home/carousel";
-      const res = await deleteDisplayImage(carouselPath, public_Id, id);
+      const path = "portfolio/display";
+      const message = await deleteDisplayImage(path, public_Id, id);
+      return message;
     },
   },
 });

@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
-import { getSectionImages, updateSectionImage, adjustOffsetY, updateSectionName } from "../apis/Section_Api";
+import {
+  getSectionImages,
+  updateSectionImage,
+  adjustOffsetY,
+  updateSectionName,
+} from "../apis/Section_Api";
 import { SectionImage } from "../types/apiType";
 export const useSectionStore = defineStore("sectionStore", {
   state: () => ({
@@ -26,21 +31,23 @@ export const useSectionStore = defineStore("sectionStore", {
       });
       console.log(formData);
       console.log("前端");
-      const res = await updateSectionImage(sectionPath, formData, title, id, publicID);
-      console.log(res);
-      return res;
+      const message = await updateSectionImage(
+        sectionPath,
+        formData,
+        title,
+        id,
+        publicID
+      );
+      return message;
     },
     async adjustOffsetY(id: string, offsetY: number) {
       const sectionPath = "home/sections";
-      const response = await adjustOffsetY(sectionPath, id, offsetY);
-      console.log(response);
- 
-      return response;
+      const message = await adjustOffsetY(sectionPath, id, offsetY);
+      return message;
     },
     async updateSectionName(id: string, title: string) {
-      const response = await updateSectionName(id, title);
-      console.log(response);
-      return response;
+      const message = await updateSectionName(id, title);
+      return message;
     },
   },
 });

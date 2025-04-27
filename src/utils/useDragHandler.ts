@@ -8,13 +8,13 @@ export function useDragHandler(
 ) {
   const offsetY = ref(initialOffsetY);
   let startY = 0;
-  let dragging = false;
+  let dragging = ref(false);
   let updateTimer;
 
   function startDrag(event) {
     event.preventDefault();
     event.stopPropagation();
-    dragging = true;
+    dragging.value = true;
     startY = event.touches ? event.touches[0].clientY : event.clientY;
   }
 
@@ -31,14 +31,13 @@ export function useDragHandler(
   }
 
   async function endDrag() {
-    dragging = false;
+    dragging.value = false;
   }
 
   watch(offsetY, (newVal) => {
     clearTimeout(updateTimer);
     updateTimer = setTimeout(() => {
       useOffsetYHandler(path, id, newVal);
-      
     }, 3000); // <-- 自由調整等待時間
   });
 

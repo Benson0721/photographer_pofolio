@@ -26,13 +26,13 @@ export const useTopicStore = defineStore("topicStore", {
       const path = "portfolio";
       const formData = new FormData();
       files.forEach((file) => formData.append("image", file));
-      const res = await addTopicImage(path, formData, {
+      const message = await addTopicImage(path, formData, {
         category,
         topic,
         notes,
       });
-      console.log(res);
-      return res;
+      console.log(message);
+      return message;
     },
     async updateImage(newData: {
       image: File[];

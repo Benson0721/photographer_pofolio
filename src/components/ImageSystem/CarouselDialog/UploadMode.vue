@@ -1,7 +1,7 @@
 <script setup>
 import { defineProps } from "vue";
 
-defineProps({
+const props = defineProps({
   previewUrls: Array,
   selectedFiles: File | null,
 });
@@ -14,9 +14,9 @@ defineProps({
   <div  class="flex gap-2 flex-wrap my-2">
     <div
       class="carousel__image--editing"
-      v-for="(image, index) in previewUrls"
+      v-for="(image, index) in props.previewUrls"
       :key="index"
-      v-if="selectedFiles"
+      v-if="props.selectedFiles"
     >
       <img
         :src="image.src"

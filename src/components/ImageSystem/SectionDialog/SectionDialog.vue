@@ -1,11 +1,12 @@
-<script setup>
+<script setup lang="ts">
 import { useUserStore } from "../../../stores/userPinia.js";
 import { useSectionStore } from "../../../stores/sectionPinia.ts";
-import { ref, watch, defineProps, computed } from "vue";
+import { ref, watch, defineProps, computed, withDefaults } from "vue";
 import { useIsDesktop } from "../../../utils/useIsDesktop";
 import { useDragHandler } from "../../../utils/useDragHandler.ts";
-import { useUploadHandler } from "../../../utils/useUploadHandler.js";
+import { useUploadHandler } from "../../../utils/useUploadHandler.ts";
 import ButtonArea from "./ButtonArea.vue";
+import Loading from "../../Loading.vue";
 const {
   selectedFiles,
   previewUrls,
@@ -23,30 +24,43 @@ const isDesktop = useIsDesktop();
 const newTitle = ref("");
 const uploadMode = ref(true);
 const changeTitleMode = ref(true);
+const isLoading = ref(false);
+const loadingmessage = ref("");
 
-const { url, title, id, publicID, width, height, updateSizes, curOffsetY } =
-  defineProps({
-    url: String,
-    title: String,
-    id: String,
-    publicID: String,
-    width: Number,
-    height: Number,
-    updateSizes: Function,
-    curOffsetY: Number,
-  });
+const props = withDefaults(
+  defineProps<{
+    url: string;
+    title: string;
+    id: string;
+    publicID: string;
+    width: number;
+    height: number;
+    updateSizes: Function;
+    curOffsetY: number;
+  }>(),
+  {
+    url: () => "",
+    title: () => "",
+    id: () => "",
+    publicID: () => "",
+    width: () => 0,
+    height: () => 0,
+    updateSizes: () => {},
+    curOffsetY: () => 0,
+  }
+);
 
 const { offsetY, startDrag, onDrag, endDrag, isDragging } = useDragHandler(
   720,
   "section",
-  id,
-  curOffsetY
+  props.id,
+  props.curOffsetY
 );
 
 const handleOpen = async () => {
   await sectionStore.fetchImages();
-  updateSizes();
-  newTitle.value = title;
+  props.updateSizes();
+  newTitle.value = props.title;
   editMode.value = "";
 };
 
@@ -54,33 +68,43 @@ const handleUpload = async () => {
   if (selectedFiles.value.length === 0) return;
   try {
     console.log("upload image");
-    console.log(selectedFiles.value, newTitle.value, id, publicID);
-    const res = await sectionStore.updateImage(
+    isLoading.value = true;
+    loadingmessage.value = "編輯圖片中...";
+    const message = await sectionStore.updateImage(
       selectedFiles.value,
       newTitle.value,
-      id,
-      publicID
+      props.id,
+      props.publicID
     );
     resetUpload();
-    successmessage.value = res.data.message;
+    isLoading.value = false;
+    successmessage.value = message;
     await sectionStore.fetchImages();
   } catch (error) {
     errormessage.value = error?.response?.data?.message;
     resetUpload();
+    isLoading.value = false;
     await sectionStore.fetchImages();
     console.error(error);
     console.error("上傳失敗：", error?.response?.data?.message);
   }
 };
 const handleTitleUpload = async () => {
-  if (newTitle.value === title) return;
+  if (newTitle.value === props.title) return;
   try {
-    const res = await sectionStore.updateSectionName(id, newTitle.value);
-    successmessage.value = res.data.message;
+    const message = await sectionStore.updateSectionName(
+      props.id,
+      newTitle.value
+    );
+    successmessage.value = message;
+    isLoading.value = true;
+    loadingmessage.value = "編輯圖片中...";
     await sectionStore.fetchImages();
+    isLoading.value = false;
   } catch (error) {
     errormessage.value = error?.response?.data?.message;
     await sectionStore.fetchImages();
+    isLoading.value = false;
     console.error(error);
     console.error("上傳失敗：", error?.response?.data?.message);
   }
@@ -96,10 +120,10 @@ const resetMode = async () => {
 };
 
 const previewImage = computed(() => {
-  if (previewUrls?.value.length > 0) {
-    return previewUrls.value[0].src;
+  if (previewUrls.value && previewUrls.value.length > 0) {
+    return previewUrls?.value[0]?.src;
   }
-  return url;
+  return props.url || "";
 });
 
 watch(previewUrls, () => {
@@ -138,6 +162,7 @@ watch(isDragging, async () => {
 
     <template #default="{ isActive }">
       <v-card title="編輯分區圖片" class="p-4 z-20">
+        <Loading :isLoading="isLoading" :loadingmessage="loadingmessage" />
         <v-card-text class="text-red-500" v-if="errormessage">{{
           errormessage
         }}</v-card-text>

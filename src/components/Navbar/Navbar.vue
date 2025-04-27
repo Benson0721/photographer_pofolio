@@ -1,6 +1,6 @@
-<script setup>
+<script setup lang="ts">
 import "./Navbar.scss";
-import { ref, computed, defineProps } from "vue";
+import { ref, computed, defineProps, withDefaults } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import logo_B from "../../assets/images/icons/logo__small__black.png";
 import logo_W from "../../assets/images/icons/logo__small__white.png";
@@ -37,15 +37,20 @@ const goToLogin = () => {
   router.push("/login");
 };
 
-const { isScrolledPast } = defineProps({
-  isScrolledPast: Boolean,
-});
+const props = withDefaults(
+  defineProps<{
+    isScrolledPast: boolean;
+  }>(),
+  {
+    isScrolledPast: false,
+  }
+);
 
 const router = useRouter();
 const route = useRoute();
 
 const currentLogo = computed(() => {
-  return isScrolledPast ? logo_B : logo_W;
+  return props.isScrolledPast ? logo_B : logo_W;
 });
 
 /*const linkClass = computed(() => {
@@ -57,8 +62,8 @@ const currentLogo = computed(() => {
     class="navbar bg-white relative"
     :class="{
       'navbar--fixed': route.path === '/' || route.path === '/about',
-      'md:bg-white': isScrolledPast,
-      'md:bg-transparent': !isScrolledPast,
+      'md:bg-white': props.isScrolledPast,
+      'md:bg-transparent': !props.isScrolledPast,
     }"
   >
     <button
@@ -89,19 +94,19 @@ const currentLogo = computed(() => {
       <router-link
         to="/"
         class="font-bellefair cursor-pointer lg:text-xl textShadow"
-        :class="route.path === '/' ? 'text-black' : 'text-white'"
+        :class="route.name === 'Home' ? 'text-black' : 'text-white'"
         >Home</router-link
       >
       <router-link
         :to="{ name: 'Portfolio', params: { category: 'All' } }"
         class="font-bellefair cursor-pointer lg:text-xl textShadow"
-        :class="route.path === '/portfolio' ? 'text-black' : 'text-white'"
+        :class="route.name === 'Portfolio' ? 'text-black' : 'text-white'"
         >Portfolio</router-link
       >
       <router-link
         to="/about"
         class="font-bellefair cursor-pointer lg:text-xl textShadow"
-        :class="route.path === '/about' ? 'text-black' : 'text-white'"
+        :class="route.name === 'About' ? 'text-black' : 'text-white'"
         >About</router-link
       >
       <router-link
