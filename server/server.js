@@ -19,7 +19,6 @@ import MongoStore from "connect-mongo";
 import cloudinary from "cloudinary";
 import cron from "node-cron";
 import { clearUploadsFolder } from "./utils/clearUploads.js";
-import serverless from "serverless-http";
 
 // 獲取當前檔案的路徑
 const __filename = fileURLToPath(import.meta.url);
@@ -134,13 +133,9 @@ cron.schedule("0 * * * *", async () => {
   res.sendFile(path.join(__dirname, "../dist", "index.html"));
 });*/
 
-if (process.env.NODE_ENV !== "production") {
-  app.listen(port, () => {
-    console.log(`Serving on port ${port}`);
-  });
-} else {
-  exports.handler = serverless(app);
-}
+app.listen(port, () => {
+  console.log(`Serving on port ${port}`);
+});
 
 app.on("error", (err) => {
   console.error("Server error:", err);
