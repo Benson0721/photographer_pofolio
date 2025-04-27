@@ -5,6 +5,11 @@ import { fileURLToPath } from "url";
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: "./",
+  build: {
+    outDir: "./dist", 
+    emptyOutDir: true, // 清空目標目錄
+  },
   plugins: [vue(), tailwindcss()],
   resolve: {
     alias: {
