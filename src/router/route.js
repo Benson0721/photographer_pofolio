@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "../views/Home/Home.vue";
-import Draggable from "../components/Carousel/draggable.vue";
-import MasonryDemo from "../views/Portfolio/MasonryDemo.vue";
 import Portfolio from "../views/Portfolio/Portfolio.vue";
 import About from "../views/About/About.vue";
 import Login from "../views/Login/Login.vue";
@@ -34,12 +32,6 @@ const routes = [
     path: "/register",
     name: "Register",
     component: register,
-    props: true,
-  },
-  {
-    path: "/draggable",
-    name: "Draggable",
-    component: MasonryDemo,
     props: true,
   },
 ];
