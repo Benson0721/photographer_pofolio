@@ -1,11 +1,23 @@
 <script setup>
-import { defineProps, defineModel, watch } from "vue";
+import {
+  ref,
+  defineProps,
+  defineModel,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+  nextTick,
+} from "vue";
 import EditTopic from "../../components/ImageSystem/PortfolioDialog/TopicSystem/EditTopic/EditTopic.vue";
 import DeleteTopic from "../../components/ImageSystem/PortfolioDialog/TopicSystem/DeleteTopic.vue";
+import { useTopicStore } from "../../stores/topicPinia.ts";
+
+const topicStore = useTopicStore();
 
 const curTopicID = defineModel("curTopicID", { type: String });
 const curTopic = defineModel("curTopic", { type: String });
 const curNotes = defineModel("curNotes", { type: String });
+
 const props = defineProps({
   TopicImage: Array,
   mode: String,
@@ -20,19 +32,86 @@ const handleTopicClick = (item) => {
   mode.value = "display";
 };
 
+let observer = null;
+
+const imageStates = ref(new Map());
+
+const setupObserver = async () => {
+  let attempts = 0;
+  const maxAttempts = 5;
+  const expectedImages = topicStore.topicImages.length; // 期望的圖片數量（13）
+
+  while (attempts < maxAttempts) {
+    await nextTick(); // 等待 DOM 更新
+    const imageElements = document.querySelectorAll(
+      ".portfolio__gallery__image"
+    );
+    console.log(
+      `Attempt ${attempts + 1}: Found ${
+        imageElements.length
+      } images, Expected ${expectedImages}`
+    );
+
+    if (imageElements.length >= expectedImages) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              imageStates.value.set(entry.target.dataset.id, true);
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+      imageElements.forEach((el) => observer.observe(el));
+      console.log(`Observer initialized with ${imageElements.length} images`);
+      return;
+    }
+
+    attempts++;
+    await new Promise((resolve) => setTimeout(resolve, 100)); // 等待 100ms
+  }
+  console.warn(`Failed to find all images after ${maxAttempts} attempts`);
+};
+
+// 監控 TopicImage 變化
+watch(
+  () => topicStore.topicImages,
+  async () => {
+    if (observer) {
+      observer.disconnect();
+    }
+    imageStates.value.clear();
+    await setupObserver();
+  },
+  { deep: true, immediate: true } // 立即執行以初始化
+);
+
+onBeforeUnmount(() => {
+  if (observer) {
+    observer.disconnect();
+  }
+});
 watch(curTopicID, () => {
   console.log(curTopicID.value);
 });
 </script>
 <template>
   <masonry-wall
-    :items="TopicImage"
+    :items="topicStore.topicImages"
     :ssr-columns="2"
     :column-width="500"
     :gap="4"
   >
     <template #default="{ item, index }">
-      <div class="portfolio__gallery__image" :key="index">
+      <div
+        class="portfolio__gallery__image"
+        :class="imageStates.get(item._id) ? 'fade-controller' : ''"
+        :style="{ '--i': index }"
+        :key="index"
+        :data-id="item._id"
+      >
         <EditTopic
           :id="item._id"
           :topic="item.topic"
@@ -71,3 +150,22 @@ watch(curTopicID, () => {
     </template>
   </masonry-wall>
 </template>
+
+<style scoped>
+.fade-controller {
+  opacity: 0;
+  animation: fade-in 1s forwards;
+  animation-delay: calc(0.3s + var(--i) * 0.2s);
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

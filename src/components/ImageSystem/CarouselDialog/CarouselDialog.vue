@@ -1,5 +1,5 @@
 <script setup>
-import { useUserStore } from "../../../stores/userPinia.js";
+import { useUserStore } from "../../../stores/userPinia.ts";
 import { useCarouselStore } from "../../../stores/carouselPinia.ts";
 import { ref, watch, defineProps } from "vue";
 import ButtonArea from "./ButtonArea.vue";
@@ -25,7 +25,7 @@ const successmessage = ref("");
 const loadingmessage = ref("");
 const isLoading = ref(false);
 
-defineProps({
+const { orderMode, uploadMode, deleteMode } = defineProps({
   orderMode: Boolean,
   uploadMode: Boolean,
   deleteMode: Boolean,

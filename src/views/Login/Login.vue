@@ -1,6 +1,6 @@
 <script setup>
 import { reactive } from "vue";
-import { useUserStore } from "../../stores/userPinia";
+import { useUserStore } from "../../stores/userPinia.ts";
 import { useRouter } from "vue-router";
 
 const userStore = useUserStore();

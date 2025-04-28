@@ -8,7 +8,7 @@ import { useIsDesktop } from "../../utils/useIsDesktop";
 
 const isDesktop = useIsDesktop();
 
-defineProps<{
+const { currentImage } = defineProps<{
   currentImage: number;
 }>();
 
@@ -34,6 +34,13 @@ const ContentStyle = ref(
       :uploadMode="uploadMode"
       :deleteMode="deleteMode"
     />
+    <Handing
+      v-if="isDesktop"
+      v-model:title="title"
+      v-model:content="content"
+      :HeadingStyle="HeadingStyle"
+      :ContentStyle="ContentStyle"
+    />
     <div
       v-if="!isDesktop"
       class="carousel__image"
@@ -47,8 +54,6 @@ const ContentStyle = ref(
         class="w-full h-full object-cover"
         loading="lazy"
       />
-    </div>
-    <div class="carousel__text">
       <Handing
         v-model:title="title"
         v-model:content="content"

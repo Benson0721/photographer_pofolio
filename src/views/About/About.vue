@@ -20,6 +20,7 @@ import { AboutImage } from "../../types/apiType";
 import { useAboutStore } from "../../stores/aboutPinia";
 import { useIsDesktop } from "../../utils/useIsDesktop";
 import { useImageSizeList } from "../../utils/useImageSizeList";
+import Loading from "../../components/Loading.vue";
 
 const { imageRefs, imageSizes, updateSizes } = useImageSizeList();
 
@@ -153,14 +154,13 @@ const scrollFunc = (hash: string) => {
   }, 1000);
 };
 onMounted(async () => {
-  aboutStore.fetchImages();
-  isLoading.value = false;
+  await aboutStore.fetchImages();
   await nextTick(() => {
     observerFunc();
     socialFunc();
     updateSizes();
   });
-
+  isLoading.value = false;
   if (route.hash) {
     console.log("coming from hash");
     scrollFunc(route.hash);
@@ -178,7 +178,7 @@ console.log(isAboutPastScroll.value);
     <div
       class="spinner border-4 border-gray-200 border-t-blue-500 rounded-full w-12 h-12 animate-spin"
     ></div>
-    <p class="mt-2 text-gray-500 text-sm">Loading...</p>
+    <p class="mt-2 text-gray-500 text-sm">網站加載中...</p>
   </div>
   <main v-else class="about__bg transition" :style="backgroundStyle">
     <Navbar :isScrolledPast="isScrolledPast" />

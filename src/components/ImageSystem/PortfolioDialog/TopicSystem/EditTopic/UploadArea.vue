@@ -32,7 +32,7 @@ const formData = reactive({
         'Street',
         'Others',
       ]"
-      outerClass="mb-4 md:mr-8 w-full md:w-1/2"
+      outerClass="mb-4 w-3/5 md:w-1/2"
       innerClass="mt-4 border-b-2 border-black"
       labelClass=" font-noto "
       messages-class="text-red-500 text-sm"
@@ -48,7 +48,7 @@ const formData = reactive({
       type="text"
       name="topic"
       label="主題"
-      outerClass="mb-4 w-full md:w-1/2"
+      outerClass="mb-4 w-3/5 md:w-1/2"
       innerClass="mt-4 border-b-2 border-black"
       labelClass="text-black font-noto "
       validation="required"
@@ -68,7 +68,7 @@ const formData = reactive({
       type="textarea"
       name="notes"
       label="敘述"
-      outerClass="mb-4 w-full md:w-1/2"
+      outerClass="mb-4 w-3/5 md:w-1/2"
       innerClass="mt-4 border-b-2 border-black"
       labelClass="text-black font-noto "
       validation="required"
@@ -84,18 +84,6 @@ const formData = reactive({
       }"
     />
 
-    <div class="flex gap-2 flex-wrap w-[400px]">
-      <v-chip
-        v-for="(file, index) in props.selectedFiles"
-        :key="index"
-        class="me-2"
-        color="primary"
-        size="small"
-        label
-      >
-        {{ file.name }}
-      </v-chip>
-    </div>
     <v-file-input
       class="w-2/3 h-[50px] my-8 mr-16 md:mb-0"
       name="images"

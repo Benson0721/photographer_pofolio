@@ -54,11 +54,15 @@ const ContentOptions = computed<TypedOptions>(() => ({
 }));
 </script>
 <template>
-  <Typed :options="TitleOptions" :key="category || topic">
-    <h1 class="typing" :class="props.HeadingStyle || ''"></h1>
-  </Typed>
-  <Typed :options="ContentOptions" :key="notes || content">
-    <p class="typing" :class="props.ContentStyle || ''"></p>
-  </Typed>
+  <div
+    class="absolute top-1/7 md:top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center"
+  >
+    <Typed :options="TitleOptions" :key="category || topic">
+      <h1 class="typing" :class="props.HeadingStyle || ''"></h1>
+    </Typed>
+    <Typed :options="ContentOptions" :key="notes || content">
+      <p class="typing" :class="props.ContentStyle || ''"></p>
+    </Typed>
+  </div>
 </template>
 <style scoped></style>

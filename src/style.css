@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
-
 @layer base {
   body {
     @apply flex items-center justify-center bg-[#FBFDF9];

@@ -1,11 +1,18 @@
 <script setup>
-import { onMounted, computed, ref, watch } from "vue";
+import {
+  onMounted,
+  computed,
+  ref,
+  watch,
+  onBeforeUnmount,
+  nextTick,
+} from "vue";
 import Navbar from "../../components/Navbar/Navbar.vue";
 import Footer from "../../components/Footer.vue";
 import NewTopic from "../../components/ImageSystem/PortfolioDialog/TopicSystem/NewTopic/NewTopic.vue";
 import NewDisplay from "../../components/ImageSystem/PortfolioDialog/DisplaySystem/NewDisplay.vue";
 import { useRoute } from "vue-router";
-import { useUserStore } from "../../stores/userPinia";
+import { useUserStore } from "../../stores/userPinia.ts";
 import { useTopicStore } from "../../stores/topicPinia";
 import { useIsDesktop } from "../../utils/useIsDesktop";
 import Handing from "../../components/Handing.vue";
@@ -23,11 +30,12 @@ const curNotes = ref("");
 const mode = ref("Topic");
 const curTopicID = ref("");
 const deleteMode = ref(false);
+const isLoading = ref(true);
 const HeadingStyle = ref(
-  "mt-4 text-[48px] md:text-[60px] lg:text-[72px] font-playfair text-white text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+  "mt-4 text-[24px] md:text-[48px] lg:text-[72px] font-playfair text-white"
 );
 const ContentStyle = ref(
-  "text-[18px] md:text-[36px] lg:text-[48px] font-playfair text-white absolute top-3/5 left-1/2 -translate-x-1/2 "
+  "text-[18px] md:text-[36px] lg:text-[48px] font-playfair text-white"
 );
 
 const categorys = ref([
@@ -39,6 +47,16 @@ const categorys = ref([
   "Motorcycle",
   "Others",
 ]);
+
+const selectCategory = ref("");
+
+const onCategoryChange = async (category) => {
+  route.params.category = category;
+  mode.value = "Topic";
+  curTopicID.value = "";
+  await loadImage();
+};
+
 const loadImage = async () => {
   const category = route.params.category;
   curCategory.value = category;
@@ -51,7 +69,7 @@ const loadImage = async () => {
 };
 
 const backgroundStyle = computed(() => {
-  if (isDesktop) {
+  if (isDesktop.value) {
     if (curTopicID.value) {
       const image = topicStore.topicImages.find(
         (image) => image._id === curTopicID.value
@@ -64,24 +82,15 @@ const backgroundStyle = computed(() => {
         backgroundImage: `url(${topicStore.topicImages[0]?.imageURL})`,
       };
     }
+  } else {
+    return {};
   }
-  return {};
 });
 
-const handleDelete = () => {
-  deleteMode.value = true;
-};
-
-watch(curTopicID, () => {
-  console.log(curTopic.value);
-  console.log(curNotes.value);
-});
-watch(mode, () => {
-  console.log(mode.value);
-});
-
-onMounted(() => {
-  loadImage();
+onMounted(async () => {
+  await loadImage();
+  await nextTick();
+  isLoading.value = false;
 });
 </script>
 <template>
@@ -108,9 +117,10 @@ onMounted(() => {
       />
 
       <NewTopic v-if="mode === 'Topic'" />
-      <div v-else class="flex justify-end gap-2 pr-8">
+      <div v-else class="absolute top-1/8 right-1 flex justify-end gap-2 pr-8">
         <NewDisplay :curTopicID="curTopicID" />
         <v-btn
+          v-if="!deleteMode"
           color="surface-variant"
           text="刪除"
           variant="flat"
@@ -120,6 +130,7 @@ onMounted(() => {
           :class="userStore.isEditing ? 'block' : 'hidden'"
         ></v-btn>
         <v-btn
+          v-else
           color="surface-variant"
           text="取消刪除模式"
           variant="flat"
@@ -131,7 +142,10 @@ onMounted(() => {
       </div>
     </div>
     <div class="portfolio__category">
-      <div class="portfolio__category__list">
+      <div
+        v-if="isDesktop"
+        class="portfolio__category__list md:gap-0.5 lg:gap-1"
+      >
         <button
           v-for="(category, index) in categorys"
           :key="index"
@@ -141,24 +155,24 @@ onMounted(() => {
               ? 'portfolio__category__list__item--active'
               : ''
           "
-          @click="
-            () => {
-              route.params.category = category;
-              title = category;
-              mode = 'Topic';
-              curTopicID = '';
-              loadImage();
-            }
-          "
+          @click="onCategoryChange(category)"
         >
           {{ category }}
         </button>
       </div>
+      <div v-else class="px-2 pt-2">
+        <v-select
+          label="選擇主題"
+          :items="categorys"
+          variant="outlined"
+          v-model="selectCategory"
+          @update:model-value="onCategoryChange"
+        ></v-select>
+      </div>
     </div>
-    <div class="portfolio__gallery">
+    <div class="portfolio__gallery transition">
       <TopicImage
         v-if="mode === 'Topic'"
-        :TopicImage="topicStore.topicImages"
         v-model:mode="mode"
         v-model:curTopicID="curTopicID"
         v-model:curTopic="curTopic"

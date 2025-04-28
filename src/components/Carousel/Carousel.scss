@@ -12,8 +12,7 @@
     }
     &--editing {
       position: relative;
-
-      flex-basis: 32%;
+      flex-basis: 45%;
     }
   }
   &__text {
@@ -27,6 +26,12 @@
   .carousel {
     height: 100vh;
     margin-bottom: 0;
+    &__image {
+      &--editing {
+        position: relative;
+        flex-basis: 32%;
+      }
+    }
     &__text {
       top: 35%;
       left: 35%;

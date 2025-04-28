@@ -1,6 +1,6 @@
 <script setup>
-import { useUserStore } from "../../../../../stores/userPinia.js";
-import { useTopicStore } from "../../../../../stores/topicPinia.js";
+import { useUserStore } from "../../../../../stores/userPinia.ts";
+import { useTopicStore } from "../../../../../stores/topicPinia.ts";
 import { useUploadHandler } from "../../../../../utils/useUploadHandler.ts";
 import { useIsDesktop } from "../../../../../utils/useIsDesktop.js";
 import { ref, computed } from "vue";
@@ -65,14 +65,14 @@ const previewUrl = computed(() => {
         text="新增"
         variant="flat"
         :disabled="!userStore.isEditing"
-        class="bg-green-500 absolute z-10 top-1/18 left-5/6 md:top-1/10 md:left-7/8"
+        class="bg-green-500 absolute z-10 top-1/18 left-8/10 md:top-1/10 md:left-7/8"
         @click="handleOpen"
         :class="!userStore.isEditing ? 'hidden' : 'block'"
       ></v-btn>
     </template>
 
     <template #default="{ isActive }">
-      <v-card title="新增圖片" class="p-4 z-20">
+      <v-card title="新增主題" class="p-4 z-20">
         <Loading :isLoading="isLoading" :loadingmessage="loadingmessage" />
         <v-card-text
           class="absolute top-1/12 right-1/10 text-red-500"
@@ -94,8 +94,8 @@ const previewUrl = computed(() => {
           incomplete-message="請填入必要資訊以完成新增"
           messages-class="text-red-500 text-lg absolute sm:top-1/5 md:top-1/4"
         >
-          <div class="flex w-full h-full gap-2">
-            <div class="flex-1 pl-16 mt-8">
+          <div class="flex flex-col md:flex-row w-full h-full gap-2">
+            <div class="md:flex-1 pl-10 md:pl-16 mt-8">
               <UploadArea
                 :handleSingleFileChange="handleSingleFileChange"
                 :handleAddImage="handleAddImage"
@@ -103,7 +103,8 @@ const previewUrl = computed(() => {
                 :previewUrl="previewUrl"
               />
             </div>
-            <div v-if="previewUrl" class="flex-2">
+            <div v-if="previewUrl" class="mb-10 md:flex-2">
+              <v-card-text>以下為即將更新的圖片</v-card-text>
               <img
                 :src="previewUrl"
                 alt="previewImage"
@@ -113,7 +114,9 @@ const previewUrl = computed(() => {
             </div>
           </div>
           <v-card-actions>
-            <div class="flex gap-2 absolute left-5/6">
+            <div
+              class="flex gap-2 justify-center absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
+            >
               <FormKit
                 type="submit"
                 label="送出"

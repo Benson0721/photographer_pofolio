@@ -35,6 +35,7 @@ const vuetify = createVuetify({
   ssr: true,
 });
 import "vuetify/styles";
+
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);
 

@@ -8,12 +8,12 @@ export const useUserStore = defineStore("userStore", {
     isEditing: false,
   }),
   actions: {
-    async login(userData) {
+    async login(userData: object) {
       const data = await login(userData);
       this.user = data._id;
       this.error = data?.error;
     },
-    async register(userData) {
+    async register(userData: object) {
       const data = await register(userData);
       this.user = data.user;
       this.error = data?.error;

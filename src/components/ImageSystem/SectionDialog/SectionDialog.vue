@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useUserStore } from "../../../stores/userPinia.js";
+import { useUserStore } from "../../../stores/userPinia.ts";
 import { useSectionStore } from "../../../stores/sectionPinia.ts";
 import { ref, watch, defineProps, computed, withDefaults } from "vue";
 import { useIsDesktop } from "../../../utils/useIsDesktop";

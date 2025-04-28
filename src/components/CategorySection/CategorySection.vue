@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import "./CategorySection.scss";
-import { defineProps } from "vue";
+import { defineProps, watch } from "vue";
 import { useSectionStore } from "../../stores/sectionPinia";
 import SectionDialog from "../ImageSystem/SectionDialog/SectionDialog.vue";
 import { useImageSizeList } from "../../utils/useImageSizeList";
 
 const { imageRefs, imageSizes, updateSizes } = useImageSizeList();
 const sectionStore = useSectionStore();
-defineProps<{
+const { isSectionPastScroll } = defineProps<{
   isSectionPastScroll: boolean;
 }>();
 </script>
@@ -19,6 +19,7 @@ defineProps<{
           v-for="(image, index) in sectionStore.sectionImages"
           :key="image._id"
           :class="{ 'fade-controller': isSectionPastScroll }"
+          :style="{ '--i': index }"
           class="category-section__image-wrapper"
           :ref="(el) => (imageRefs[index] = el)"
           draggable="false"
@@ -56,4 +57,20 @@ defineProps<{
     </section>
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-controller {
+  opacity: 0;
+  animation: fade-in 1s forwards;
+  animation-delay: calc(0.3s + var(--i) * 0.2s);
+}
+</style>

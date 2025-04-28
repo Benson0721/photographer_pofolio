@@ -9,7 +9,7 @@ import cancel from "../../assets/images/icons/cancel.png";
 import { faInstagram, faGithub } from "@fortawesome/free-brands-svg-icons";
 import { faArrowRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import { useUserStore } from "../../stores/userPinia";
+import { useUserStore } from "../../stores/userPinia.ts";
 
 const userStore = useUserStore();
 const isMenuOpen = ref(false);
@@ -36,10 +36,13 @@ const goToHome = () => {
 const goToLogin = () => {
   router.push("/login");
 };
+const handleLogout = async () => {
+  await userStore.logout();
+};
 
 const props = withDefaults(
   defineProps<{
-    isScrolledPast: boolean;
+    isScrolledPast?: boolean;
   }>(),
   {
     isScrolledPast: false,
@@ -113,14 +116,12 @@ const currentLogo = computed(() => {
         v-if="!userStore.user"
         to="/login"
         class="hidden md:block font-bellefair cursor-pointer lg:text-xl textShadow"
-        :class="linkClass"
         >Login</router-link
       >
       <template v-else>
         <button
           class="hidden md:block font-bellefair text-white cursor-pointer lg:text-xl textShadow"
-          :class="linkClass"
-          @click="userStore.logout()"
+          @click=""
         >
           Logout
         </button>

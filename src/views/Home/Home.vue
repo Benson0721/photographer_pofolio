@@ -86,7 +86,6 @@ const changeImage = () => {
 };
 const observerFunc = () => {
   const categorySection = document.querySelector(".category-section");
-  console.log(categorySection);
   if (!categorySection) return;
 
   const observer = new IntersectionObserver(
@@ -114,9 +113,6 @@ onMounted(async () => {
   });
 });
 
-const handleDrag = (event) => {
-  event.preventDefault();
-};
 onMounted(() => {
   changeImage();
 });
@@ -140,7 +136,7 @@ watch(isEditing, (newVal, oldVal) => {
     <div
       class="spinner border-4 border-gray-200 border-t-blue-500 rounded-full w-12 h-12 animate-spin"
     ></div>
-    <p class="mt-2 text-gray-500 text-sm">Loading...</p>
+    <p class="mt-2 text-gray-500 text-sm">網站加載中...</p>
   </div>
   <main v-else :class="`home transition`">
     <!-- 前一張圖片的背景層 -->
@@ -174,4 +170,6 @@ watch(isEditing, (newVal, oldVal) => {
   background-attachment: fixed;
   min-height: 100vh;
 }
+
+
 </style>

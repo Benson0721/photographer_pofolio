@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{
+const { isLoading, loadingmessage } = defineProps<{
   isLoading: boolean;
   loadingmessage: string;
 }>();

@@ -1,6 +1,6 @@
 <script setup>
-import { useUserStore } from "../../../../../stores/userPinia.js";
-import { useTopicStore } from "../../../../../stores/topicPinia.js";
+import { useUserStore } from "../../../../../stores/userPinia.ts";
+import { useTopicStore } from "../../../../../stores/topicPinia.ts";
 import { useUploadHandler } from "../../../../../utils/useUploadHandler.ts";
 import { useIsDesktop } from "../../../../../utils/useIsDesktop.js";
 import { ref, computed, defineProps } from "vue";
@@ -73,7 +73,7 @@ const previewUrl = computed(() => {
         text="編輯"
         variant="flat"
         :disabled="!userStore.isEditing"
-        class="bg-blue-500 absolute z-10 top-1/18 left-5/6 md:top-1/10 md:left-6/8"
+        class="bg-indigo-500 absolute z-10 top-1/18 left-6/10 md:top-1/10 md:left-6/8"
         @click="handleOpen"
         :class="!userStore.isEditing ? 'hidden' : 'block'"
       ></v-btn>
@@ -103,14 +103,14 @@ const previewUrl = computed(() => {
           incomplete-message="請填入必要資訊以完成編輯"
           messages-class="text-red-500 text-lg absolute sm:top-1/5 md:top-1/4"
         >
-          <div class="flex w-full h-full gap-2">
-            <div class="flex-1 pl-16 mt-8">
+          <div class="flex flex-col md:flex-row w-full h-full gap-2">
+            <div class="md:flex-1 pl-16 mt-8">
               <UploadArea
                 :handleSingleFileChange="handleSingleFileChange"
                 :selectedFiles="selectedFiles"
               />
             </div>
-            <div class="flex-2">
+            <div class="mb-10 md:flex-2">
               <div class="w-full h-full">
                 <img
                   v-if="previewUrl"
@@ -130,7 +130,9 @@ const previewUrl = computed(() => {
             </div>
           </div>
           <v-card-actions>
-            <div class="flex gap-2 absolute left-5/6">
+            <div
+              class="flex gap-2 absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
+            >
               <FormKit
                 type="submit"
                 label="送出"
