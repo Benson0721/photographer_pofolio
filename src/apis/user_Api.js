@@ -25,3 +25,11 @@ export const logout = async () => {
   }
   return { error: "Logout failed" };
 };
+
+export const checkAuth = async () => {
+  const response = await axios.get(`${baseURL}/api/checkAuth`);
+  if (response.status === 200) {
+    return response.data;
+  }
+  return { error: "Check auth failed" };
+};

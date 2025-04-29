@@ -65,13 +65,10 @@ export const updateSectionName = async (req, res) => {
 
 export const adjustOffsetY = async (req, res) => {
   try {
-    console.log("後端");
 
     const { id, offsetY } = req.body;
-    console.log(id, offsetY);
 
     await SectionImage.findByIdAndUpdate(id, { offsetY }, { new: true });
-    console.log(updatedSection);
 
     res.status(200).json({ message: "調整成功!" });
   } catch (error) {

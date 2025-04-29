@@ -4,9 +4,9 @@ import { defineProps, ref } from "vue";
 import "./Carousel.scss";
 import CarouselDialog from "../ImageSystem/CarouselDialog/CarouselDialog.vue";
 import { useCarouselStore } from "../../stores/carouselPinia.ts";
-import { useIsDesktop } from "../../utils/useIsDesktop";
+import { useWindowSize } from "../../utils/useWindowSize.js";
 
-const isDesktop = useIsDesktop();
+const { device } = useWindowSize();
 
 const { currentImage } = defineProps<{
   currentImage: number;
@@ -35,14 +35,14 @@ const ContentStyle = ref(
       :deleteMode="deleteMode"
     />
     <Handing
-      v-if="isDesktop"
+      v-if="device !== 'mobile'"
       v-model:title="title"
       v-model:content="content"
       :HeadingStyle="HeadingStyle"
       :ContentStyle="ContentStyle"
     />
     <div
-      v-if="!isDesktop"
+      v-if="device === 'mobile'"
       class="carousel__image"
       v-for="(image, index) in carouselStore.sortedImages"
       :key="image._id"

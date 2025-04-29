@@ -9,7 +9,11 @@ export type SectionImage = {
   public_id: string;
   imageURL: string;
   title: string;
-  offsetY: number;
+  offsetY: {
+    mobile: number;
+    tablet: number;
+    desktop: number;
+  };
   type: string;
 };
 

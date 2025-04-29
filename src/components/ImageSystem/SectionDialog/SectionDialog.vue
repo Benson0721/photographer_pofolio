@@ -2,7 +2,7 @@
 import { useUserStore } from "../../../stores/userPinia.ts";
 import { useSectionStore } from "../../../stores/sectionPinia.ts";
 import { ref, watch, defineProps, computed, withDefaults } from "vue";
-import { useIsDesktop } from "../../../utils/useIsDesktop";
+import { useWindowSize } from "../../../utils/useWindowSize.js";
 import { useDragHandler } from "../../../utils/useDragHandler.ts";
 import { useUploadHandler } from "../../../utils/useUploadHandler.ts";
 import ButtonArea from "./ButtonArea.vue";
@@ -20,7 +20,7 @@ const sectionStore = useSectionStore();
 const errormessage = ref("");
 const successmessage = ref("");
 const editMode = ref("");
-const isDesktop = useIsDesktop();
+const { device } = useWindowSize();
 const newTitle = ref("");
 const uploadMode = ref(true);
 const changeTitleMode = ref(true);
@@ -36,7 +36,11 @@ const props = withDefaults(
     width: number;
     height: number;
     updateSizes: Function;
-    curOffsetY: number;
+    curOffsetY: {
+      mobile: number;
+      tablet: number;
+      desktop: number;
+    };
   }>(),
   {
     url: () => "",
@@ -46,7 +50,7 @@ const props = withDefaults(
     width: () => 0,
     height: () => 0,
     updateSizes: () => {},
-    curOffsetY: () => 0,
+    curOffsetY: () => ({ mobile: 0, tablet: 0, desktop: 0 }),
   }
 );
 
@@ -54,7 +58,8 @@ const { offsetY, startDrag, onDrag, endDrag, isDragging } = useDragHandler(
   720,
   "section",
   props.id,
-  props.curOffsetY
+  props.curOffsetY,
+  device
 );
 
 const handleOpen = async () => {
@@ -67,7 +72,6 @@ const handleOpen = async () => {
 const handleUpload = async () => {
   if (selectedFiles.value.length === 0) return;
   try {
-    console.log("upload image");
     isLoading.value = true;
     loadingmessage.value = "編輯圖片中...";
     const message = await sectionStore.updateImage(
@@ -111,7 +115,6 @@ const handleTitleUpload = async () => {
 };
 
 const resetMode = async () => {
-  console.log("reset mode");
   editMode.value = "";
   errormessage.value = ""; // 切換模式時清空錯誤訊息
   successmessage.value = "";
@@ -126,24 +129,19 @@ const previewImage = computed(() => {
   return props.url || "";
 });
 
-watch(previewUrls, () => {
-  console.log("selectedFile changed!");
-});
-
 watch(handleOpen, () => {
   errormessage.value = ""; // 切換模式時清空錯誤訊息
   successmessage.value = "";
 });
 
 watch(isDragging, async () => {
-  console.log("更新");
   await sectionStore.fetchImages();
 });
 </script>
 
 <template>
   <v-dialog
-    :width="isDesktop ? '60vw' : '100vw'"
+    :width="device !== 'mobile' ? '60vw' : '100vw'"
     @dragover="handleDragOver"
     @drop="handleDrop"
   >
@@ -176,7 +174,7 @@ watch(isDragging, async () => {
             @mousemove="onDrag"
             @mouseup="endDrag"
             @mouseleave="endDrag"
-            @touchstart="startDrag"
+            @touchstart.prevent="startDrag"
             @touchmove="onDrag"
             @touchend="endDrag"
             class="relative overflow-hidden"
@@ -186,7 +184,7 @@ watch(isDragging, async () => {
               :src="previewImage"
               alt="previewImage"
               class="draggable-image"
-              :style="{ top: `${offsetY}px` }"
+              :style="{ top: `${offsetY[device]}px` }"
               @dragstart.prevent
               draggable="false"
               pre
@@ -248,7 +246,6 @@ watch(isDragging, async () => {
   width: 100%;
   user-select: none;
   transition: top 0.1s ease-out;
-  cursor: grab;
 }
 .draggable-image:active {
   cursor: grabbing;

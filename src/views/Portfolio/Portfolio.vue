@@ -14,13 +14,13 @@ import NewDisplay from "../../components/ImageSystem/PortfolioDialog/DisplaySyst
 import { useRoute } from "vue-router";
 import { useUserStore } from "../../stores/userPinia.ts";
 import { useTopicStore } from "../../stores/topicPinia";
-import { useIsDesktop } from "../../utils/useIsDesktop";
+import { useWindowSize } from "../../utils/useWindowSize.js";
 import Handing from "../../components/Handing.vue";
 import TopicImage from "./TopicImage.vue";
 import DisplayImage from "./DisplayImage.vue";
 import "./Portfolio.scss";
 
-const isDesktop = useIsDesktop();
+const { device } = useWindowSize();
 const topicStore = useTopicStore();
 const userStore = useUserStore();
 const route = useRoute();
@@ -32,7 +32,7 @@ const curTopicID = ref("");
 const deleteMode = ref(false);
 const isLoading = ref(true);
 const HeadingStyle = ref(
-  "mt-4 text-[24px] md:text-[48px] lg:text-[72px] font-playfair text-white"
+  "mt-4 text-[36px] md:text-[72px] lg:text-[96px] font-playfair text-white"
 );
 const ContentStyle = ref(
   "text-[18px] md:text-[36px] lg:text-[48px] font-playfair text-white"
@@ -69,7 +69,7 @@ const loadImage = async () => {
 };
 
 const backgroundStyle = computed(() => {
-  if (isDesktop.value) {
+  if (device.value !== "mobile") {
     if (curTopicID.value) {
       const image = topicStore.topicImages.find(
         (image) => image._id === curTopicID.value
@@ -98,7 +98,7 @@ onMounted(async () => {
     <Navbar />
     <div class="portfolio__banner relative md:static">
       <img
-        v-if="!isDesktop"
+        v-if="device === 'mobile'"
         :src="topicStore.topicImages[0]?.imageURL"
         alt="portfolio"
         class="w-full h-auto object-cover md:hidden"
@@ -143,7 +143,7 @@ onMounted(async () => {
     </div>
     <div class="portfolio__category">
       <div
-        v-if="isDesktop"
+        v-if="device !== 'mobile'"
         class="portfolio__category__list md:gap-0.5 lg:gap-1"
       >
         <button

@@ -37,13 +37,11 @@ export const getTopicImages = async (req, res) => {
 export const addTopicImage = async (req, res) => {
   try {
     const { category, topic, notes } = req.query;
-    console.log("後端");
-    console.log(category, topic, notes);
+
     const { folder1 } = req.params;
     const filepath = req.file.path;
 
     const imageData = await addImages(folder1, category, filepath);
-    console.log("imageData:", imageData);
     if (imageData.error) {
       return res.status(500).json({ message: imageData.error });
     }
@@ -66,11 +64,10 @@ export const addTopicImage = async (req, res) => {
 };
 export const updateTopicImage = async (req, res) => {
   try {
-    console.log(req.body);
     const { newData } = req.body;
     const parsedData = JSON.parse(newData);
     const { category, topic, notes, id, publicID } = parsedData;
-    const { folder1, folder2 = "" } = req.params;
+    const { folder1 } = req.params;
     const updateData = { category: category, topic: topic, notes: notes };
     if (req.file?.path) {
       const filepath = req.file.path;
@@ -78,7 +75,6 @@ export const updateTopicImage = async (req, res) => {
         `Pai/views/portfolio/${category}/`,
         ""
       );
-      console.log(filterPublicID);
 
       const imageData = await updateImage(
         folder1,

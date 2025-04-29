@@ -1,15 +1,32 @@
 <script setup lang="ts">
 import "./CategorySection.scss";
-import { defineProps, watch } from "vue";
+import { defineProps, watch, ref, onMounted, nextTick } from "vue";
 import { useSectionStore } from "../../stores/sectionPinia";
 import SectionDialog from "../ImageSystem/SectionDialog/SectionDialog.vue";
 import { useImageSizeList } from "../../utils/useImageSizeList";
+import { useWindowSize } from "../../utils/useWindowSize";
 
 const { imageRefs, imageSizes, updateSizes } = useImageSizeList();
 const sectionStore = useSectionStore();
 const { isSectionPastScroll } = defineProps<{
   isSectionPastScroll: boolean;
 }>();
+
+const { device } = useWindowSize();
+const currentImage = ref(0);
+let intervalId: ReturnType<typeof setInterval> | null = null;
+
+const changeImage = () => {
+  intervalId = setInterval(() => {
+    currentImage.value =
+      (currentImage.value + 1) % sectionStore.sectionImages.length;
+  }, 5000);
+};
+
+onMounted(async () => {
+  await nextTick();
+  changeImage();
+});
 </script>
 <template>
   <div class="category-section__wrapper">
@@ -18,10 +35,13 @@ const { isSectionPastScroll } = defineProps<{
         <div
           v-for="(image, index) in sectionStore.sectionImages"
           :key="image._id"
-          :class="{ 'fade-controller': isSectionPastScroll }"
+          :class="{
+            'fade-controller': isSectionPastScroll,
+            '--padding': currentImage === index && device === 'mobile',
+          }"
           :style="{ '--i': index }"
           class="category-section__image-wrapper"
-          :ref="(el) => (imageRefs[index] = el)"
+          :ref="(el) => (imageRefs[index] = el as HTMLElement)"
           draggable="false"
         >
           <SectionDialog
@@ -39,8 +59,11 @@ const { isSectionPastScroll } = defineProps<{
               :src="image?.imageURL"
               alt=""
               class="category-section__image"
+              :class="{
+                '--visible': currentImage === index && device === 'mobile',
+              }"
               :style="{
-                top: `${image.offsetY}px`,
+                top: `${image.offsetY[device]}px`,
               }"
               draggable="false"
             />
@@ -68,6 +91,15 @@ const { isSectionPastScroll } = defineProps<{
     transform: translateY(0);
   }
 }
+
+.--padding {
+  padding: 28.26%;
+}
+
+.--visible {
+  filter: none;
+}
+
 .fade-controller {
   opacity: 0;
   animation: fade-in 1s forwards;

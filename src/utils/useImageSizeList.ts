@@ -1,7 +1,7 @@
 import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
 
 export function useImageSizeList() {
-  const imageRefs = ref<HTMLElement[] | null>([]);
+  const imageRefs = ref<HTMLElement[]>([]);
   const imageSizes = ref<{ width: number; height: number }[]>([]);
 
   const updateSizes = async () => {
@@ -9,8 +9,6 @@ export function useImageSizeList() {
     imageSizes.value =
       imageRefs.value?.map((el) => {
         const rect = el?.getBoundingClientRect?.();
-        console.log(rect.width);
-        console.log(rect.height);
         return {
           width: rect?.width || 0,
           height: rect?.height || 0,

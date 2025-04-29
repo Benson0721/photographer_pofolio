@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { login, register, logout } from "../apis/user_Api.js";
+import { login, register, logout, checkAuth } from "../apis/user_Api.js";
 
 export const useUserStore = defineStore("userStore", {
   state: () => ({
@@ -21,6 +21,11 @@ export const useUserStore = defineStore("userStore", {
     async logout() {
       await logout();
       this.user = null;
+    },
+    async checkAuth() {
+      const data = await checkAuth();
+      this.user = data.user;
+      this.error = data?.error;
     },
   },
   persist: {

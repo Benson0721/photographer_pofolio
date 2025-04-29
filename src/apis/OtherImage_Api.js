@@ -11,7 +11,6 @@ export const getImages = async (folderPath) => {
 };
 
 export const updateImage = async (folderPath, formData, publicID) => {
-  console.log(folderPath, formData, publicID);
   const response = await axios.put(
     `${baseURL}/api/images/${folderPath}`,
     formData,
@@ -21,7 +20,6 @@ export const updateImage = async (folderPath, formData, publicID) => {
       },
     }
   );
-  console.log(response);
   if (response.status === 200) {
     return response;
   }

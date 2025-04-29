@@ -2,7 +2,7 @@
 import { useUserStore } from "../../../../../stores/userPinia.ts";
 import { useTopicStore } from "../../../../../stores/topicPinia.ts";
 import { useUploadHandler } from "../../../../../utils/useUploadHandler.ts";
-import { useIsDesktop } from "../../../../../utils/useIsDesktop.js";
+import { useWindowSize } from "../../../../../utils/useWindowSize.js";
 import { ref, computed, defineProps } from "vue";
 import UploadArea from "./UploadArea.vue";
 import Loading from "../../../../../components/Loading.vue";
@@ -23,7 +23,7 @@ const successmessage = ref("");
 const loadingmessage = ref("");
 const isLoading = ref(false);
 
-const { isDesktop } = useIsDesktop();
+const { device } = useWindowSize();
 const { selectedFiles, handleSingleFileChange, resetUpload, previewUrls } =
   useUploadHandler();
 
@@ -65,7 +65,7 @@ const previewUrl = computed(() => {
 </script>
 
 <template>
-  <v-dialog :max-width="isDesktop ? '60vw' : '100vw'">
+  <v-dialog :max-width="device !== 'mobile' ? '60vw' : '100vw'">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         v-bind="activatorProps"
@@ -73,7 +73,7 @@ const previewUrl = computed(() => {
         text="編輯"
         variant="flat"
         :disabled="!userStore.isEditing"
-        class="bg-indigo-500 absolute z-10 top-1/18 left-6/10 md:top-1/10 md:left-6/8"
+        class="bg-indigo-500 absolute z-10 top-1/18 left-11/15 md:top-1/10 md:left-6/8"
         @click="handleOpen"
         :class="!userStore.isEditing ? 'hidden' : 'block'"
       ></v-btn>

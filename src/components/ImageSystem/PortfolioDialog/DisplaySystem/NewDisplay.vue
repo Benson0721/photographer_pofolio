@@ -3,6 +3,7 @@ import { useUserStore } from "../../../../stores/userPinia.ts";
 import { useUploadHandler } from "../../../../utils/useUploadHandler.ts";
 import { useDisplayStore } from "../../../../stores/displayPinia.ts";
 import { defineProps, ref } from "vue";
+import { useWindowSize } from "../../../../utils/useWindowSize.js";
 import Loading from "../../../../components/Loading.vue";
 const userStore = useUserStore();
 const displayStore = useDisplayStore();
@@ -17,6 +18,7 @@ const {
 const props = defineProps({
   curTopicID: String,
 });
+const { device } = useWindowSize();
 const successmessage = ref("");
 const errormessage = ref("");
 const isLoading = ref(false);
@@ -52,7 +54,7 @@ const handleUpload = async () => {
 };
 </script>
 <template>
-  <v-dialog max-width="500" @dragover="handleDragOver" @drop="handleDrop">
+  <v-dialog :max-width="device !== 'mobile' ? '60vw' : '100vw'" @dragover="handleDragOver" @drop="handleDrop">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         v-bind="activatorProps"

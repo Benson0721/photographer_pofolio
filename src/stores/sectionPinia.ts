@@ -40,8 +40,9 @@ export const useSectionStore = defineStore("sectionStore", {
       );
       return message;
     },
-    async adjustOffsetY(id: string, offsetY: number) {
+    async adjustOffsetY(id: string, offsetY: object) {
       const sectionPath = "home/sections";
+      console.log(offsetY);
       const message = await adjustOffsetY(sectionPath, id, offsetY);
       return message;
     },

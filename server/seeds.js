@@ -49,7 +49,7 @@ db.once("open", () => {
 
 const addAboutImage = async () => {
   try {
-    const images = [
+    /*const images = [
       {
         public_id: "Pai/views/about/about_putqkq",
         imageURL:
@@ -71,9 +71,12 @@ const addAboutImage = async () => {
         displayName: "pai",
         offsetY: 0,
       },
-    ];
+    ];*/
 
-    await SectionImage.insertMany(images);
+    await SectionImage.updateMany(
+      {},
+      { offsetY: { mobile: 0, tablet: 0, desktop: 0 } }
+    );
   } catch (error) {
     console.error(error);
   }

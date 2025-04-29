@@ -10,9 +10,7 @@ import {
 } from "vue";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useDisplayStore } from "../../stores/displayPinia.ts";
-import { useUserStore } from "../../stores/userPinia.ts";
 
-const userStore = useUserStore();
 const displayStore = useDisplayStore();
 const curTopicID = defineModel("curTopicID", { type: String });
 import VueEasyLightbox from "vue-easy-lightbox";
@@ -64,11 +62,6 @@ const setupObserver = async () => {
     const imageElements = document.querySelectorAll(
       ".portfolio__gallery__image"
     );
-    console.log(
-      `Attempt ${attempts + 1}: Found ${
-        imageElements.length
-      } images, Expected ${expectedImages}`
-    );
 
     if (imageElements.length >= expectedImages) {
       observer = new IntersectionObserver(
@@ -83,14 +76,12 @@ const setupObserver = async () => {
         { threshold: 0.01 }
       );
       imageElements.forEach((el) => observer.observe(el));
-      console.log(`Observer initialized with ${imageElements.length} images`);
       return;
     }
 
     attempts++;
     await new Promise((resolve) => setTimeout(resolve, 100)); // 等待 100ms
   }
-  console.warn(`Failed to find all images after ${maxAttempts} attempts`);
 };
 
 // 監控 TopicImage 變化

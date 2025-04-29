@@ -3,10 +3,10 @@ import { useUserStore } from "../../../stores/userPinia.ts";
 import { ref, watch, defineProps, computed } from "vue";
 import { useUploadHandler } from "../../../utils/useUploadHandler.ts";
 import { useAboutStore } from "../../../stores/aboutPinia.ts";
-import { useIsDesktop } from "../../../utils/useIsDesktop.js";
+import { useWindowSize } from "../../../utils/useWindowSize.js";
 import Loading from "../../Loading.vue";
 
-const { isDesktop } = useIsDesktop();
+const { device } = useWindowSize();
 const aboutStore = useAboutStore();
 const {
   selectedFiles,
@@ -83,7 +83,7 @@ watch(props, () => {
 
 <template>
   <v-dialog
-    :max-width="isDesktop ? '60vw' : '100vw'"
+    :max-width="device !== 'mobile' ? '60vw' : '100vw'"
     @dragover="handleDragOver"
     @drop="handleDrop"
   >

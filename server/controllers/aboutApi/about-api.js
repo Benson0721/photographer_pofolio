@@ -17,8 +17,6 @@ export const updateAboutImage = async (req, res) => {
     }
     const { folder1 } = req.params;
     const { publicID, id } = req.query;
-    console.log("id:", id);
-    console.log("publicID:", publicID);
     const filepath = req.file.path;
     const filterPublicID = publicID.replace("Pai/views/about/", "");
     const imageData = await updateImage(
@@ -27,7 +25,6 @@ export const updateAboutImage = async (req, res) => {
       filepath,
       filterPublicID
     );
-    console.log(imageData);
     const newUrl = imageData.secure_url.replace(
       "/upload/",
       "/upload/f_auto,q_auto,w_1440/"

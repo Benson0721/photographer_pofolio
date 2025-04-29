@@ -2,7 +2,7 @@
 import { useUserStore } from "../../../../../stores/userPinia.ts";
 import { useTopicStore } from "../../../../../stores/topicPinia.ts";
 import { useUploadHandler } from "../../../../../utils/useUploadHandler.ts";
-import { useIsDesktop } from "../../../../../utils/useIsDesktop.js";
+import { useWindowSize } from "../../../../../utils/useWindowSize.js";
 import { ref, computed } from "vue";
 import UploadArea from "./UploadArea.vue";
 import Loading from "../../../../../components/Loading.vue";
@@ -14,14 +14,13 @@ const successmessage = ref("");
 const loadingmessage = ref("");
 const isLoading = ref(false);
 
-const { isDesktop } = useIsDesktop();
+const { device } = useWindowSize();
 const { selectedFiles, handleSingleFileChange, resetUpload, previewUrls } =
   useUploadHandler();
 
 const handleOpen = async () => {
   errormessage.value = "";
   successmessage.value = "";
-  await topicStore.fetchImages();
 };
 
 const handleAddImage = async (data) => {
@@ -57,7 +56,7 @@ const previewUrl = computed(() => {
 </script>
 
 <template>
-  <v-dialog :max-width="isDesktop ? '60vw' : '100vw'">
+  <v-dialog :max-width="device !== 'mobile' ? '60vw' : '100vw'">
     <template v-slot:activator="{ props: activatorProps }">
       <v-btn
         v-bind="activatorProps"

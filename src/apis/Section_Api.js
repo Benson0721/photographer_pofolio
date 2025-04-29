@@ -4,7 +4,6 @@ const baseURL = window.location.origin;
 
 export const getSectionImages = async (folderPath) => {
   const response = await axios.get(`${baseURL}/api/section/${folderPath}`);
-  console.log(response);
   if (response.status === 200) {
     return response.data.sectionImages;
   }
@@ -29,7 +28,6 @@ export const updateSectionImage = async (
       },
     }
   );
-  console.log(response);
   if (response.status === 200) {
     return response.data.message;
   }
@@ -37,12 +35,10 @@ export const updateSectionImage = async (
 };
 
 export const adjustOffsetY = async (folderPath, id, offsetY) => {
-  console.log(folderPath, id, offsetY);
   const response = await axios.patch(`${baseURL}/api/section/${folderPath}`, {
     offsetY,
     id,
   });
-  console.log(response);
   if (response.status === 200) {
     return response.data.message;
   }
@@ -54,7 +50,6 @@ export const updateSectionName = async (id, title) => {
     id,
     title,
   });
-  console.log(response);
   if (response.status === 200) {
     return response.data.message;
   }

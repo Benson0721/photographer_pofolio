@@ -18,13 +18,13 @@ import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
 import AboutDialog from "../../components/ImageSystem/AboutDialog/AboutDialog.vue";
 import { AboutImage } from "../../types/apiType";
 import { useAboutStore } from "../../stores/aboutPinia";
-import { useIsDesktop } from "../../utils/useIsDesktop";
+import { useWindowSize } from "../../utils/useWindowSize";
 import { useImageSizeList } from "../../utils/useImageSizeList";
 import Loading from "../../components/Loading.vue";
 
 const { imageRefs, imageSizes, updateSizes } = useImageSizeList();
 
-const isDesktop = useIsDesktop();
+const { device } = useWindowSize();
 const route = useRoute();
 const aboutStore = useAboutStore();
 const formData = reactive({
@@ -38,7 +38,7 @@ const title = ref("About");
 const isLoading = ref(true);
 
 const HeadingStyle = ref(
-  "mt-4 text-[48px] md:text-[72px] lg:text-[96px] font-playfair text-white text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+  "mt-4 text-[36px] md:text-[72px] lg:text-[96px] font-playfair text-white text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
 );
 
 const isScrolledPast = ref(false);
@@ -60,7 +60,7 @@ const imageMap = computed(() => {
 });
 
 const backgroundStyle = computed(() => {
-  if (isDesktop) {
+  if (device.value !== "mobile") {
     return {
       backgroundImage: `url(${imageMap.value["about"]?.imageURL})`,
     };
@@ -184,7 +184,7 @@ console.log(isAboutPastScroll.value);
     <Navbar :isScrolledPast="isScrolledPast" />
     <div class="about__banner">
       <img
-        v-if="!isDesktop"
+        v-if="device === 'mobile'"
         :src="imageMap['about']?.imageURL"
         :ref="(el) => (imageRefs['about'] = el)"
         alt="about"

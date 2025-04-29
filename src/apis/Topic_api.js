@@ -15,7 +15,6 @@ export const getTopicImages = async (folderPath = "", category = "") => {
 };
 
 export const addTopicImage = async (folderPath, formData, info) => {
-  console.log(folderPath, formData, info);
   const response = await axios.post(
     `${baseURL}/api/topic/${folderPath}`,
     formData,
@@ -28,7 +27,6 @@ export const addTopicImage = async (folderPath, formData, info) => {
     }
   );
   if (response.status === 200) {
-    console.log(response.data.message);
     return response.data.message;
   }
   return { error: response.data.error };
@@ -39,7 +37,6 @@ export const updateTopicImage = async (folderPath, formData) => {
     `${baseURL}/api/topic/${folderPath}`,
     formData
   );
-  console.log(response);
   if (response.status === 200) {
     return response.data.message;
   }
@@ -52,7 +49,6 @@ export const updateTopicInfo = async (id, topic, notes) => {
     topic,
     notes,
   });
-  console.log(response);
   if (response.status === 200) {
     return response.data.message;
   }
@@ -60,14 +56,12 @@ export const updateTopicInfo = async (id, topic, notes) => {
 };
 
 export const deleteTopicImage = async (folderPath, publicId, id) => {
-  console.log("前端");
   const response = await axios.delete(`${baseURL}/api/topic/${folderPath}`, {
     params: {
       publicId,
       id,
     },
   });
-  console.log(response);
   if (response.status === 200) {
     return response.data.message;
   }

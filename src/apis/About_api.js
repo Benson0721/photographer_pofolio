@@ -4,7 +4,6 @@ const baseURL = window.location.origin;
 
 export const getAboutImages = async (folderPath) => {
   const response = await axios.get(`${baseURL}/api/about/${folderPath}`);
-  console.log(response);
   if (response.status === 200) {
     return response.data.AboutImages;
   }
@@ -22,7 +21,6 @@ export const updateAboutImage = async (folderPath, formData, publicID, id) => {
       },
     }
   );
-  console.log(response.data.message);
   if (response.status === 200) {
     return response.data.message;
   }
@@ -34,7 +32,6 @@ export const adjustOffsetY = async (folderPath, id, offsetY) => {
     offsetY,
     id,
   });
-  console.log(response);
   if (response.status === 200) {
     return response;
   }

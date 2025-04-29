@@ -4,7 +4,6 @@ import { addImages, deleteImages } from "../cloudinaryApi/img-api.js";
 export const getDisplayImages = async (req, res) => {
   try {
     const { topicID } = req.query;
-    console.log(topicID);
     const displayImages = await DisplayImage.find({ topicID });
     res.json({ displayImages });
   } catch (error) {
@@ -16,18 +15,14 @@ export const addDisplayImages = async (req, res) => {
   try {
     const { topicID } = req.body;
     const parsedTopicID = JSON.parse(topicID);
-    console.log("後端");
     const { folder1, folder2 = "" } = req.params;
     const files = req.files;
-    console.log(files);
     const paths = files.map((file) => file.path);
     const imageDatas = await addImages(folder1, folder2, paths);
-    console.log("imageDatas:", imageDatas);
     if (imageDatas.error) {
       return res.status(500).json({ message: imageDatas.error });
     }
     if (!Array.isArray(imageDatas)) {
-      console.log("object!");
       const newUrl = imageDatas.secure_url.replace(
         "/upload/",
         "/upload/f_auto,q_auto,w_1440/"
@@ -39,7 +34,6 @@ export const addDisplayImages = async (req, res) => {
       });
       await image.save();
     } else {
-      console.log("array!");
       imageDatas.map(async (data) => {
         const newUrl = data.secure_url.replace(
           "/upload/",

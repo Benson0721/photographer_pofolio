@@ -30,8 +30,6 @@ export const adjustCarouselOrder = async (req, res) => {
 
 export const addCarouselImage = async (req, res) => {
   try {
-    console.log("後端");
-
     const { folder1, folder2 = "" } = req.params;
     const files = req.files;
     const paths = files.map((file) => file.path);

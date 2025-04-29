@@ -4,7 +4,7 @@ import Carousel from "../../components/Carousel/Carousel.vue";
 import CategorySection from "../../components/CategorySection/CategorySection.vue";
 import Footer from "../../components/Footer.vue";
 import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
-import { useIsDesktop } from "../../utils/useIsDesktop";
+import { useWindowSize } from "../../utils/useWindowSize.js";
 import {
   ref,
   onMounted,
@@ -23,31 +23,35 @@ import { useSectionStore } from "../../stores/sectionPinia.ts";
 const carouselStore = useCarouselStore();
 const sectionStore = useSectionStore();
 
-const isDesktop = useIsDesktop();
+const { device } = useWindowSize();
 const isLoading = ref(true);
-const isEditing = ref(false);
-
+const curBgOpacity = ref(0);
+const preBgOpacity = ref(1);
 const currentImage = ref(0);
 const isSectionPastScroll = ref(false);
-const previousImage = ref(-1); // 用於儲存前一張圖片索引
+const previousImage = ref(0); // 用於儲存前一張圖片索引
+let observer: IntersectionObserver | null = null;
 
 const currentBackgroundStyle = computed(() => {
-  if (isDesktop.value && carouselStore.sortedImages[currentImage.value]) {
+  if (
+    device.value !== "mobile" &&
+    carouselStore.sortedImages[currentImage.value]
+  ) {
     return {
       backgroundImage: `url("${
         carouselStore.sortedImages[currentImage.value].imageURL
       }")`,
-      opacity: 1,
+      opacity: curBgOpacity.value,
       transition: "opacity 1s ease-in-out",
     };
   }
-  return { opacity: 0 };
+  return {};
 });
 
 // 前一張圖片的背景樣式
 const previousBackgroundStyle = computed(() => {
   if (
-    isDesktop.value &&
+    device.value !== "mobile" &&
     previousImage.value >= 0 &&
     carouselStore.sortedImages[previousImage.value]
   ) {
@@ -55,40 +59,61 @@ const previousBackgroundStyle = computed(() => {
       backgroundImage: `url("${
         carouselStore.sortedImages[previousImage.value].imageURL
       }")`,
-      opacity: 0,
-      transition: "opacity 1s ease-in-out",
-    };
-  }
-  return { opacity: 0 };
-});
-
-const backgroundStyle = computed(() => {
-  if (isDesktop.value) {
-    return {
-      backgroundImage: `url(${
-        carouselStore.sortedImages[currentImage.value]?.imageURL || ""
-      })`,
-      opacity: bgOpacity.value,
+      opacity: preBgOpacity.value,
       transition: "opacity 1s ease-in-out",
     };
   }
   return {};
 });
 
+/*const backgroundStyle = computed(() => {
+  if (device.value !== "mobile") {
+    return {
+      backgroundImage: `url(${
+        carouselStore.sortedImages[currentImage.value]?.imageURL || ""
+      })`,
+      opacity: curBgOpacity.value,
+      transition: "opacity 1s ease-in-out",
+    };
+  }
+  return {};
+});*/
+
 let intervalId: ReturnType<typeof setInterval> | null = null;
-const bgOpacity = ref(0);
+const preloadImage = (src: string) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => resolve(true);
+  });
+};
+
 const changeImage = () => {
-  intervalId = setInterval(() => {
-    previousImage.value = currentImage.value; // 儲存當前圖片作為前一張
-    currentImage.value =
+  intervalId = setInterval(async () => {
+    const nextIndex =
       (currentImage.value + 1) % carouselStore.sortedImages.length;
-  }, 10000);
+    const nextImageURL = carouselStore.sortedImages[nextIndex].imageURL;
+
+    await preloadImage(nextImageURL); // 預先載入下一張圖
+
+    previousImage.value = currentImage.value;
+    currentImage.value = nextIndex;
+
+    // 重設 opacity 為初始狀態
+    curBgOpacity.value = 0;
+    preBgOpacity.value = 1;
+
+    setTimeout(() => {
+      preBgOpacity.value = 0;
+      curBgOpacity.value = 1;
+    }, 50); // 延遲一點點，確保樣式已經更新
+  }, 5000);
 };
 const observerFunc = () => {
   const categorySection = document.querySelector(".category-section");
   if (!categorySection) return;
 
-  const observer = new IntersectionObserver(
+  observer = new IntersectionObserver(
     ([entry]) => {
       isSectionPastScroll.value = entry.isIntersecting;
     },
@@ -98,10 +123,6 @@ const observerFunc = () => {
   );
 
   observer.observe(categorySection);
-
-  onBeforeUnmount(() => {
-    observer.disconnect();
-  });
 };
 
 onMounted(async () => {
@@ -110,11 +131,8 @@ onMounted(async () => {
   isLoading.value = false;
   await nextTick(() => {
     observerFunc();
+    changeImage();
   });
-});
-
-onMounted(() => {
-  changeImage();
 });
 
 onUnmounted(() => {
@@ -124,8 +142,18 @@ onUnmounted(() => {
   }
 });
 
-watch(isEditing, (newVal, oldVal) => {
-  console.log(`isEditing changed from ${oldVal} to ${newVal}`);
+onBeforeUnmount(() => {
+  observer.disconnect();
+});
+
+watch(previousImage, () => {
+  console.log(previousImage.value);
+});
+
+watch(currentImage, (newIndex) => {
+  //預載
+  const img = new Image();
+  img.src = carouselStore.sortedImages[newIndex].imageURL;
 });
 </script>
 <template>
@@ -157,6 +185,7 @@ watch(isEditing, (newVal, oldVal) => {
   position: relative;
   overflow: hidden;
 }
+
 .background-layer {
   position: absolute;
   top: 0;
@@ -169,7 +198,7 @@ watch(isEditing, (newVal, oldVal) => {
   background-repeat: no-repeat;
   background-attachment: fixed;
   min-height: 100vh;
+  transition: opacity 1s ease-in-out;
+  pointer-events: none; /* 避免干擾 */
 }
-
-
 </style>

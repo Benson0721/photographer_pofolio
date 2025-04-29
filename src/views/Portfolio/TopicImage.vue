@@ -46,11 +46,6 @@ const setupObserver = async () => {
     const imageElements = document.querySelectorAll(
       ".portfolio__gallery__image"
     );
-    console.log(
-      `Attempt ${attempts + 1}: Found ${
-        imageElements.length
-      } images, Expected ${expectedImages}`
-    );
 
     if (imageElements.length >= expectedImages) {
       observer = new IntersectionObserver(
@@ -65,14 +60,12 @@ const setupObserver = async () => {
         { threshold: 0.1 }
       );
       imageElements.forEach((el) => observer.observe(el));
-      console.log(`Observer initialized with ${imageElements.length} images`);
       return;
     }
 
     attempts++;
     await new Promise((resolve) => setTimeout(resolve, 100)); // 等待 100ms
   }
-  console.warn(`Failed to find all images after ${maxAttempts} attempts`);
 };
 
 // 監控 TopicImage 變化
@@ -92,9 +85,6 @@ onBeforeUnmount(() => {
   if (observer) {
     observer.disconnect();
   }
-});
-watch(curTopicID, () => {
-  console.log(curTopicID.value);
 });
 </script>
 <template>

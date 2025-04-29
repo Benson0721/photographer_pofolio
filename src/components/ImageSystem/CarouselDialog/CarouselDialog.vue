@@ -7,7 +7,8 @@ import OrderMode from "./OrderMode.vue";
 import UploadMode from "./UploadMode.vue";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { useUploadHandler } from "../../../utils/useUploadHandler.ts";
-import { useIsDesktop } from "../../../utils/useIsDesktop.js";
+import { useWindowSize } from "../../../utils/useWindowSize.js";
+import Loading from "../../Loading.vue";
 const {
   selectedFiles,
   previewUrls,
@@ -18,7 +19,7 @@ const {
 } = useUploadHandler();
 const userStore = useUserStore();
 const carouselStore = useCarouselStore();
-const { isDesktop } = useIsDesktop();
+const { device } = useWindowSize();
 const editMode = ref("");
 const errormessage = ref("");
 const successmessage = ref("");
@@ -32,7 +33,6 @@ const { orderMode, uploadMode, deleteMode } = defineProps({
 });
 
 const resetMode = () => {
-  console.log("reset mode");
   editMode.value = "";
   previewUrls.value = [];
   selectedFiles.value = [];
@@ -50,7 +50,6 @@ const handleUpload = async () => {
     loadingmessage.value = "上傳圖片中...";
     isLoading.value = true;
     const res = await carouselStore.addImages(selectedFiles.value);
-    console.log(res);
     resetUpload();
     successmessage.value = res.data.message;
     carouselStore.fetchImages();
@@ -68,7 +67,6 @@ const handleOrder = async () => {
     ...image,
     order: index + 1,
   }));
-  console.log(newOrderArray);
   try {
     loadingmessage.value = "調整順序中...";
     isLoading.value = true;
@@ -97,10 +95,6 @@ const handleDelete = async (public_Id, id) => {
   }
 };
 
-watch(previewUrls, () => {
-  console.log("selectedFile changed!");
-});
-
 watch(editMode, () => {
   errormessage.value = ""; // 切換模式時清空錯誤訊息
   successmessage.value = "";
@@ -111,7 +105,7 @@ watch(editMode, () => {
 
 <template>
   <v-dialog
-    :max-width="isDesktop ? '60vw' : '100vw'"
+    :max-width="device !== 'mobile' ? '60vw' : '100vw'"
     @dragover="handleDragOver"
     @drop="handleDrop"
   >

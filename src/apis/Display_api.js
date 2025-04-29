@@ -12,7 +12,6 @@ export const getDisplayImages = async (folderPath, topicID) => {
 };
 
 export const addDisplayImage = async (folderPath, formData) => {
-  console.log("前端");
   const response = await axios.post(
     `${baseURL}/api/display/${folderPath}`,
     formData,
@@ -22,7 +21,6 @@ export const addDisplayImage = async (folderPath, formData) => {
       },
     }
   );
-  console.log(response.data.message);
   if (response.status === 200) {
     return response.data.message;
   }
@@ -30,11 +28,9 @@ export const addDisplayImage = async (folderPath, formData) => {
 };
 
 export const deleteDisplayImage = async (folderPath, publicId, id) => {
-  console.log("前端");
   const response = await axios.delete(`${baseURL}/api/display/${folderPath}`, {
     params: { publicId, id },
   });
-  console.log(response);
   if (response.status === 200) {
     return response.data.message;
   }

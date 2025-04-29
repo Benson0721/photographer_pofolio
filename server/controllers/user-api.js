@@ -2,6 +2,8 @@ import { User } from "../models/UserSchema.js";
 
 
 
+
+
 export const logout = (req, res) => {
   req.logout(function (err) {
     if (err) {

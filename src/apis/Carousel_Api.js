@@ -10,7 +10,6 @@ export const getCarouselImages = async (folderPath) => {
 };
 
 export const addCarouselImage = async (folderPath, formData) => {
-  console.log("前端");
   const response = await axios.post(
     `${baseURL}/api/carousel/${folderPath}`,
     formData,
@@ -20,7 +19,6 @@ export const addCarouselImage = async (folderPath, formData) => {
       },
     }
   );
-  console.log(response);
   if (response.status === 200) {
     return response;
   }
@@ -28,12 +26,10 @@ export const addCarouselImage = async (folderPath, formData) => {
 };
 
 export const adjustCarouselOrder = async (folderPath, newOrderArray) => {
-  console.log("前端");
   const response = await axios.patch(
     `${baseURL}/api/carousel/${folderPath}`,
     newOrderArray
   );
-  console.log(response);
   if (response.status === 200) {
     return response;
   }
@@ -41,11 +37,9 @@ export const adjustCarouselOrder = async (folderPath, newOrderArray) => {
 };
 
 export const deleteCarouselImage = async (folderPath, publicId, id) => {
-  console.log("前端");
   const response = await axios.delete(`${baseURL}/api/carousel/${folderPath}`, {
     params: { publicId, id },
   });
-  console.log(response);
   if (response.status === 200) {
     return response;
   }

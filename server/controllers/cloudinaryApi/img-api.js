@@ -2,7 +2,6 @@ import { v2 as cloudinary } from "cloudinary";
 
 export const getImages = async (folder1, folder2 = "") => {
   try {
-    console.log("後端");
     const res = await cloudinary.search
       .expression(`folder:Pai/views/${folder1}/${folder2}`)
       .sort_by("public_id", "asc")
@@ -25,7 +24,6 @@ export const updateImage = async (
   publicId
 ) => {
   try {
-    console.log(folder1, folder2, filePath, publicId);
     const folderPath = folder2
       ? `Pai/views/${folder1}/${folder2}`
       : `Pai/views/${folder1}`;
@@ -45,7 +43,6 @@ export const updateImage = async (
 
 export const addImages = async (folder1, folder2 = "", filePath) => {
   try {
-    console.log(folder1, folder2, filePath);
     const options = {
       folder: `Pai/views/${folder1}/${folder2}`,
       resource_type: "image",
@@ -66,7 +63,6 @@ export const addImages = async (folder1, folder2 = "", filePath) => {
   }
 };
 export const deleteImages = async (publicId) => {
-  console.log("刪除圖片", publicId);
   try {
     const result = await cloudinary.uploader.destroy(publicId, {
       resource_type: "image",
