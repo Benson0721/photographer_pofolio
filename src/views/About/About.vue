@@ -12,7 +12,6 @@ import { useRoute } from "vue-router";
 import Navbar from "../../components/Navbar/Navbar.vue";
 import Footer from "../../components/Footer.vue";
 import { FormKit } from "@formkit/vue";
-import emailjs from "@emailjs/browser";
 import Handing from "../../components/Handing.vue";
 import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
 import AboutDialog from "../../components/ImageSystem/AboutDialog/AboutDialog.vue";
@@ -20,8 +19,8 @@ import { AboutImage } from "../../types/apiType";
 import { useAboutStore } from "../../stores/aboutPinia";
 import { useWindowSize } from "../../utils/useWindowSize";
 import { useImageSizeList } from "../../utils/useImageSizeList";
+import { sendEmail } from "../../utils/sendEmail";
 import Loading from "../../components/Loading.vue";
-
 const { imageRefs, imageSizes, updateSizes } = useImageSizeList();
 
 const { device } = useWindowSize();
@@ -35,7 +34,11 @@ const formData = reactive({
 });
 
 const title = ref("About");
-const isLoading = ref(true);
+const isLoading = ref(false);
+const isEmailSending = ref(false);
+const loadingmessage = ref("");
+const errorMessage = ref("");
+const successMessage = ref("");
 
 const HeadingStyle = ref(
   "mt-4 text-[36px] md:text-[72px] lg:text-[96px] font-playfair text-white text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
@@ -45,6 +48,7 @@ const isScrolledPast = ref(false);
 const isSocialScrolledPast = ref(false);
 const isAboutPastScroll = ref(false);
 const isContactPastScroll = ref(false);
+
 const imageMap = computed(() => {
   const result: Record<string, AboutImage> = {};
   const targets = ["about", "pai", "moto"];
@@ -69,18 +73,27 @@ const backgroundStyle = computed(() => {
 });
 
 const handleSubmit = async (data: any) => {
-  const response = await emailjs.send(
-    "service_zus6nig",
-    "template_kzv5rbv",
-    {
-      subject: data.subject,
-      name: data.name,
-      message: data.message,
-      email: data.email,
-    },
-    "vkXwHwAPV2buEf4Sp"
-  );
-  console.log(response);
+  try {
+    isEmailSending.value = true;
+    loadingmessage.value = "正在寄出信件...";
+    if (!data.name || !data.email || !data.subject || !data.message) {
+      throw new Error("請填寫完整表單");
+    }
+    const res = await sendEmail(data);
+    successMessage.value = res.message;
+    clearForm();
+    setTimeout(() => {
+      clearMessage();
+    }, 5000);
+
+    isEmailSending.value = false;
+  } catch (error: any) {
+    errorMessage.value = error.message;
+    setTimeout(() => {
+      clearMessage();
+    }, 5000);
+    isEmailSending.value = false;
+  }
 };
 const observerFunc = () => {
   const contactSection = document.querySelector("#contact");
@@ -153,6 +166,16 @@ const scrollFunc = (hash: string) => {
     }
   }, 1000);
 };
+const clearForm = () => {
+  formData.name = "";
+  formData.email = "";
+  formData.subject = "";
+  formData.message = "";
+};
+const clearMessage = () => {
+  successMessage.value = "";
+  errorMessage.value = "";
+};
 onMounted(async () => {
   await aboutStore.fetchImages();
   await nextTick(() => {
@@ -166,9 +189,6 @@ onMounted(async () => {
     scrollFunc(route.hash);
   }
 });
-
-console.log(isLoading.value);
-console.log(isAboutPastScroll.value);
 </script>
 <template #default="{ state: { valid } }">
   <div
@@ -269,6 +289,24 @@ console.log(isAboutPastScroll.value);
           >
             Contact
           </h2>
+          <div
+            v-if="isEmailSending"
+            class="flex items-center absolute sm:top-1/7 md:top-1/5"
+          >
+            <div
+              class="spinner border-4 border-gray-200 border-t-blue-500 rounded-full w-5 h-5 animate-spin"
+            ></div>
+            <span class="ml-2 text-gray-500 text-sm">{{ loadingmessage }}</span>
+          </div>
+          <div class="absolute sm:top-1/7 md:top-1/5 text-green-500">
+            {{ successMessage }}
+          </div>
+          <div
+            v-if="errorMessage"
+            class="absolute sm:top-1/7 md:top-1/5 text-red-500"
+          >
+            {{ errorMessage }}
+          </div>
           <FormKit
             type="form"
             :actions="false"
@@ -277,7 +315,7 @@ console.log(isAboutPastScroll.value);
             validation="required"
             :validation-visibility="'submit'"
             incomplete-message="請填寫完必要資訊以送出信件"
-            messages-class="text-red-500 text-lg absolute sm:top-1/5 md:top-1/4"
+            messages-class="text-red-500 text-lg absolute sm:top-1/5 md:top-1/5"
           >
             <div class="flex flex-col md:flex-row">
               <FormKit
@@ -288,11 +326,7 @@ console.log(isAboutPastScroll.value);
                 outerClass="mb-4 md:mr-8 w-full md:w-1/2"
                 innerClass="mt-4 border-b-2 border-black"
                 labelClass=" font-noto "
-                validation="required"
                 messages-class="text-red-500 text-sm"
-                :validation-messages="{
-                  required: '請輸入姓名',
-                }"
                 :classes="{
                   outer: '',
                   inner: 'mt-4 border-b-2',
@@ -308,11 +342,7 @@ console.log(isAboutPastScroll.value);
                 outerClass="mb-4 w-full md:w-1/2"
                 innerClass="mt-4 border-b-2 border-black"
                 labelClass="text-black font-noto "
-                validation="required"
                 messages-class="text-red-500 text-sm"
-                :validation-messages="{
-                  required: '請輸入正確的 Email 格式',
-                }"
                 :classes="{
                   outer: '',
                   inner: 'mt-4 border-b-2',
@@ -330,11 +360,7 @@ console.log(isAboutPastScroll.value);
                 outerClass="mb-4 w-full md:w-full"
                 innerClass="mt-4 border-b-2 border-black"
                 labelClass="text-black font-noto "
-                validation="required"
                 messages-class="text-red-500 text-sm"
-                :validation-messages="{
-                  required: '請輸入標題',
-                }"
                 :classes="{
                   outer: '',
                   inner: 'mt-4 border-b-2',
@@ -350,13 +376,9 @@ console.log(isAboutPastScroll.value);
                 outerClass="mb-4"
                 innerClass="mt-4 border-b-2 border-black"
                 labelClass="text-black font-noto"
-                validation="required"
                 rows="5"
                 cols="30"
                 messages-class="text-red-500 text-sm"
-                :validation-messages="{
-                  required: '請輸入訊息',
-                }"
                 :classes="{
                   outer: '',
                   inner: 'mt-4 border-b-2',

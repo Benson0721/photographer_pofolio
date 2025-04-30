@@ -146,10 +146,6 @@ onBeforeUnmount(() => {
   observer.disconnect();
 });
 
-watch(previousImage, () => {
-  console.log(previousImage.value);
-});
-
 watch(currentImage, (newIndex) => {
   //預載
   const img = new Image();

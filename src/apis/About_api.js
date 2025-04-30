@@ -26,14 +26,3 @@ export const updateAboutImage = async (folderPath, formData, publicID, id) => {
   }
   return { error: response.data.error };
 };
-
-export const adjustOffsetY = async (folderPath, id, offsetY) => {
-  const response = await axios.patch(`${baseURL}/api/about/${folderPath}`, {
-    offsetY,
-    id,
-  });
-  if (response.status === 200) {
-    return response;
-  }
-  return { error: response.data.error };
-};
