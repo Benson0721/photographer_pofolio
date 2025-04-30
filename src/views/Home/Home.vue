@@ -106,10 +106,7 @@ const changeImage = () => {
 };*/
 
 const currentLayer = ref(0); // 0 or 1，控制哪一層在上面
-const layerImages = ref([
-  { imageURL: carouselStore.sortedImages[0].imageURL, opacity: 1 },
-  { imageURL: carouselStore.sortedImages[1].imageURL, opacity: 0 },
-]);
+const layerImages = ref([]);
 
 let index = 0;
 
@@ -150,6 +147,10 @@ const observerFunc = () => {
 
 onMounted(async () => {
   await carouselStore.fetchImages();
+  layerImages.value = [
+    { imageURL: carouselStore.sortedImages[0].imageURL, opacity: 1 },
+    { imageURL: carouselStore.sortedImages[1].imageURL, opacity: 0 },
+  ];
   await sectionStore.fetchImages();
   isLoading.value = false;
   await nextTick(() => {
