@@ -244,9 +244,14 @@ onMounted(async () => {
           :class="{ 'fade-controller': isAboutPastScroll }"
         >
           <div
-            class="px-4 h-full text-[1rem] md:text-[1.03rem] lg:text-[1.5rem] text-black font-noto"
+            class="px-4 h-full text-[1rem] md:text-[1.03rem] lg:text-[1.75rem] text-black font-noto"
           >
-            <div class="my-4 md:my-8 lg:my-18">
+            <h2
+              class="text-[48px] md:text-[72px] font-playfair text-black text-center"
+            >
+              Me
+            </h2>
+            <div class="my-4 md:my-8 lg:my-8">
               我是白承智，一位專注於人像、街拍、風景與建築攝影的創作者。
             </div>
             <div>喜歡以機車旅行的方式探索城市與自然，</div>
