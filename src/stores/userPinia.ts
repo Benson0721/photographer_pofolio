@@ -28,14 +28,5 @@ export const useUserStore = defineStore("userStore", {
       this.error = data?.error;
     },
   },
-  persist: {
-    enabled: true,
-    strategies: [
-      {
-        key: "userStore",
-        storage: localStorage,
-        paths: ["user"],
-      },
-    ],
-  },
+  persist: true,
 });
