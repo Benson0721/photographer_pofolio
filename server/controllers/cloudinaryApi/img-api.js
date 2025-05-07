@@ -3,7 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 export const getImages = async (folder1, folder2 = "") => {
   try {
     const res = await cloudinary.search
-      .expression(`folder:Pai/views/${folder1}/${folder2}`)
+      .expression(`folder:Photographer/views/${folder1}/${folder2}`)
       .sort_by("public_id", "asc")
       .max_results(30)
       .execute();
@@ -25,8 +25,8 @@ export const updateImage = async (
 ) => {
   try {
     const folderPath = folder2
-      ? `Pai/views/${folder1}/${folder2}`
-      : `Pai/views/${folder1}`;
+      ? `Photographer/views/${folder1}/${folder2}`
+      : `Photographer/views/${folder1}`;
     const options = {
       folder: folderPath,
       resource_type: "image",
@@ -40,11 +40,12 @@ export const updateImage = async (
     return { error: error.message };
   }
 };
+      
 
 export const addImages = async (folder1, folder2 = "", filePath) => {
   try {
     const options = {
-      folder: `Pai/views/${folder1}/${folder2}`,
+      folder: `Photographer/views/${folder1}/${folder2}`,
       resource_type: "image",
     };
     if (!Array.isArray(filePath)) {

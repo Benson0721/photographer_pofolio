@@ -65,6 +65,7 @@ db.once("open", () => {
 
 const store = MongoStore.create({
   mongoUrl: DBURL,
+  dbName: "selfDatabase",
   collectionName: "sessions",
   touchAfter: 24 * 60 * 60,
 });

@@ -40,7 +40,7 @@ export const addCarouselImage = async (req, res) => {
     imageDatas.map(async (data) => {
       const newUrl = data.secure_url.replace(
         "/upload/",
-        "/upload/f_auto,q_auto,w_1440/"
+        "/upload/f_auto,q_80/"
       );
       const image = new CarouselImage({
         imageURL: newUrl,

@@ -1,4 +1,5 @@
 import { SectionImage } from "./models/SectionImageSchema.js";
+import { CarouselImage } from "./models/CarouselImageSchema.js";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -73,10 +74,12 @@ const addAboutImage = async () => {
       },
     ];*/
 
-    await SectionImage.updateMany(
-      {},
-      { offsetY: { mobile: 0, tablet: 0, desktop: 0 } }
-    );
+    await CarouselImage.create({
+      imageURL:
+        "https://res.cloudinary.com/dk1yh5mdu/image/upload/v1746080364/dt7t71xizcc9drgo8dra_gfdnx7.jpg",
+      public_id: "Photographer/views/home/carousel/dt7t71xizcc9drgo8dra_gfdnx7",
+      order: 1,
+    });
   } catch (error) {
     console.error(error);
   }

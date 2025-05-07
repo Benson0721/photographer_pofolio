@@ -24,11 +24,10 @@ const carouselStore = useCarouselStore();
 const sectionStore = useSectionStore();
 
 const isLoading = ref(true);
-const curBgOpacity = ref(0);
-const preBgOpacity = ref(1);
+let intervalId1: ReturnType<typeof setInterval> | null = null;
+let intervalId2: ReturnType<typeof setInterval> | null = null;
 const currentImage = ref(0);
 const isSectionPastScroll = ref(false);
-const previousImage = ref(0); // 用於儲存前一張圖片索引
 let observer: IntersectionObserver | null = null;
 
 /*const currentBackgroundStyle = computed(() => {
@@ -110,7 +109,7 @@ const layerImages = ref([]);
 
 let index = 0;
 
-const switchImage = async () => {
+const switchBgImage = async () => {
   const nextIndex = (index + 1) % carouselStore.sortedImages.length;
   const backLayer = 1 - currentLayer.value;
 
@@ -127,6 +126,11 @@ const switchImage = async () => {
     currentLayer.value = backLayer;
     index = nextIndex;
   }, 1000);
+};
+
+const switchMbImage = () => {
+  currentImage.value =
+    (currentImage.value + 1) % carouselStore.sortedImages.length;
 };
 
 const observerFunc = () => {
@@ -148,19 +152,22 @@ const observerFunc = () => {
 onMounted(async () => {
   await carouselStore.fetchImages();
   layerImages.value = [
-    { imageURL: carouselStore.sortedImages[0].imageURL, opacity: 1 },
-    { imageURL: carouselStore.sortedImages[1].imageURL, opacity: 0 },
+    { imageURL: carouselStore?.sortedImages[0]?.imageURL, opacity: 1 },
+    { imageURL: carouselStore?.sortedImages[1]?.imageURL, opacity: 0 },
   ];
   await sectionStore.fetchImages();
   isLoading.value = false;
   await nextTick(() => {
     observerFunc();
-    setInterval(switchImage, 8000);
+    intervalId1 = setInterval(switchBgImage, 8000);
+    intervalId2 = setInterval(switchMbImage, 8000);
   });
 });
 
 onBeforeUnmount(() => {
   observer.disconnect();
+  clearInterval(intervalId1);
+  clearInterval(intervalId2);
 });
 
 watch(currentImage, (newIndex) => {
