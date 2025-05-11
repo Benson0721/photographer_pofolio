@@ -32,15 +32,10 @@ export const updateSectionImage = async (req, res) => {
       return res.status(500).json({ message: imageData.error });
     }
 
-    const newUrl = imageData.secure_url.replace(
-      "/upload/",
-      "/upload/f_auto,q_auto,w_1440/"
-    );
-
     await SectionImage.findByIdAndUpdate(
       id,
       {
-        imageURL: newUrl,
+        imageURL: imageData.secure_url,
         public_id: imageData.public_id,
         title: title,
       },

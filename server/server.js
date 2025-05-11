@@ -2,23 +2,23 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import mongoose from "mongoose";
 import { User } from "./models/UserSchema.js";
-import { router as UserRoutes } from "./routes/UserRoutes.js";
-import { router as OtherPageRoutes } from "./routes/OtherPageRoutes.js";
-import { router as CarouselRoutes } from "./routes/CarouselRoutes.js";
-import { router as SectionRoutes } from "./routes/SectionRoutes.js";
-import { router as AboutRoutes } from "./routes/AboutRoutes.js";
-import { router as DisplayRoutes } from "./routes/DisplayRoutes.js";
-import { router as TopicRoutes } from "./routes/TopicRoutes.js";
+import {
+  UserRoutes,
+  CarouselRoutes,
+  SectionRoutes,
+  AboutRoutes,
+  DisplayRoutes,
+  TopicRoutes,
+} from "./routes/routes.js";
 import passport from "passport";
 import express from "express";
 import LocalStrategy from "passport-local";
 import session from "express-session";
-import MongoStore from "connect-mongo";
 import cloudinary from "cloudinary";
 import cron from "node-cron";
 import { clearUploadsFolder } from "./utils/clearUploads.js";
+import { connectToDB } from "./mongoDB.js";
 
 // 獲取當前檔案的路徑
 const __filename = fileURLToPath(import.meta.url);
@@ -41,38 +41,7 @@ if (process.env.NODE_ENV !== "production") {
   }
 }
 
-const DBURL = process.env.DB_URL;
-if (!DBURL) {
-  throw new Error("DB_URL is not defined in .env");
-}
-
-const connectToDB = async () => {
-  try {
-    await mongoose.connect(DBURL);
-    console.log("connection successful");
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-connectToDB();
-const db = mongoose.connection;
-
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-  console.log("Database connected");
-});
-
-const store = MongoStore.create({
-  mongoUrl: DBURL,
-  dbName: "selfDatabase",
-  collectionName: "sessions",
-  touchAfter: 24 * 60 * 60,
-});
-
-store.on("error", function (e) {
-  console.log("Session Store Error", e);
-});
+const store = await connectToDB();
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -107,32 +76,25 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-if (process.env.NODE_ENV !== "production") {
-  app.use("/", UserRoutes);
-  app.use("/", OtherPageRoutes);
-  app.use("/", CarouselRoutes);
-  app.use("/", SectionRoutes);
-  app.use("/", AboutRoutes);
-  app.use("/", DisplayRoutes);
-  app.use("/", TopicRoutes);
-} else {
-  app.use("/api", UserRoutes);
-  app.use("/api", OtherPageRoutes);
-  app.use("/api", CarouselRoutes);
-  app.use("/api", SectionRoutes);
-  app.use("/api", AboutRoutes);
-  app.use("/api", DisplayRoutes);
-  app.use("/api", TopicRoutes);
-}
+const prefix = process.env.NODE_ENV !== "production" ? "" : "api";
+
+const routes = [
+  { path: "/", router: UserRoutes },
+  { path: "/carousel", router: CarouselRoutes },
+  { path: "/section", router: SectionRoutes },
+  { path: "/about", router: AboutRoutes },
+  { path: "/display", router: DisplayRoutes },
+  { path: "/topic", router: TopicRoutes },
+];
+
+routes.forEach(({ path, router }) => {
+  app.use(prefix + path, router);
+});
 
 cron.schedule("0 * * * *", async () => {
   console.log("每日清空 uploads 資料夾...");
   await clearUploadsFolder();
 });
-
-/*app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../dist", "index.html"));
-});*/
 
 app.listen(port, () => {
   console.log(`Serving on port ${port}`);

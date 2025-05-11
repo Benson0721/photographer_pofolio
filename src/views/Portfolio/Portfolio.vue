@@ -3,8 +3,6 @@ import {
   onMounted,
   computed,
   ref,
-  watch,
-  onBeforeUnmount,
   nextTick,
 } from "vue";
 import Navbar from "../../components/Navbar/Navbar.vue";

@@ -14,6 +14,7 @@ const socialMediaLinks = ref([
       <!-- 左側版權信息 -->
       <div class="footer__copyright font-noto">© 2025 by Mpass.</div>
       <!-- 右側社交媒體連結 -->
+
       <div class="footer__social font-noto">
         <a
           v-for="link in socialMediaLinks"

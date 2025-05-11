@@ -20,7 +20,6 @@ import { useAboutStore } from "../../stores/aboutPinia";
 import { useWindowSize } from "../../utils/useWindowSize";
 import { useImageSizeList } from "../../utils/useImageSizeList";
 import { sendEmail } from "../../utils/sendEmail";
-import Loading from "../../components/Loading.vue";
 const { imageRefs, imageSizes, updateSizes } = useImageSizeList();
 
 const { device } = useWindowSize();
@@ -228,7 +227,7 @@ onMounted(async () => {
           <img
             :src="imageMap['pai']?.imageURL"
             alt="攝影師帥哥本人"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover object-[0%_30%]"
             :ref="(el) => (imageRefs['pai'] = el)"
           />
           <AboutDialog
@@ -274,7 +273,7 @@ onMounted(async () => {
           <img
             :src="imageMap['moto']?.imageURL"
             alt="moto"
-            class="w-full h-full object-cover"
+            class="w-full h-full object-cover object-[0%_40%]"
             :ref="(el) => (imageRefs['moto'] = el)"
           />
           <AboutDialog

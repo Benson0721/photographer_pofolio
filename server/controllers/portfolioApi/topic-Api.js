@@ -5,14 +5,6 @@ import {
   deleteImages,
 } from "../cloudinaryApi/img-api.js";
 
-export const getAllTopicImages = async (req, res) => {
-  try {
-    const topicImages = await TopicImage.find({});
-    res.json({ topicImages });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 export const getTopicImages = async (req, res) => {
   try {
     const { category } = req.query;
@@ -23,12 +15,13 @@ export const getTopicImages = async (req, res) => {
       }
       res.json({ topicImages });
       return;
+    } else {
+      const topicImages = await TopicImage.find({});
+      if (!topicImages) {
+        return res.status(404).json({ message: "No images found" });
+      }
+      res.json({ topicImages });
     }
-    const topicImages = await TopicImage.find({});
-    if (!topicImages) {
-      return res.status(404).json({ message: "No images found" });
-    }
-    res.json({ topicImages });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -45,15 +38,11 @@ export const addTopicImage = async (req, res) => {
     if (imageData.error) {
       return res.status(500).json({ message: imageData.error });
     }
-    const newUrl = imageData.secure_url.replace(
-      "/upload/",
-      "/upload/f_auto,q_auto,w_1440/"
-    );
     const newTopicImage = new TopicImage({
       category,
       topic,
       notes,
-      imageURL: newUrl,
+      imageURL: imageData.secure_url,
       public_id: imageData.public_id,
     });
     await newTopicImage.save();
@@ -86,12 +75,7 @@ export const updateTopicImage = async (req, res) => {
       if (imageData.error) {
         return res.status(500).json({ message: imageData.error });
       }
-
-      const newUrl = imageData.secure_url.replace(
-        "/upload/",
-        "/upload/f_auto,q_auto,w_1440/"
-      );
-      updateData.imageURL = newUrl;
+      updateData.imageURL = imageData.secure_url;
     }
 
     const updatedImage = await TopicImage.findByIdAndUpdate(id, updateData, {

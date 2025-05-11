@@ -4,7 +4,6 @@ import {
   defineProps,
   defineModel,
   watch,
-  onMounted,
   onBeforeUnmount,
   nextTick,
 } from "vue";
@@ -39,10 +38,11 @@ const imageStates = ref(new Map());
 const setupObserver = async () => {
   let attempts = 0;
   const maxAttempts = 5;
-  const expectedImages = topicStore.topicImages.length; // 期望的圖片數量（13）
+  const expectedImages = topicStore.topicImages.length;
 
   while (attempts < maxAttempts) {
-    await nextTick(); // 等待 DOM 更新
+    //以多次嘗試確保圖片已載入
+    await nextTick();
     const imageElements = document.querySelectorAll(
       ".portfolio__gallery__image"
     );

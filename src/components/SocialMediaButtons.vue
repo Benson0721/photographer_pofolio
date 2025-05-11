@@ -33,7 +33,11 @@ const socialMedias = ref([
       v-for="socialMedia in socialMedias"
       :key="socialMedia.name"
     >
-      <a v-if="socialMedia.herf" :href="socialMedia.herf" target="_blank">
+      <a
+        v-if="socialMedia.herf"
+        :href="socialMedia.herf as string"
+        target="_blank"
+      >
         <FontAwesomeIcon
           :icon="socialMedia.icon"
           class="social-media-buttons__icon"
@@ -41,8 +45,8 @@ const socialMedias = ref([
         />
       </a>
       <router-link
-        v-if="socialMedia.to"
-        :to="{ path: socialMedia.to, hash: socialMedia.hash }"
+        v-else
+        :to="{ path: socialMedia.to as string, hash: socialMedia.hash as string }"
       >
         <FontAwesomeIcon
           :icon="socialMedia.icon"

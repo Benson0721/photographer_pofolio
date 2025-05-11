@@ -4,19 +4,7 @@ import Carousel from "../../components/Carousel/Carousel.vue";
 import CategorySection from "../../components/CategorySection/CategorySection.vue";
 import Footer from "../../components/Footer.vue";
 import SocialMediaButtons from "../../components/SocialMediaButtons.vue";
-import { useWindowSize } from "../../utils/useWindowSize.js";
-import {
-  ref,
-  onMounted,
-  onUnmounted,
-  computed,
-  onBeforeUnmount,
-  nextTick,
-  watch,
-} from "vue";
-
-import "./Home.scss";
-
+import { ref, onMounted, onBeforeUnmount, nextTick, watch } from "vue";
 import { useCarouselStore } from "../../stores/carouselPinia.ts";
 import { useSectionStore } from "../../stores/sectionPinia.ts";
 
@@ -24,85 +12,12 @@ const carouselStore = useCarouselStore();
 const sectionStore = useSectionStore();
 
 const isLoading = ref(true);
-let intervalId1: ReturnType<typeof setInterval> | null = null;
-let intervalId2: ReturnType<typeof setInterval> | null = null;
-const currentImage = ref(0);
+
+const currentMbImage = ref(0);
 const isSectionPastScroll = ref(false);
 let observer: IntersectionObserver | null = null;
-
-/*const currentBackgroundStyle = computed(() => {
-  if (
-    device.value !== "mobile" &&
-    carouselStore.sortedImages[currentImage.value]
-  ) {
-    return {
-      backgroundImage: `url("${
-        carouselStore.sortedImages[currentImage.value].imageURL
-      }")`,
-      opacity: curBgOpacity.value,
-    };
-  }
-  return {};
-});
-
-// 前一張圖片的背景樣式
-const previousBackgroundStyle = computed(() => {
-  if (
-    device.value !== "mobile" &&
-    previousImage.value >= 0 &&
-    carouselStore.sortedImages[previousImage.value]
-  ) {
-    return {
-      backgroundImage: `url("${
-        carouselStore.sortedImages[previousImage.value].imageURL
-      }")`,
-      opacity: preBgOpacity.value,
-    };
-  }
-  return {};
-});
-
-/*const backgroundStyle = computed(() => {
-  if (device.value !== "mobile") {
-    return {
-      backgroundImage: `url(${
-        carouselStore.sortedImages[currentImage.value]?.imageURL || ""
-      })`,
-      opacity: curBgOpacity.value,
-      transition: "opacity 1s ease-in-out",
-    };
-  }
-  return {};
-});*/
-
-/*let intervalId: ReturnType<typeof setInterval> | null = null;
-const preloadImage = (src: string) => {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.src = src;
-    img.onload = () => resolve(true);
-  });
-};
-
-const changeImage = () => {
-  intervalId = setInterval(async () => {
-    const nextIndex =
-      (currentImage.value + 1) % carouselStore.sortedImages.length;
-    const nextImageURL = carouselStore.sortedImages[nextIndex].imageURL;
-
-    await preloadImage(nextImageURL); // 預先載入下一張圖
-
-    previousImage.value = currentImage.value;
-    currentImage.value = nextIndex;
-
-    // 重設 opacity 為初始狀態
-
-    setTimeout(() => {
-      preBgOpacity.value = 0;
-      curBgOpacity.value = 1;
-    }, 50); // 延遲一點點，確保樣式已經更新
-  }, 5000);
-};*/
+let intervalId1: ReturnType<typeof setInterval> | null = null;
+let intervalId2: ReturnType<typeof setInterval> | null = null;
 
 const currentLayer = ref(0); // 0 or 1，控制哪一層在上面
 const layerImages = ref([]);
@@ -127,10 +42,8 @@ const switchBgImage = async () => {
     index = nextIndex;
   }, 1000);
 };
-
 const switchMbImage = () => {
-  currentImage.value =
-    (currentImage.value + 1) % carouselStore.sortedImages.length;
+  currentMbImage.value = (currentMbImage.value + 1) % carouselStore.sortedImages.length;
 };
 
 const observerFunc = () => {
@@ -170,7 +83,7 @@ onBeforeUnmount(() => {
   clearInterval(intervalId2);
 });
 
-watch(currentImage, (newIndex) => {
+watch(currentMbImage, (newIndex) => {
   //預載
   const img = new Image();
   img.src = carouselStore.sortedImages[newIndex].imageURL;
@@ -200,7 +113,7 @@ watch(currentImage, (newIndex) => {
       ></div>
     </div>
     <Navbar />
-    <Carousel :currentImage="currentImage" />
+    <Carousel :currentImage="currentMbImage" />
     <CategorySection :isSectionPastScroll="isSectionPastScroll" />
     <Footer />
     <SocialMediaButtons />

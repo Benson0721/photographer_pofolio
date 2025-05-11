@@ -25,17 +25,13 @@ export const updateAboutImage = async (req, res) => {
       filepath,
       filterPublicID
     );
-    const newUrl = imageData.secure_url.replace(
-      "/upload/",
-      "/upload/f_auto,q_auto,w_1440/"
-    );
     if (imageData.error) {
       return res.status(500).json({ message: imageData.error });
     }
     await AboutImage.findByIdAndUpdate(
       id,
       {
-        imageURL: newUrl,
+        imageURL: imageData.secure_url,
         public_id: imageData.public_id,
       },
       { new: true }

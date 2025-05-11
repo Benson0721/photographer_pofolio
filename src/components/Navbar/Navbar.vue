@@ -12,6 +12,7 @@ import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { useUserStore } from "../../stores/userPinia.ts";
 
 const userStore = useUserStore();
+
 const isMenuOpen = ref(false);
 const socialMedias = ref([
   {
@@ -70,6 +71,7 @@ const currentLogo = computed(() => {
     }"
   >
     <button
+      v-if="userStore.user"
       class="absolute top-1/2 -translate-y-1/2 right-1/3 md:hidden font-bellefair cursor-pointer lg:text-xl text-black textShadow"
       @click="userStore.isEditing = !userStore.isEditing"
     >
@@ -115,13 +117,13 @@ const currentLogo = computed(() => {
       <router-link
         v-if="!userStore.user"
         to="/login"
-        class="hidden md:block font-bellefair cursor-pointer lg:text-xl textShadow"
+        class="hidden md:block font-bellefair text-white hover:text-black cursor-pointer lg:text-xl textShadow"
         >Login</router-link
       >
       <template v-else>
         <button
-          class="hidden md:block font-bellefair text-white cursor-pointer lg:text-xl textShadow"
-          @click=""
+          class="hidden md:block font-bellefair text-white hover:text-black cursor-pointer lg:text-xl textShadow"
+          @click="handleLogout"
         >
           Logout
         </button>
@@ -146,7 +148,7 @@ const currentLogo = computed(() => {
           <button class="ml-2" v-if="!userStore.user" @click="goToLogin">
             <FontAwesomeIcon :icon="faArrowRightToBracket" class="icon" />
           </button>
-          <button class="ml-2" v-else @click="userStore.logout()">
+          <button class="ml-2" v-else @click="handleLogout">
             <FontAwesomeIcon :icon="faArrowRightFromBracket" class="icon" />
           </button>
         </div>

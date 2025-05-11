@@ -10,7 +10,8 @@
     "esModuleInterop": true,
     "lib": ["ESNext", "DOM"],
     "types": ["vite/client"],
-    "allowImportingTsExtensions": true
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
   "include": ["src", "src/**/*.d.ts"],
   "exclude": ["node_modules"]

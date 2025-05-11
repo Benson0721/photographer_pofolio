@@ -23,24 +23,16 @@ export const addDisplayImages = async (req, res) => {
       return res.status(500).json({ message: imageDatas.error });
     }
     if (!Array.isArray(imageDatas)) {
-      const newUrl = imageDatas.secure_url.replace(
-        "/upload/",
-        "/upload/f_auto,q_auto,w_1440/"
-      );
       const image = new DisplayImage({
-        imageURL: newUrl,
+        imageURL: imageDatas.secure_url,
         public_id: imageDatas.public_id,
         topicID: parsedTopicID,
       });
       await image.save();
     } else {
       imageDatas.map(async (data) => {
-        const newUrl = data.secure_url.replace(
-          "/upload/",
-          "/upload/f_auto,q_auto,w_1440/"
-        );
         const image = new DisplayImage({
-          imageURL: newUrl,
+          imageURL: data.secure_url,
           public_id: data.public_id,
           topicID: parsedTopicID,
         });

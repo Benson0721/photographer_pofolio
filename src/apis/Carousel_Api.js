@@ -4,7 +4,6 @@ const baseURL = window.location.origin;
 export const getCarouselImages = async (folderPath) => {
   const response = await axios.get(`${baseURL}/api/carousel/${folderPath}`);
   if (response.status === 200) {
-    console.log(response.data.carouselImages);
     return response.data.carouselImages;
   }
   return { error: "Failed to fetch images" };
