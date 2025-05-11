@@ -76,7 +76,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-const prefix = process.env.NODE_ENV !== "production" ? "" : "api";
+const prefix = process.env.NODE_ENV !== "production" ? "" : "/api";
 
 const routes = [
   { path: "/", router: UserRoutes },
