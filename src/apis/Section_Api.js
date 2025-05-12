@@ -46,7 +46,7 @@ export const adjustOffsetY = async (folderPath, id, offsetY) => {
 };
 
 export const updateSectionName = async (id, title) => {
-  const response = await axios.patch(`${baseURL}/api/section`, {
+  const response = await axios.patch(`${baseURL}/api/section/name`, {
     id,
     title,
   });

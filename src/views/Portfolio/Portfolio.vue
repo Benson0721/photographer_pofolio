@@ -1,10 +1,5 @@
 <script setup>
-import {
-  onMounted,
-  computed,
-  ref,
-  nextTick,
-} from "vue";
+import { onMounted, computed, ref, nextTick } from "vue";
 import Navbar from "../../components/Navbar/Navbar.vue";
 import Footer from "../../components/Footer.vue";
 import NewTopic from "../../components/ImageSystem/PortfolioDialog/TopicSystem/NewTopic/NewTopic.vue";
@@ -12,6 +7,7 @@ import NewDisplay from "../../components/ImageSystem/PortfolioDialog/DisplaySyst
 import { useRoute } from "vue-router";
 import { useUserStore } from "../../stores/userPinia.ts";
 import { useTopicStore } from "../../stores/topicPinia";
+import { useSectionStore } from "../../stores/sectionPinia";
 import { useWindowSize } from "../../utils/useWindowSize.js";
 import Handing from "../../components/Handing.vue";
 import TopicImage from "./TopicImage.vue";
@@ -21,6 +17,7 @@ import "./Portfolio.scss";
 const { device } = useWindowSize();
 const topicStore = useTopicStore();
 const userStore = useUserStore();
+const sectionStore = useSectionStore();
 const route = useRoute();
 const curCategory = ref("");
 const curTopic = ref("");
@@ -45,6 +42,7 @@ const categorys = ref([
   "Motorcycle",
   "Others",
 ]);
+const sectionCategorys = ref(["All"]);
 
 const selectCategory = ref("");
 
@@ -65,6 +63,14 @@ const loadImage = async () => {
     await topicStore.fetchImages();
   }
 };
+
+/*const loadSectionCategory = async () => {
+  await sectionStore.fetchImages();
+  sectionStore.sectionImages.map((image) => {
+    sectionCategorys.value.push(image.title);
+  });
+  console.log(sectionCategorys.value);
+};*/
 
 const backgroundStyle = computed(() => {
   if (device.value !== "mobile") {
@@ -87,6 +93,7 @@ const backgroundStyle = computed(() => {
 
 onMounted(async () => {
   await loadImage();
+  //await loadSectionCategory();
   await nextTick();
   isLoading.value = false;
 });

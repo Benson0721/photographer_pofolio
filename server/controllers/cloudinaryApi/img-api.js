@@ -20,7 +20,7 @@ export const updateImage = async (
     const result = await cloudinary.uploader.upload(filePath, options);
     result.secure_url = result.secure_url.replace(
       "/upload/",
-      "/upload/f_auto,q_80"
+      "/upload/f_auto,q_80/"
     );
     return result;
   } catch (error) {
