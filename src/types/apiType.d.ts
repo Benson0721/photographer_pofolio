@@ -4,6 +4,12 @@ export type Image = {
   title: string | null;
 };
 
+export type FrontImage = {
+  _id: string;
+  category: string;
+  imageURL: string;
+};
+
 export type SectionImage = {
   _id: string;
   public_id: string;

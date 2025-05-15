@@ -7,17 +7,16 @@ import NewDisplay from "../../components/ImageSystem/PortfolioDialog/DisplaySyst
 import { useRoute } from "vue-router";
 import { useUserStore } from "../../stores/userPinia.ts";
 import { useTopicStore } from "../../stores/topicPinia";
-import { useSectionStore } from "../../stores/sectionPinia";
 import { useWindowSize } from "../../utils/useWindowSize.js";
 import Handing from "../../components/Handing.vue";
 import TopicImage from "./TopicImage.vue";
 import DisplayImage from "./DisplayImage.vue";
+import ChangeFrontPage from "../../components/ImageSystem/PortfolioDialog/TopicSystem/ChangeFrontPage.vue";
 import "./Portfolio.scss";
 
 const { device } = useWindowSize();
 const topicStore = useTopicStore();
 const userStore = useUserStore();
-const sectionStore = useSectionStore();
 const route = useRoute();
 const curCategory = ref("");
 const curTopic = ref("");
@@ -42,7 +41,6 @@ const categorys = ref([
   "Motorcycle",
   "Others",
 ]);
-const sectionCategorys = ref(["All"]);
 
 const selectCategory = ref("");
 
@@ -76,14 +74,14 @@ const backgroundStyle = computed(() => {
   if (device.value !== "mobile") {
     if (curTopicID.value) {
       const image = topicStore.topicImages.find(
-        (image) => image._id === curTopicID.value
+        (image) => image._id === curTopicID.value//進入display image顯示的封面
       );
       return {
         backgroundImage: `url(${image?.imageURL})`,
       };
     } else {
       return {
-        backgroundImage: `url(${topicStore.topicImages[0]?.imageURL})`,
+        backgroundImage: `url(${topicStore.frontImage.imageURL})`,
       };
     }
   } else {
@@ -91,9 +89,21 @@ const backgroundStyle = computed(() => {
   }
 });
 
+const frontImageStyle = computed(() => {
+  if (device.value == "mobile") {
+    if (curTopicID.value) {
+      const image = topicStore.topicImages.find(
+        (image) => image._id === curTopicID.value//進入display image顯示的封面
+      );
+      return image?.imageURL;
+    } else {
+      return topicStore.frontImage.imageURL;
+    }
+  }
+});
+
 onMounted(async () => {
   await loadImage();
-  //await loadSectionCategory();
   await nextTick();
   isLoading.value = false;
 });
@@ -104,7 +114,7 @@ onMounted(async () => {
     <div class="portfolio__banner relative md:static">
       <img
         v-if="device === 'mobile'"
-        :src="topicStore.topicImages[0]?.imageURL"
+        :src="frontImageStyle"
         alt="portfolio"
         class="w-full h-auto object-cover md:hidden"
       />
@@ -120,8 +130,13 @@ onMounted(async () => {
         :HeadingStyle="HeadingStyle"
         :ContentStyle="ContentStyle"
       />
-
-      <NewTopic v-if="mode === 'Topic'" />
+      <div
+        v-if="mode === 'Topic'"
+        class="flex gap-2 absolute z-10 top-1/18 left-8/10 md:top-1/8 md:left-7/9"
+      >
+        <NewTopic />
+        <ChangeFrontPage />
+      </div>
       <div v-else class="absolute top-1/8 right-1 flex justify-end gap-2 pr-8">
         <NewDisplay :curTopicID="curTopicID" />
         <v-btn

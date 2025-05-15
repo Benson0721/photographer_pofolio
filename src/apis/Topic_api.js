@@ -43,18 +43,6 @@ export const updateTopicImage = async (folderPath, formData) => {
   return { error: response.data.error };
 };
 
-export const updateTopicInfo = async (id, topic, notes) => {
-  const response = await axios.patch(`${baseURL}/api/topic`, {
-    id,
-    topic,
-    notes,
-  });
-  if (response.status === 200) {
-    return response.data.message;
-  }
-  return { error: response.data.error };
-};
-
 export const deleteTopicImage = async (folderPath, publicId, id) => {
   const response = await axios.delete(`${baseURL}/api/topic/${folderPath}`, {
     params: {

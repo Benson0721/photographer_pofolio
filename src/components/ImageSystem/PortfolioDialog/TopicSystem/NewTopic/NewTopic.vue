@@ -64,7 +64,7 @@ const previewUrl = computed(() => {
         text="新增"
         variant="flat"
         :disabled="!userStore.isEditing"
-        class="bg-green-500 absolute z-10 top-1/18 left-8/10 md:top-1/10 md:left-7/8"
+        class="bg-green-500 "
         @click="handleOpen"
         :class="!userStore.isEditing ? 'hidden' : 'block'"
       ></v-btn>

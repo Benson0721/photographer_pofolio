@@ -2,20 +2,22 @@ import { defineStore } from "pinia";
 import {
   getTopicImages,
   updateTopicImage,
-  updateTopicInfo,
   deleteTopicImage,
   addTopicImage,
 } from "../apis/Topic_api";
-import { TopicImage } from "../types/apiType";
+import { updateFrontImage, getFrontImages } from "../apis/Front_api";
+import { TopicImage, FrontImage } from "../types/apiType";
 export const useTopicStore = defineStore("topicStore", {
   state: () => ({
     topicImages: [] as TopicImage[],
+    frontImage: {} as FrontImage,
   }),
 
   actions: {
     async fetchImages(category: string | undefined) {
       const folderPath = `portfolio`;
       this.topicImages = await getTopicImages(folderPath, category);
+      this.frontImage = await getFrontImages(category || "All");
     },
     async addImage(
       files: File[],
@@ -53,6 +55,11 @@ export const useTopicStore = defineStore("topicStore", {
       formData.append("newData", JSON.stringify(newData));
       const res = await updateTopicImage(path, formData);
       console.log(res);
+      return res;
+    },
+    async updateFrontImage(category: string, imageURL: string) {
+      const res = await updateFrontImage(category, imageURL);
+      this.frontImage = await getFrontImages(category || "All");
       return res;
     },
     async deleteImage(public_Id: string, id: string) {
