@@ -27,6 +27,13 @@ export const useUserStore = defineStore("userStore", {
       this.user = data.user;
       this.error = data?.error;
     },
+    showEdit() {
+      if (this.isEditing === true && this.user) {
+        return true;
+      } else {
+        return false;
+      }
+    },
   },
   persist: true,
 });

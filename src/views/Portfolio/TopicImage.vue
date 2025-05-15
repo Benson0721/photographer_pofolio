@@ -10,7 +10,9 @@ import {
 import EditTopic from "../../components/ImageSystem/PortfolioDialog/TopicSystem/EditTopic/EditTopic.vue";
 import DeleteTopic from "../../components/ImageSystem/PortfolioDialog/TopicSystem/DeleteTopic.vue";
 import { useTopicStore } from "../../stores/topicPinia.ts";
+import { useUserStore } from "../../stores/userPinia.ts";
 
+const userStore = useUserStore();
 const topicStore = useTopicStore();
 
 const curTopicID = defineModel("curTopicID", { type: String });
@@ -102,19 +104,24 @@ onBeforeUnmount(() => {
         :key="index"
         :data-id="item._id"
       >
-        <EditTopic
-          :id="item._id"
-          :topic="item.topic"
-          :notes="item.notes"
-          :category="item.category"
-          :imageURL="item.imageURL"
-          :publicId="item.public_id"
-        />
-        <DeleteTopic
-          :topic="item.topic"
-          :id="item._id"
-          :publicId="item.public_id"
-        />
+        <div
+          class="flex gap-0.5 md:gap-2 absolute z-10 top-1/18 left-11/18 md:top-1/10 md:left-6/8"
+          :class="userStore.showEdit() ? 'block' : 'hidden'"
+        >
+          <EditTopic
+            :id="item._id"
+            :topic="item.topic"
+            :notes="item.notes"
+            :category="item.category"
+            :imageURL="item.imageURL"
+            :publicId="item.public_id"
+          />
+          <DeleteTopic
+            :topic="item.topic"
+            :id="item._id"
+            :publicId="item.public_id"
+          />
+        </div>
         <img
           :src="item.imageURL"
           alt="portfolio"

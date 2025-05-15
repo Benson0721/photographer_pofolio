@@ -26,10 +26,8 @@ const handleChangeImage = async () => {
   if (selectedImage.value === "") return;
   try {
     const category = route.params.category;
-    console.log(category);
     isLoading.value = true;
     loadingmessage.value = "切換圖片中...";
-    console.log(selectedImage.value);
     await topicStore.updateFrontImage(category, selectedImage.value);
     selectedImage.value = "";
     isLoading.value = false;

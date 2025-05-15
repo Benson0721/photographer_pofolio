@@ -115,10 +115,10 @@ watch(editMode, () => {
         color="surface-variant"
         text="編輯"
         variant="flat"
-        :disabled="!userStore.isEditing"
+        :disabled="!userStore.showEdit()"
         class="absolute z-10 top-0 left-5/6 md:left-11/12"
         @click="carouselStore.fetchImages"
-        :class="!userStore.isEditing ? 'hidden' : 'block'"
+        :class="userStore.showEdit() ? 'block' : 'hidden'"
       ></v-btn>
     </template>
 

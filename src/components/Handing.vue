@@ -19,18 +19,9 @@ const title = ref(props.title);
 const content = ref(props.content);
 
 watch(category, (newVal) => {
-  console.log(newVal);
   if (newVal === "All") {
     category.value = "Portfolio";
   }
-});
-
-watch(topic, (newVal) => {
-  console.log(newVal);
-});
-
-watch(notes, (newVal) => {
-  console.log(newVal);
 });
 
 const TitleOptions = computed<TypedOptions>(() => ({

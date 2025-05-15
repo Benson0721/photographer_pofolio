@@ -12,7 +12,6 @@ const formData = reactive({
 });
 
 const handleSubmit = async (data) => {
-  console.log(data);
   userStore.login(data);
   router.push("/");
 };

@@ -73,7 +73,7 @@ const previewUrl = computed(() => {
         text="編輯"
         variant="flat"
         :disabled="!userStore.isEditing"
-        class="bg-indigo-500 absolute z-10 top-1/18 left-11/15 md:top-1/10 md:left-6/8"
+        class="bg-indigo-500"
         @click="handleOpen"
         :class="!userStore.isEditing ? 'hidden' : 'block'"
       ></v-btn>

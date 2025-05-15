@@ -74,7 +74,7 @@ const backgroundStyle = computed(() => {
   if (device.value !== "mobile") {
     if (curTopicID.value) {
       const image = topicStore.topicImages.find(
-        (image) => image._id === curTopicID.value//進入display image顯示的封面
+        (image) => image._id === curTopicID.value //進入display image顯示的封面
       );
       return {
         backgroundImage: `url(${image?.imageURL})`,
@@ -93,7 +93,7 @@ const frontImageStyle = computed(() => {
   if (device.value == "mobile") {
     if (curTopicID.value) {
       const image = topicStore.topicImages.find(
-        (image) => image._id === curTopicID.value//進入display image顯示的封面
+        (image) => image._id === curTopicID.value //進入display image顯示的封面
       );
       return image?.imageURL;
     } else {
@@ -133,28 +133,33 @@ onMounted(async () => {
       <div
         v-if="mode === 'Topic'"
         class="flex gap-2 absolute z-10 top-1/18 left-8/10 md:top-1/8 md:left-7/9"
+        :class="userStore.showEdit() ? 'block' : 'hidden'"
       >
         <NewTopic />
         <ChangeFrontPage />
       </div>
-      <div v-else class="absolute top-1/8 right-1 flex justify-end gap-2 pr-8">
+      <div
+        v-else
+        class="absolute top-1/8 right-1 flex justify-end gap-2 pr-8"
+        :class="userStore.showEdit() ? 'block' : 'hidden'"
+      >
         <NewDisplay :curTopicID="curTopicID" />
         <v-btn
           v-if="!deleteMode"
           color="surface-variant"
           text="刪除"
           variant="flat"
-          :disabled="!userStore.isEditing"
+          :disabled="!userStore.showEdit()"
           class="bg-red-500"
           @click="deleteMode = true"
-          :class="userStore.isEditing ? 'block' : 'hidden'"
+          :class="userStore.showEdit() ? 'block' : 'hidden'"
         ></v-btn>
         <v-btn
           v-else
           color="surface-variant"
           text="取消刪除模式"
           variant="flat"
-          :disabled="!userStore.isEditing"
+          :disabled="!userStore.showEdit()"
           class="bg-blue-500"
           @click="deleteMode = false"
           :class="deleteMode ? 'block' : 'hidden'"

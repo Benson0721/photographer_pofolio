@@ -151,10 +151,10 @@ watch(isDragging, async () => {
         color="surface-variant"
         text="編輯"
         variant="flat"
-        :disabled="!userStore.isEditing"
+        :disabled="!userStore.showEdit()"
         class="absolute z-10 top-1/18 left-5/6"
         @click="handleOpen"
-        :class="!userStore.isEditing ? 'hidden' : 'block'"
+        :class="userStore.showEdit() ? 'block' : 'hidden'"
       ></v-btn>
     </template>
 

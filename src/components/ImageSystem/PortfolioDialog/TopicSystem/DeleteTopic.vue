@@ -42,7 +42,7 @@ const handleDelete = async () => {
         text="刪除"
         variant="flat"
         :disabled="!userStore.isEditing"
-        class="bg-red-500 absolute z-10 top-1/18 left-13/15 md:top-1/10 md:left-7/8"
+        class="bg-red-500"
         @click="handleOpen"
         :class="!userStore.isEditing ? 'hidden' : 'block'"
       ></v-btn>
