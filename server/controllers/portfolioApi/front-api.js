@@ -19,9 +19,13 @@ export const getFrontImages = async (req, res) => {
 export const updateFrontImage = async (req, res) => {
   try {
     const { category, imageURL } = req.body;
+    const newImageURL = imageURL.replace(
+      "/upload/f_auto,q_auto,w_1440",
+      "/upload/f_auto,q_80"
+    );
     await PortfolioFrontImage.findOneAndUpdate(
       { category: category },
-      { $set: { imageURL: imageURL } }
+      { $set: { imageURL: newImageURL } }
     );
     res.status(200).json({ message: "更新資料成功!" });
   } catch (error) {
